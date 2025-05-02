@@ -1,0 +1,25 @@
+{
+    "welcome_message": "Bienvenido a la Aplicación React",
+    "home_button1": "Ir a Descripciones",
+
+    "faq": {
+        "title": "Preguntas Frecuentes",
+        "questions": [
+            {
+                "q": "Como puedo cambiar de Idioma?",
+                "a": "Usar el botton para cambiar de Idioma"
+            },
+            {
+                "q": "Este programa es de libre uso?",
+                "a": "Sí, es libre de uso y de guardado"
+            },
+            {
+                "q": "Cuánto tiempo tengo que esperar para recibir mi artículo?",
+                "a": "Normalmente no más de 3 días laborables"
+            }
+        ],
+        "Accordeon1Button1": "Ingles",
+        "Accordeon1Button2": "Español"
+
+    }
+}
