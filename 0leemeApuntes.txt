@@ -10,7 +10,7 @@ ABRIR DIRECTORIO react-frontend
 cd react-frontend
 
 INSTALAR MUI CON
-npm install @mui/material @emotion/react @emotion/styled
+npm install @mui/material @emotion/react @emotion/styled @mui/joy
 npm install @fontsource/roboto
 npm install @mui/icons-material
 

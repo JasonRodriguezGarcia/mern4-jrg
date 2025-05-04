@@ -1,4 +1,22 @@
 {
+    "login": {
+        "loginStatusMessage": {
+            "notLogged": "Not logged in",
+            "logged": "Logged"
+        },
+        "loginWindow": {
+            "headLine1": "Welcome!",
+            "headLine2": "Sign in to continue.",
+            "field1Label": "Name",
+            "field1Placeholder": "name",
+            "field2Label": "Password",
+            "field2Placeholder": "password",
+            "button1": "Log in",
+            "button2": "Don't have an account? Sign up",
+            "errorLogin": "NOT VALID USER OR PASSWORD",
+            "errorSignup": "EXISTING USER"
+        }
+    },
     "welcome_message": "Welcome to my React Application",
     "home_button1": "Go to descriptions",
 

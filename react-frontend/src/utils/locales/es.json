@@ -1,4 +1,22 @@
 {
+    "login": {
+        "loginStatusMessage": {
+            "notLogged": "No logeado",
+            "logged": "Logeado"
+        },
+        "loginWindow": {
+            "headLine1": "Bienvenido!",
+            "headLine2": "Inicia sesión para continuar.",
+            "field1Label": "Nombre",
+            "field1Placeholder": "nombre",
+            "field2Label": "Contraseña",
+            "field2Placeholder": "contraseña",
+            "button1": "Acceder",
+            "button2": "No tienes cuenta? Regístrate",
+            "errorLogin": "USUARIO O CONTRASEÑA NO VALIDOS",
+            "errorSignup": "USUARIO YA EXISTENTE"
+        }
+    },
     "welcome_message": "Bienvenido a la Aplicación React",
     "home_button1": "Ir a Descripciones",
 
