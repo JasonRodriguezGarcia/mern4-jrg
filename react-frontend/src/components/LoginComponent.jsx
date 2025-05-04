@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import { CssVarsProvider, useColorScheme } from '@mui/joy/styles';
@@ -24,6 +25,7 @@ const LoginComponent = ({ language }) => {
     const [languageSet, setLanguageSet] = useState("")
 
     const { t, i18n } = useTranslation();
+    const navigate = useNavigate();
     
     // useEffect(()=> {
     //     const fetchSignIn = async () => {
@@ -60,7 +62,6 @@ const LoginComponent = ({ language }) => {
     }, [errorMessage])
 
     const loginText = t('login', {returnObjects: true})
-    console.log("imprimo loginText: ", loginText)
     const handleLogin = async (e) => {
         e.preventDefault()
         const buttonSelected = e.nativeEvent.submitter.name
@@ -87,6 +88,7 @@ const LoginComponent = ({ language }) => {
                     return
                 }
                 setIsValidToken(true)
+                navigate(`/profile/${data.token}`);
             } catch (error) {
                 // setError(error.message); // Handle errors
                 console.log(error.message)

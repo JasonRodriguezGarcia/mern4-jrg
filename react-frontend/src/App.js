@@ -2,6 +2,7 @@ import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
+import ProfilePage from './pages/ProfilePage';
 
 // http://localhost:5000/api/v1/users?summary=count
 
@@ -10,7 +11,9 @@ function App() {
         <BrowserRouter>
         <Routes>
 
-            <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/profile/:token" element={<ProfilePage />} />
+            
             {/* <Route path="/descriptions" element={<DescriptionsListPage />} />
             <Route path="/descriptions/new" element={<DescriptionsFormInsertPage />} />
             <Route path="/descriptions/view/:id" element={<DescriptionsView />} />
