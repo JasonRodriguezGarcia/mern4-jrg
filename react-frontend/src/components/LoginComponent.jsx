@@ -15,7 +15,7 @@ import Option from '@mui/joy/Option';
 import { grey } from "@mui/material/colors";
 import { useEventCallback } from "@mui/material";
 
-const Profilepage = ({ language }) => {
+const LoginComponent = ({ language }) => {
 
     const [isValidToken, setIsValidToken] = useState(false)
     const [userName, setUserName] = useState("")
@@ -201,4 +201,4 @@ const Profilepage = ({ language }) => {
     )
 }
 
-export default Profilepage
+export default LoginComponent

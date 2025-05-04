@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Button, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import Profilepage from '../components/ProfilePage';
+import LoginComponent from '../components/LoginComponent';
 
 function HomePage() {
     const [language, setLanguage] = useState("")
@@ -41,7 +41,7 @@ function HomePage() {
         <Button variant="contained" onClick={() => changeLanguage('es')} color="primary">
             {t("faq.Accordeon1Button2")}
         </Button>
-        <Profilepage language = {language}/>
+        <LoginComponent language = {language}/>
 
 </div>
   );
