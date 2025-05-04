@@ -3,10 +3,7 @@ import express from "express";
 import path from "path";
 import cors from 'cors';
 import { fileURLToPath } from "url";
-// import PouchDB from 'pouchdb';
 import usersRouter from './routes/users.js';
-import carsRouter from './routes/cars.js';
-import descriptionsRouter from './routes/descriptions.js';
 import loginRouter from './routes/login.js';
 
 import { logger } from "./middleware/logger.js";
@@ -34,8 +31,6 @@ app.use(logger); // adding middleware to show some logs
 // /api/v1/cars → controlado por carsRouter
 // /api/v1/descriptions → controlado por descriptionsRouter
 app.use('/api/v1/users', usersRouter)
-app.use('/api/v1/cars', carsRouter)
-app.use('/api/v1/descriptions', descriptionsRouter)
 app.use('/api/v1/login', loginRouter)
 
 // Start Server

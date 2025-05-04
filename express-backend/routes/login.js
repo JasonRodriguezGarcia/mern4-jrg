@@ -73,14 +73,21 @@ router.post('/signup', async (req, res) => {
     // const { username, password } = req.body;
     const user = req.body
     console.log(user)
+    const selector = {
+        type: "login",
+        username: user.username
+    }
+    const logins = await db.find({
+        selector,
+        fields: ['_id', '_rev', 'type', 'username', 'password'],
+        // limit: 10, // limita a 10 registros
+        // skip: 20 // Omite los 20 primeros
+    })
+    console.log("imprimo logins: ", logins)
 
-    const existe = false
-    if (existe) {
-        // console.log("correcto")
-        // res.json({message: "LOGIN CORRECTO"})
-        
-        res.json({token: miToken})
-        
+    if (logins.docs.length > 0) {
+        console.log("usuario ya existe")
+        res.json({message: "Usuario ya existente"})
     } else {
         console.log("creating user")
         try {
@@ -101,31 +108,68 @@ router.post('/signup', async (req, res) => {
             res.json({token: miToken})
         } catch (error) {
             res.status(500).json({ error: 'Failed to add user' });
-        }
-            
+        }       
     }
-
 })
 
-router.post('/login', async (req, res) => {
+// http://localhost:5000/api/v1/login con body de username y password
+router.post('/', async (req, res) => {
     const { username, password } = req.body;
-    if (username == "maria" && password == "password") {
-        // console.log("correcto")
-        // res.json({message: "LOGIN CORRECTO"})
+    // const user = req.body
+    console.log(username, password)
+    const selector = {
+        $and: [
+            { type: "login", },
+            { username: username },
+            { password: password}
+          ]
+        // type: "login",
+        // username: username
+    }
+    const logins = await db.find({
+        selector,
+        fields: ['_id', '_rev', 'type', 'username', 'password'],
+        // limit: 10, // limita a 10 registros
+        // skip: 20 // Omite los 20 primeros
+    })
+    console.log("imprimo logins: ", logins)
+
+    if (logins.docs.length > 0) {
+        console.log("usuario ya existe y contraseña ok, recuperando datos")
         const miToken = jwt.sign(
-            { username: username.username },
+            { username: username,  },
             JWT_SECRET,
             { expiresIn: '1h' },
             { algorithm: 'HS256' } 
         )
+        // return token
         res.json({token: miToken})
-
     } else {
-        console.log("incorrecto")
-        res.json({message: "invalid login"})
+        console.log("usuario o contraseña no válidos")
+        res.json({message: "usuario o contraseña no válidos"})
     }
-
 })
+
+
+// router.post('/borrar', async (req, res) => {
+//     const { username, password } = req.body;
+//     if (username == "maria" && password == "password") {
+//         // console.log("correcto")
+//         // res.json({message: "LOGIN CORRECTO"})
+//         const miToken = jwt.sign(
+//             { username: username.username },
+//             JWT_SECRET,
+//             { expiresIn: '1h' },
+//             { algorithm: 'HS256' } 
+//         )
+//         res.json({token: miToken})
+
+//     } else {
+//         console.log("incorrecto")
+//         res.json({message: "invalid login"})
+//     }
+
+// })
 
 // curl http://localhost:5000/api/v1/login/profile -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE3NDQ5MTEyMTIsImV4cCI6MTc0NDkxNDgxMn0.gSgpWcF9O43rZJVDWf9xjbRsuALGBcJH6jjfvLvmNos"
 router.get('/profile', authenticateToken, (req, res) => {
