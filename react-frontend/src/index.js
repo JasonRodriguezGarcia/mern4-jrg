@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import './utils/i18n';  // Path is relative to the current file (index.js)
+// import './utils/i18n';  // Path is relative to the current file (index.js)
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
