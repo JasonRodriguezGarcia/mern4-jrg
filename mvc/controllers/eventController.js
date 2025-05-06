@@ -1,4 +1,4 @@
-import { createEvent, getEvents, getEvent } from '../models/eventModel.js';
+import { createEvent, getEvents, getEvent, deleteEvent, updateEvent } from '../models/eventModel.js';
 
 // Controller to create a new Event
 const createEventController = async (req, res) => {
@@ -20,7 +20,7 @@ const getEventsController = async (req, res) => {
   }
 };
 
-// Controller to get one user
+// Controller to get one event
 const getEventController = async (req, res) => {
   try {
     const {id} = req.params
@@ -31,4 +31,28 @@ const getEventController = async (req, res) => {
   }
 };
 
-export { createEventController, getEventsController, getEventController };
+const deleteEventController = async (req, res) => {
+    try {
+        const {id} = req.params
+        const evento = await deleteEvent(id);  // Call model function
+        res.status(200).json(evento);  // Send event back
+      } catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve event' });
+      }
+    
+}
+
+const updateEventController = async (req, res) => {
+    try {
+        const {id} = req.params
+        const body = req.body
+        const evento = await updateEvent(id, body);  // Call model function
+        res.status(200).json(evento);  // Send event back
+      } catch (error) {
+        res.status(500).json({ error: 'Failed to update event' });
+      }
+    
+}
+
+
+export { createEventController, getEventsController, getEventController, deleteEventController, updateEventController };

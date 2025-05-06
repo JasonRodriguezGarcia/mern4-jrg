@@ -1,0 +1,15 @@
+Hasta ahora teníamos en el servidor express
+    rutas avanzadas con userRouter
+
+Ahora usamos modelo MVC (MODELO VISTA CONTROLADOR)
+En el que hay un fichero principas con las rutas (userRoutes.js)
+    Configura las rutas y a qué Controlador llamarán
+Que apuntan a un CONTROLADOR (userController.js)
+    Llamará a un modelo que devolverá el evento .res junto al objeto que devuelva el modelo
+Que a su vez apunta a un modelo (userModel.js)
+    El modelo recibirá parámetros desde el Controlador (como el id) y realizará las tareas de busquéda de datos, borrado,
+    actualizaciones, ... en la base de datos
+Luego las rutas las podemos utilizar en React, Postman, otros, ...
+
+
+

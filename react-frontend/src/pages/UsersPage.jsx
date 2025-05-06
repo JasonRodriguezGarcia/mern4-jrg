@@ -104,13 +104,13 @@ const UsersPage = () => {
                 <Table sx={{ minWidth: 200 }} aria-label="simple table">
                     <TableHead>
                     <TableRow>
-                        <TableCell>Nombre</TableCell>
-                        <TableCell align="right">Contraseña</TableCell>
-                        <TableCell align="right">Acción</TableCell>
+                        <TableCell sx={{fontWeight: "bolder", fontSize: "25px"}}>Nombre</TableCell>
+                        <TableCell sx={{fontWeight: "bolder", fontSize: "25px"}} align="right">Contraseña</TableCell>
+                        <TableCell sx={{fontWeight: "bolder", fontSize: "25px"}} align="right">Acción</TableCell>
                     </TableRow>
                     </TableHead>
                     <TableBody>
-                        {datosUsers.map((usuario) => (
+                        {datosUsers.length < 1 ? "SIN DATOS" : datosUsers.map((usuario) => (
                             <TableRow
                             key={usuario._id}
                             //   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

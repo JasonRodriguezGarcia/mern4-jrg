@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // import HomePage from './pages/HomePage';
 // import ProfilePage from './pages/ProfilePage';
-import CatBouncePage from './pages/CatBouncePage';
+// import CatBouncePage from './pages/CatBouncePage';
 
 // http://localhost:5000/api/v1/users?summary=count
 import UsersPage from './pages/UsersPage';
@@ -15,7 +15,7 @@ function App() {
         <Routes>
 
         <Route path="/events" element={<EventsPage />} />
-        {/* <Route path="/users" element={<UsersPage />} /> */}
+        <Route path="/users" element={<UsersPage />} />
         {/* <Route path="/" element={<HomePage />} /> */}
         {/* <Route path="/" element={<CatBouncePage />} /> */}
         {/* <Route path="/profile/:token" element={<ProfilePage />} /> */}

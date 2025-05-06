@@ -1,4 +1,4 @@
-import { createUser, getUsers, getUser } from '../models/userModel.js';
+import { createUser, getUsers, getUser, deleteUser, updateUser } from '../models/userModel.js';
 
 // Controller to create a new user
 const createUserController = async (req, res) => {
@@ -25,10 +25,33 @@ const getUserController = async (req, res) => {
   try {
     const {id} = req.params
     const user = await getUser(id);  // Call model function
-    res.status(200).json(user);  // Send users back
+    res.status(200).json(user);  // Send user back
   } catch (error) {
     res.status(500).json({ error: 'Failed to retrieve user' });
   }
 };
 
-export { createUserController, getUsersController, getUserController };
+const deleteUserController = async (req, res) => {
+    try {
+        const {id} = req.params
+        const user = await deleteUser(id);  // Call model function
+        res.status(200).json(user);  // Send user back
+      } catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve user' });
+      }
+    
+}
+
+const updateUserController = async (req, res) => {
+    try {
+        const {id} = req.params
+        const body = req.body
+        const user = await updateUser(id, body);  // Call model function
+        res.status(200).json(user);  // Send user back
+      } catch (error) {
+        res.status(500).json({ error: 'Failed to update user' });
+      }
+    
+}
+
+export { createUserController, getUsersController, getUserController, deleteUserController, updateUserController };
