@@ -1,0 +1,18 @@
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1844-Entorno-Servidor/resumen.md
+
+Uso del Context para evitar el propdrilling pasando props a un monton de componentes hijos
+    /pages/PropDrillingHomePage.jsx
+
+Actividad para pasar el /pages/DashBoardPageOLD.jsx a
+    Context
+    Luego separar
+
+Actividad bcrypt en /nodejs/actividadbcrypt.jsx
+
+Actividad en /nodejs/
+
+Actividad en express añadir ruta para /conversion
+
+Actividad en /nodejs/ para un generador de html
+
+

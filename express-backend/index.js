@@ -5,6 +5,7 @@ import cors from 'cors';
 import { fileURLToPath } from "url";
 import usersRouter from './routes/users.js';
 import loginRouter from './routes/login.js';
+import conversionRouter from './routes/conversion.js';
 
 import { logger } from "./middleware/logger.js";
 
@@ -32,6 +33,7 @@ app.use(logger); // adding middleware to show some logs
 // /api/v1/descriptions → controlado por descriptionsRouter
 app.use('/api/v1/users', usersRouter)
 app.use('/api/v1/login', loginRouter)
+app.use('/api/v1/conversion', conversionRouter)
 
 // Start Server
 app.listen(PORT, HOSTNAME, () => {

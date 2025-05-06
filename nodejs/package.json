@@ -18,6 +18,7 @@
     "collectCoverage": true
   },
   "dependencies": {
-    "bcrypt": "^5.1.1"
+    "bcrypt": "^5.1.1",
+    "prompt-sync": "^4.2.0"
   }
 }

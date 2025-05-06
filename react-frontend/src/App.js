@@ -8,12 +8,17 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 // http://localhost:5000/api/v1/users?summary=count
 import UsersPage from './pages/UsersPage';
 import EventsPage from './pages/EventsPage';
+import PropDrillingHomePage from './pages/PropDrillingHomePage';
+import DashboardPage from './pages/DashBoardPage';
 
 function App() {
     return (
         <BrowserRouter>
         <Routes>
 
+        <Route path="/" element={<DashboardPage />} />
+
+        <Route path="/propdrilling" element={<PropDrillingHomePage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/users" element={<UsersPage />} />
         {/* <Route path="/" element={<HomePage />} /> */}
