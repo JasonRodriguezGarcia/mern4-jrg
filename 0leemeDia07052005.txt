@@ -1,0 +1,138 @@
+Event Loop
+https://dev.to/nodedoctors/an-animated-guide-to-nodejs-event-loop-3g62
+Principios Solid
+https://www.freecodecamp.org/espanol/news/los-principios-solid-explicados-en-espanol/
+
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1844-Entorno-Servidor/resumen.md
+En nodejs/tareasDB.js
+    Actividad de Pouchdb en nodejs con el CRUD mínimo
+
+En nodejs/userService.js Actividad: JEST y JSDOC
+    npm install node-fetch
+    npm install --save-dev jsdoc <-- ojo trabaja en ESmodules
+    npm install --save-dev jest <-- ojo trabaja en common modules
+
+    generar código en userService.js y userApp.js para su uso y ejecución
+    npx jsdoc userService.js
+
+    crear userService.test.js
+    node --experimental-vm-modules node_modules/.bin/jest
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1844-Entorno-Servidor/desarrollo-sw/07-herramientas.md
+En docker actividad LOLCode
+    docker pull esolang/lolcode
+    docker run -it --name lol esolang/lolcode  sh
+    Usandi vi, crear un programa de "hello.lolcode" y ejecutarlo dentro del contenedor:
+
+    HAI 1.2
+    CAN HAS STDIO?
+    VISIBLE "Hello Lolcode"
+    KTHXBYE
+    ~ # lolcode hello.lolcode
+
+En docker actividad nodejs
+    docker pull node:alpine  <--hemos descargado una imagen
+
+    docker images
+    docker inspect node:alpine
+
+    docker run -it node:alpine sh <-- creamos un container con una imagen
+    ls
+    node
+    console.log("hola")
+
+
+    docker ps
+    docker ps -a
+
+    docker stop <container_id_or_name>
+    docker rm <container_id_or_name>
+
+    crear dockertest1.js en nodejs
+    En docker abrir node:alpine container e ir a \Documents\mern4-jrg\nodejs
+    docker cp dockertest1.js nombrecontainer:/dockertest1.js
+    docker start nombrecontainer
+    docker exec -it nombrecontainer sh
+    Ya estamos dentro del container de node minimalista
+    node dockertest1.js e imrime
+        Hola desde Docker test1
+        Hola desde Docker test1
+    parar imagen
+    exit
+    docker stop id
+    docker rm id
+
+    abrir un node
+    docker run -it -p 5001:5001 --name nodejs node:alpine sh
+
+    creamos carpeta para nuestro node
+    cd home
+    cd node
+    mkdir app
+    cd app
+    npm init -y
+    npm install express
+
+    crear en pc/nodejs/app.js y pegar contenido para el app.js
+    ir a docker container
+    docker cp app.js nodejs:/home/node/app/app.js
+    docker exec -it nodejs sh
+    cd home/node/app/
+    node app.js
+
+    en PC local /mi-express-app
+    npm init -y
+    npm install express
+    cambiar el package.json
+        "type": "module",
+        "scripts": {
+            "start": "node index.js"  
+        },
+
+    crear index.js
+            // Import the Express library
+        import express from "express";
+
+        // Create an Express app
+        const app = express();
+
+        // Define a route for the root path
+        app.get('/', (req, res) => {
+        res.send('Hello, World!');
+        });
+
+        // Start the server on port 3001
+        app.listen(3001, () => {
+        console.log('Server is running on http://localhost:3001');
+        });
+    crear Dockerfile
+            # Use the official Node.js image with Alpine as the base image
+        FROM node:alpine
+
+        # Set the working directory inside the container
+        WORKDIR /usr/src/app
+
+        # Copy package.json and package-lock.json (if you have it) into the container
+        COPY package*.json ./
+
+        # Install the app dependencies inside the container
+        RUN npm install
+
+        # Copy the rest of the application files into the container
+        COPY . .
+
+        # Expose the port your app will run on (typically 3000 for Express)
+        EXPOSE 3001
+
+        # Run the app when the container starts
+        CMD ["npm", "start"]
+    crear .dockerignore
+        node_modules
+        npm-debug.log
+    
+    en dockre salir del container
+        exit
+        ir a mi-express-app/
+        docker build -t my-express-app .    <-- generamos imagen con nuestro fichero Dockerfile
+        docker run -d -p 3001:3001 --name my-express-app my-express-app   <-- arranca nuestro servidor
