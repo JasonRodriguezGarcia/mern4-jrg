@@ -220,3 +220,15 @@ como Body - Raw - json
         "modelo": "Captur",
         "ano": "2015"
     }
+
+
+En react Instalar
+    npm install jsonwebtoken bcrypt (para manejar jwt y bcrypt)
+
+En express
+    npm install express-validator (para velidación de rutas)
+
+En nodejs para andar con prompt() (aunque luego lo metemos en un input con 'const input= prompt()'):
+    npm install prompt-sync
+
+

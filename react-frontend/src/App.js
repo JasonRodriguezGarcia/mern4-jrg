@@ -10,6 +10,7 @@ import UsersPage from './pages/UsersPage';
 import EventsPage from './pages/EventsPage';
 import PropDrillingHomePage from './pages/PropDrillingHomePage';
 import DashboardPage from './pages/DashBoardPage';
+import PropDrillingHomePage2 from './pages/PropDrillingHomePage2';
 
 function App() {
     return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/" element={<DashboardPage />} />
 
         <Route path="/propdrilling" element={<PropDrillingHomePage />} />
+        <Route path="/propdrilling2" element={<PropDrillingHomePage2 />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/users" element={<UsersPage />} />
         {/* <Route path="/" element={<HomePage />} /> */}

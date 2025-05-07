@@ -1,18 +1,35 @@
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1844-Entorno-Servidor/resumen.md
 
 Uso del Context para evitar el propdrilling pasando props a un monton de componentes hijos
-    /pages/PropDrillingHomePage.jsx
+    /pages/PropDrillingHomePageOLD.jsx <-- es un ejemplo de propdrilling
+    /pages/PropDrillingHomePage2.jsx <-- es un ejemplo de uso de Context, añadidos botones de sumar y restar edad
+        para ver la propagación del cambio en el componente padre al resto y del componente childchild (nieto)
+
+    /pages/DashBoardPageOLD.jsx <-- es un ejemplo de propdrilling
+    /pages/DashBoardPage.jsx <-- es un ejemplo de uso de context pero el Context se guarda en un directorio
+        donde están todos los Contex de la aplicacion en un solo punto para una mejor organización.
+
 
 Actividad para pasar el /pages/DashBoardPageOLD.jsx a
     Context
-    Luego separar
+    Luego separar el Context
 
 Actividad bcrypt en /nodejs/actividadbcrypt.jsx
+    Instalar librería:
+        npm install prompt-sync
+    Metiendo usuario y contraseña, guardar los campos en un fichero, pero la contraseña encriptada. El guardado que sea 
+    con métodos síncrono y asyncrono. Ojo para asíncrono el 'fs' se importa de 'fs/promises'
 
-Actividad en /nodejs/
+Actividad en /nodejs/conversor.js
+    Actividad de Criterios de Aceptacion según link del principio para meter un númeo en USD y pasarlo a EUR.
 
-Actividad en express añadir ruta para /conversion
 
-Actividad en /nodejs/ para un generador de html
+Actividad en express añadir ruta para /conversion. Creada /express-backend/routes/conversion.js y añadida 
+en /express-backend/index.js
+
+
+Actividad en /nodejs/generadorhtml.js para un generador de html.
+    Meteremos Título, Autor y contenido y se generará un miindex.html con el código web incluyendo los datos introducidos.
+
 
 

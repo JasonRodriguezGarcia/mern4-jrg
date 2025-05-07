@@ -99,7 +99,7 @@ IDIOMAS - TRADUCCION
 Para los idiomas, por un problema por incompatibilidad de dependencias hay que ejecutar
     npm uninstall typescript react-scripts fork-ts-checker-webpack-plugin
     npm cache clean --force
-instalar
+instalar (OJO SUELE DAR PROBLEMAS DE DEPENDENCIAS)
     npm install i18next react-i18next
     npm install react-scripts   o   npm install typescript@4.9.5 o npm install npm install typescript@^5 y npm install
 Probar

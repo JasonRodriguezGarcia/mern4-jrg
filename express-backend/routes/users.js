@@ -50,22 +50,6 @@ const router = Router()
 // })
 
 
-// añadiendo
-router.get('/conversor', validateUserId, async (req, res) => {
-    const tasa = 0.85 // tasa
-    const {cantidad, tipo} = req.query
-    
-    if (tipo === "EUR") {
-        const resultado = cantidad / tipo
-        res.json({resultado: resultado})
-    } else if (tipo === "USD") {
-        const resultado = cantidad * tipo
-        res.json({resultado: resultado})
-    }
-
-})
-
-
 function auditar() {
     console.log("hola")
 }

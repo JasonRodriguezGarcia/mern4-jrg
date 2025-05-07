@@ -2,6 +2,8 @@ import prompt from 'prompt-sync';
 import bcrypt from 'bcrypt'
 // import {appendFileSync} from 'fs'
 import fs from 'fs'
+import fs1 from 'fs/promises'
+
 
 const input= prompt();
 
@@ -31,7 +33,7 @@ do {
     //                     fs.readFileSync("file.txt", "utf8"));
     //                 }
     //         });
-    fs.appendFile("file.txt", `Creado Asincrono: usuario: ${username}, password: ${hash}\n`,
+    await fs1.appendFile("file.txt", `Creado Asincrono: usuario: ${username}, password: ${hash}\n`,
         { encoding: "utf8"},
             (err) => {
                 if (err) {

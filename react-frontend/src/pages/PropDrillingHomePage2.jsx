@@ -2,16 +2,23 @@
 
 // en versiones viejas el "React" sobraría ya que en nuevas está por defecto
 //1º
-import React, {createContext, useContext} from 'react';
+import { lightGreen } from '@mui/material/colors';
+import React, {useState, createContext, useContext} from 'react';
 
 // 2º definir contexto
-const MessageContext = createContext();
+const MessageContext = createContext(); // Puede llamarse MisDatosContext en lugar de MessageContext
 
 const ChildChildComponent = () => {
      // Acceder la variable con UseContext
-     const {message, edad} = useContext(MessageContext);
+     const {message, edad, setEdad} = useContext(MessageContext);
     return (
-        <div>hijo del hijo {message} de {edad}</div>
+        <div style={{border: "1px solid white", color: "white",  backgroundColor: 'lightsalmon', width: "65%", margin: "auto"}}>
+                <div>hijo del hijo {message} de {edad}
+                <h3>Estos botones están en el componente ChildChild</h3>
+                <button onClick={()=> setEdad(prevEdad => edad+1)}>sumar</button>
+                <button onClick={()=> setEdad(prevEdad => edad-1)}>restar</button>
+            </div>
+        </div>
     )
 }
   // borramos prop
@@ -19,7 +26,7 @@ const ChildChildComponent = () => {
        // Acceder la variable con UseContext
        const {message, edad} = useContext(MessageContext);
        return (
-      <div>
+      <div style={{border: "1px solid white", color: "white",  backgroundColor: "lightGreen", width: "65%", margin: "auto"}}>
         <h1> Soy un hijo componente </h1>
         <h2>{message}- edad: {edad}</h2>  
         {/* // borramos prop */}
@@ -31,31 +38,38 @@ const ChildChildComponent = () => {
   // borramos prop
   const ParentComponent = () => {
      // Acceder la variable con UseContext
-     const {message, edad} = useContext(MessageContext);
+     const {message, edad, setEdad} = useContext(MessageContext);
     return (
-      <div>
+      <div style={{border: "1px solid white", color: "white",  backgroundColor: "lightblue", width: "75%", margin: "auto"}}>
         <h1> Soy el padre componente </h1>
         <h2>{message} - edad: {edad} </h2>
+        <div>
+            <h3>Estos botones están en el componente principal</h3>
+            <button onClick={()=> setEdad(prevEdad => prevEdad+1)}>sumar</button>
+            <button onClick={()=> setEdad(prevEdad => prevEdad-1)}>restar</button>
+        </div>
+        <br />
         {/* // borramos prop */}
         <ChildComponent />
       </div>
     );
   }
   
-  function PropDrillingHomePage() {
+  function PropDrillingHomePage2() {
   
       const message = "Hello everyone!";
-      const edad = "55"
+    //   const edad = "55"
+        const [edad, setEdad] = useState(55)
       return (
             //3º Envolver los componentes con MessageContext
-        <MessageContext.Provider value={{message, edad}} >
+        <MessageContext.Provider value={{message, edad, setEdad}} >
 
-              <div>
-              {/* // borramos prop */}
-     
-              <ParentComponent />
+              <div style={{border: "1px solid white", color: "white",  backgroundColor: "blue"}}>
+                {/* // borramos prop */}
+        
+                <ParentComponent />
               </div>
         </MessageContext.Provider>
       );
   }
-  export default PropDrillingHomePage;
+  export default PropDrillingHomePage2;

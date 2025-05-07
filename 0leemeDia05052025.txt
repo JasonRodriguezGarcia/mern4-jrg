@@ -12,4 +12,9 @@ Que a su vez apunta a un modelo (userModel.js)
 Luego las rutas las podemos utilizar en React, Postman, otros, ...
 
 
+En react Instalar
+    npm install jsonwebtoken bcrypt (para manejar jwt y bcrypt)
+
+En express
+    npm install express-validator (para velidación de rutas)
 

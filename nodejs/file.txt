@@ -1,2 +1,10 @@
 Creado Sincrono: usuario: pepe, password: $2b$14$97zNALU8EKU/fV9Qcnk1DufgTTiPsuqksl14XNeHplf6wLjnVNVvm
 Creado Asincrono: usuario: pepe, password: $2b$14$97zNALU8EKU/fV9Qcnk1DufgTTiPsuqksl14XNeHplf6wLjnVNVvm
+Creado Sincrono: usuario: pee, password: $2b$14$PXYKVXOI4edOqX2ym39hJubbDhiFa26XTjCoXqZ1VL0Ab6OFWgetq
+Creado Asincrono: usuario: pee, password: $2b$14$PXYKVXOI4edOqX2ym39hJubbDhiFa26XTjCoXqZ1VL0Ab6OFWgetq
+Creado Sincrono: usuario: manue, password: $2b$14$cE2bwhl/bWdmSQwAz7tKsOHdGXhQLiu5rnJ9EgNEKUz3ydTBtBe/6
+Creado Asincrono: usuario: manue, password: $2b$14$cE2bwhl/bWdmSQwAz7tKsOHdGXhQLiu5rnJ9EgNEKUz3ydTBtBe/6
+Creado Sincrono: usuario: maria, password: $2b$14$qwR6CR6O83ExyPYAGpMJiu13j8qyEDul8sXaW9FSI8j5jeD/9Dvou
+Creado Asincrono: usuario: maria, password: $2b$14$qwR6CR6O83ExyPYAGpMJiu13j8qyEDul8sXaW9FSI8j5jeD/9Dvou
+Creado Sincrono: usuario: raul, password: $2b$14$fXRtt8ahLH7jhCtXmRMXB.xDVgnTB9VOVozbljx90eaeZrQOND6Ey
+Creado Asincrono: usuario: raul, password: $2b$14$fXRtt8ahLH7jhCtXmRMXB.xDVgnTB9VOVozbljx90eaeZrQOND6Ey
