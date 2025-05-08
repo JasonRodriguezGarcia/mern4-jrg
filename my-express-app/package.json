@@ -1,15 +1,15 @@
 {
-  "name": "mi-express-app",
+  "name": "my-express-app",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js"  
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "description": "",
   "dependencies": {
     "express": "^5.1.0"
   }

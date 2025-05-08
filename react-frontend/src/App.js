@@ -11,12 +11,13 @@ import EventsPage from './pages/EventsPage';
 import PropDrillingHomePage from './pages/PropDrillingHomePage';
 import DashboardPage from './pages/DashBoardPage';
 import PropDrillingHomePage2 from './pages/PropDrillingHomePage2';
+import PasswordForm from './components/PasswordForm';
+import EmojiRender from './components/EmojiRender';
 
 function App() {
     return (
         <BrowserRouter>
         <Routes>
-
         <Route path="/" element={<DashboardPage />} />
 
         <Route path="/propdrilling" element={<PropDrillingHomePage />} />
@@ -36,6 +37,9 @@ function App() {
                 
         </Routes>
 
+        <PasswordForm />
+
+        <EmojiRender />
 
         </BrowserRouter>
     );

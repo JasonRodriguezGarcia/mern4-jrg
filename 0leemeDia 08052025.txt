@@ -1,0 +1,121 @@
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1844-Entorno-Servidor/resumen.md
+
+Actividad: custom Hooks
+    /hooks/usePasswordValidation.jsx
+    /components/PasswordForm.jsx
+
+Actividad Docker
+Build una aplicacion de express
+    crear my-express-app
+    crear package.json con npm install -y
+    modificar package.json
+        "type": "module",
+        "scripts": {
+            "start": "node index.js"  
+        },
+    npm install express
+    crear index.js
+    crear .dockerignore
+        node_modules
+        npm-debug.log
+    crear Dockerfile
+        # Use the official Node.js image with Alpine as the base image
+        FROM node:alpine
+
+        # Set the working directory inside the container
+        WORKDIR /usr/src/app
+
+        # Copy package.json and package-lock.json (if you have it) into the container
+        COPY package*.json ./
+
+        # Install the app dependencies inside the container
+        RUN npm install
+
+        # Copy the rest of the application files into the container
+        COPY . .
+
+        # Expose the port your app will run on (typically 3000 for Express)
+        EXPOSE 3001
+
+        # Run the app when the container starts
+        CMD ["npm", "start"]
+
+    en VSC terminal ejecutamos en /mi-express-app/ estas líneas que mirará el Dockerfile
+    (el terminal de VSC es el mismo que el de Docker)
+        docker build -t my-express-app .
+            - Crea una imagen de Docker desde un archivo Dockerfile en el directorio actual (.) y
+            le asigna una etiqueta (nombre) a la imagen, en este caso my-express-app.
+
+        docker run -d -p 3001:3001 --name my-express-app my-express-app
+            - docker run: Crea y ejecuta un contenedor desde la imagen especificada. -d: Ejecuta el contenedor
+            en segundo plano (modo detached). -p 3001:3001: Mapea el puerto 3001 del host al puerto 3001 del 
+            contenedor, permitiendo acceder a la app desde tu navegador en http://localhost:3001. 
+            --name my-express-app: Le da un nombre al contenedor. my-express-app: Especifica la imagen
+            que se va a usar (la que creaste en el paso anterior).
+
+Python
+Construir un app de Flask con Python en la consola VSC
+Crear directorio python-backend
+Crear un entorno virtual
+    python -m venv .venv
+Activar entorno
+    source .venv/bin/activate  # On macOS/Linux
+ó
+    .venv\Scripts\activate     # On Windows
+
+Instalar flask
+    pip install flask
+    pip install flask-cors
+
+Crear app.py
+    from flask import Flask, jsonify
+    from flask_cors import CORS
+
+    app = Flask(__name__)
+    CORS(app)
+
+
+    @app.route('/')
+    def hello():
+        return jsonify(message="Hello World!")
+
+
+    if __name__ == '__main__':
+        app.run(host='0.0.0.0', port=8000)
+
+Crear .dockerignore
+    .venv/
+Crear Dockerfile
+    FROM python:3.11-slim
+
+    WORKDIR /app
+
+    COPY requirements.txt .
+
+    RUN pip install --no-cache-dir -r requirements.txt
+
+    COPY . .
+
+    CMD ["python", "app.py"]
+
+Crear un requirements.txt (equivalente a package.json pero en python)
+    pip freeze > requirements.txt
+
+(*)Luego
+    docker build -t flask-app:latest .
+    docker run -p 8000:8000 --name flask flask-app:latest
+
+Actividad Flask
+# List of emojis you might want to return
+emojis = ["😀", "😎", "😂", "😍", "🥺", "😜", "😇", "🥳", "😈", "😱", "🙃", "🤔", "😏", "🤩"]
+
+@app.route('/random-emoji', methods=['GET'])
+def random_emoji():
+  # continuar ...
+
+Volver a repetir (*)
+
+Y crear en react un hook y un componente que lo llame para devolver un icono
+    /hooks/useEmojiGenerator.jsx
+    /components/EmojiRender.jsx
+
