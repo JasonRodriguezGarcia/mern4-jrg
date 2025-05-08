@@ -1,0 +1,88 @@
+Idea es abrir el contenedor en VSC
+extension VSC Dev Containers de microsoft
+
+en consola VSC
+docker pull python:3.11-slim
+docker run -it python /bin/bash
+
+ctr+shift+p
+dev containers: attach to running container
+encontrará un contenedor con nombre aleatorio, seleccionar
+abrir carpeta pondrá /root/ pulsar enter
+y ya se abrirá nuestro container con la imagen de Python
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1844-Entorno-Servidor/desarrollo-sw/07-herramientas.md
+programar
+Actividad
+Aqui tienes el psuedocode para un programa de Python para gestionar tu playlist de canciones, usando comandos de la consola como input(), print().
+playlist.py
+
+Mostrar mensaje de bienvenida
+
+Crear una lista vacía llamada "playlist"
+
+Mientras sea verdadero:
+    Pedir al usuario que ingrese el nombre de una canción
+    Pedir al usuario el nombre del artista
+    
+    Crear una cadena con el formato "canción por artista"
+    Agregar esa cadena a la lista "playlist"
+
+    Si el usuario escribe "fin" (ignorando mayúsculas/minúsculas):
+        Salir del bucle
+    
+    Mostrar mensaje de confirmación de que se agregó la canción
+
+
+Al final, mostrar un mensaje de "Tu Playlist:"
+Para cada elemento en la lista "playlist":
+    Mostrar el número y el nombre de la canción con el artista
+
+Codigo playlist.py
+print("Vienvenido a tu Playlist")
+print("------------------------")
+
+play_list = []
+while True: 
+    nombre_cancion = input("Introduce nombre canción:")
+    nombre_artista = input("Introduce nombre artista:")
+
+    play_list.append (f"{nombre_cancion} por {nombre_artista}")
+    print("* Canción añadida a la lista *")
+    continuar = input("Seguir añadiendo canciones? (s/n) ")
+    if continuar == "n" or continuar == "N":
+        break
+
+print("****************")    
+print("Tu PlayList ...")
+contador = 1
+for cancion in play_list:
+    print(f"{contador} {cancion}")
+    contador+=1
+
+otro ejercicio
+Te han dado estos datos en formato csv sobre las canciones y el número de reproducciones:
+
+datos.csv
+Canción,Artista,Duración (min),Reproducciones
+Sol de Verano,Luz Rivera,3.5,120
+Noches en Vela,Juan Torres,4.1,98
+Bajo la Lluvia,Camila Vega,3.8,135
+Caminos Cruzados,Los del Sur,4.5,150
+Mar Abierto,Elena Márquez,4.0,110
+Susurros,Andrés Luna,3.2,143
+Hasta el Alba,Sofía Méndez,3.9,160
+Vuelo Libre,Grupo Horizonte,4.3,100
+Ecos del Tiempo,Raúl Martínez,5.0,90
+Latidos,Clara Solís,3.7,155
+
+
+Tareas:
+Cargar los datos desde el CSV usando un DataFrame (como en Pandas)
+Ordenar por número de reproducciones
+Mostrar las 5 canciones más reproducidas.
+
+pip install pandas
+
+playlistDataframe.py
+reader = csv.reader(archivo_csv)
