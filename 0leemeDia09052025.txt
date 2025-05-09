@@ -1,0 +1,119 @@
+SQL
+-----
+https://livesql.oracle.com/next/worksheet?tutorial=introduction-to-sql-CDpng3#module2
+
+https://livesql.oracle.com/next/
+
+https://es.khanacademy.org/computing/computer-programming/sql
+
+Actividad: SQL Intro - DML
+Usando Customer Order (CO), llevar a cabo comandos SQL (DML):
+
+Conseguir este resultado:
+SQL Store
+	describe co.stores;
+Mostrar el ID, nombre y web address de cada STORES. Mostrar solo los que tengan un URL.
+	SELECT store_id, store_name, web_address FROM co.stores WHERE web_address IS NOT NULL;
+Mostrar todos los clientes, ordenados por su nombre en ordén alfabético.
+	SELECT * FROM co.customers ORDER BY FULL_NAME;
+Mostrar los datos del client con id 5.
+	SELECT * FROM co.customers WHERE CUSTOMER_ID = 5;
+Mostrar su nombre y correo solamente, en una columna, en el siguiente format: "email - nombre"
+	SELECT CONCAT(full_name, ' - ', email_address) as DATOS 
+	FROM co.customers 
+	WHERE customer_id = 5;
+Mostrar los datos de los clientes 5, 6, 7 o 8.
+	SELECT customer_id, CONCAT(full_name, ' - ', email_address) as DATOS 
+	FROM co.customers 
+	WHERE customer_id IN (5, 6, 7, 8);
+¿Cuántos clientes hay?
+	SELECT COUNT(*) as Cuenta FROM co.customers;
+Mostrar todos los orders (pedidos) con los de cliente 1 primero (ordenado por cliente).
+	SELECT * FROM co.orders ORDER BY customer_id;
+¿El cliente 3 ha cancelado alguna vez un pedido? SI ¿Y el cliente 1? NO
+	SELECT * FROM co.orders 
+	WHERE (order_status = 'CANCELLED' AND customer_id = 3)
+	OR (order_status = 'CANCELLED' AND customer_id = 1)
+	ORDER BY customer_id ;
+Para el cliente 5, mostrar sus pedidos en el siguiente formato:
+	SELECT order_id, TO_CHAR(order_tms, 'yyyy') AS Pedido_ano,
+		TO_CHAR(order_tms, 'Month') AS Pedido_mes
+	FROM co.orders 
+	WHERE customer_id = 5
+	ORDER BY customer_id ;
+Mostrar 10 últimos los pedidos en la tabla de ORDERS.
+	SELECT *
+	FROM co.orders 
+	ORDER BY ORDER_TMS DESC FETCH FIRST 10 ROWS ONLY;
+Mostrar los pedidos para cliente 3. Además, mostrar el nombre de la tienda donde la ha comprado.
+SELECT c.customer_id, c.full_name, o.order_id, o.order_tms, 
+    o.order_status
+	FROM co.orders o
+	JOIN co.customers c
+	ON c.customer_id = o.customer_id
+	ORDER BY c.customer_id;
+
+	también valdría
+	
+	
+	
+Ahora, mostrar su nombre tambien en el resultado (el resultado deberia incluir el nombre de cliente, su pedido 
+y el nombre de la tienda)
+SELECT c.customer_id, c.full_name, o.order_id, o.order_tms, 
+    o.order_status, s.store_name
+	FROM co.orders o
+	JOIN co.customers c
+	ON c.customer_id = o.customer_id
+	JOIN co.stores s
+	ON o.store_id = s.store_id;
+
+
+bbdd ORACLE
+CREAR TABLA
+	CREATE TABLE TABLE1 (
+		ID     NUMBER PRIMARY KEY, -- OJO NO DEJA INSERTAR ID REPETIDOS
+		NOMBRE VARCHAR2(100),
+		EDAD   NUMBER
+	)
+INSERTAR DATOS
+	INSERT INTO TABLE1 (ID, Nombre, Edad)
+	VALUES (1, 'Pepe', 32);
+	
+	INSERT INTO TABLE1 (ID, Nombre) -- ojo falta Edad, por lo que guarda valor nulo
+	VALUES (2, 'Maria');
+	
+	INSERT INTO TABLE1 (ID, Nombre, Edad)
+	VALUES (5, 'Lola', 40);	
+BORRAR TABLA
+	DELETE FROM scott.emp;
+
+MODIFICAR DATOS
+	UPDATE TABLE1
+	SET nombre ='MariJose' -- ojo no ponemos edad, solo cambiamos 1 campo
+	WHERE ID = 1; -- OJO SIEMPRE PONER WHERE
+
+	UPDATE TABLE1
+	SET nombre ='MariJose', edad = 29
+	WHERE ID = 1; -- OJO SIEMPRE PONER WHERE
+BORRAR DATOS	
+	DELETE FROM TABLE1
+	WHERE ID = 2; -- OJO SIEMPRE PONER WHERE
+
+
+
+https://github.com/chekulhan/Desarrollo-Web/tree/main/UF1845-Acceso-a-Datos/sqlite
+
+Crear carpeta principal /sql-backend
+crear appUsers.js, db.js, /models/userModel.js
+
+npm init -y
+Cambiar en package.json
+ "main": "appUsers.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node appUsers.js"
+  },
+
+npm install sqlite3
+npm install prompt-sync
