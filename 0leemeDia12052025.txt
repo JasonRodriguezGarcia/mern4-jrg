@@ -1,0 +1,243 @@
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/introduccion-oracle.md
+
+Actividad DDL - CREATE
+CREATE TABLE productos (
+  id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  nombre VARCHAR2(100) NOT NULL,
+  precio NUMBER(10,2) NOT NULL,
+  stock NUMBER DEFAULT 0,
+  fecha_agregado DATE DEFAULT SYSDATE
+);
+
+DESCRIBE user_tables;
+SELECT * FROM user_tables 
+    WHERE TABLE_NAME = 'PRODUCTOS';
+
+describe user_tab_columns;
+SELECT * FROM user_tab_columns
+WHERE TABLE_NAME = 'PRODUCTOS';
+
+SELECT * FROM user_tab_columns
+WHERE TABLE_NAME = 'PRODUCTOS' AND DATA_TYPE = 'NUMBER';
+
+SELECT * FROM ALL_TABLES;
+SELECT * FROM ALL_TABLES 
+WHERE TABLE_NAME = 'PRODUCTOS'; -- aparece nuestro usuario en PRODUCTOS
+
+SELECT * FROM user_users; -- aparece nuestro usuario
+
+SELECT * FROM all_users;
+SELECT * FROM all_users
+WHERE USERNAME = 'NUESTRO USUARIO';
+
+Creando secuencias (un autoincrementable secuencial--antiguo). Se crean a parte de la tabla.
+Se usan en los INSERT INTO
+CREATE SEQUENCE productos_seq;
+
+CREATE SEQUENCE productos_seq 
+START WITH 100 
+INCREMENT BY 10;
+
+SELECT * FROM ALL_SEQUENCES; -- VEMOS TODAS SECUENCIAS
+SELECT * FROM USER_SEQUENCES; -- TAMBIEN SALE LA SECUENCIA NUESTRA DIRECTAMENTE
+
+INSERT INTO PRODUCTOS (id, nombre, precio)
+VALUES (productos_seq.NEXTVAL, 'CAMISA', 29.99); -- USANDO SEQUENCE CREADO
+
+Actividad
+Preparar la base de datos con los siguientes datos de la tienda de Zara:
+Producto: Blusa Precio: 29.99 Stock: 50 Fecha agregado: 2025-04-01
+Producto: Pantalón de lino Precio: 39.99 Stock: 30 Fecha agregado: 2025-03-15
+Producto: Chaqueta Precio: 99.99
+Producto: Vestido Precio: 59.50 Stock: 40 Fecha agregado: 2025-04-05
+Producto: Camiseta básica Precio: 14.99 Stock: 100
+
+CREATE TABLE productos (
+  id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  nombre VARCHAR2(100) NOT NULL,
+  precio NUMBER(10,2) NOT NULL,
+  stock NUMBER DEFAULT 0,
+  fecha_agregado DATE DEFAULT SYSDATE
+);
+
+INSERT INTO productos (nombre, precio, stock, fecha_agregado)
+VALUES ('Blusa', 29.99, NULL, TO_DATE('2025-04-01', 'yyyy-mm-dd')),
+('Pantalón', 39.99, 30, TO_DATE('2025-03-15', 'yyyy-mm-dd')),
+('Chaqueta', 99.99, NULL, NULL),
+('Vestido', 59.50, 40,  TO_DATE('2025-04-05', 'yyyy-mm-dd')),
+('Camiseta basica', 14.99, 100, NULL , NULL);
+
+
+ACTIVIDAD MIEMBROS
+Trabajas como administrador de la base de datos en un gimnasio. Durante el dia, estas recibiendo muchos correos. Crear los comandos SQL para introducir los datos basado en la información que te llega desde el buzón de correo:
+
+****************
+Asunto: Solicitud de alta en el gimnasio
+
+Hola,
+
+Soy Ana Martínez y deseo registrarme como miembro del gimnasio. A continuación, te dejo mis datos:
+
+Correo electrónico: ana.martinez@email.com
+Teléfono: No proporcionado
+Fecha de registro: 1 de febrero de 2025
+Tipo de membresía: Anual
+Fecha de expiración: 1 de febrero de 2026
+Gracias, espero su respuesta.
+
+Atentamente, Ana Martínez
+******************
+Asunto: Solicitud de alta en el gimnasio Hola,
+
+Mi nombre es Carlos Pérez y me gustaría registrarme como nuevo miembro en el gimnasio.
+Mi correo electrónico es carlos.perez@email.com y mi número de teléfono es 555-1234. 
+Quiero registrarme el 10 de enero de 2025 y mi tipo de membresía sería mensual, con 
+fecha de expiración el 10 de febrero de 2025. 
+La última vez que asistí al gimnasio fue el 20 de enero de 2025, y deseo mantener mi estado como activo.
+Quedo a la espera de su confirmación.
+
+Saludos cordiales, Carlos Pérez
+*****************
+Hola,
+
+Soy Carlos Pérez. Me gustaría actualizar la fecha de mi última asistencia al gimnasio. La nueva fecha es:
+
+Nueva fecha de última asistencia: 25 de enero de 2025
+Gracias por gestionar la actualización.
+
+Saludos cordiales, Carlos Pérez
+***************
+Asunto: Solicitud de baja del gimnasio
+
+Hola,
+
+Mi nombre es Ana Martínez y me gustaría solicitar la baja de mi membresía en el gimnasio. Mi correo electrónico es ana.martinez@email.com. Agradecería que procedieran con la cancelación de mi cuenta y me confirmaran cuando haya sido completada. Lamento tener que dar este paso, pero espero poder volver en el futuro.
+
+Gracias de antemano por su atención.
+
+Atentamente, Ana Martínez
+******************
+
+CREATE TABLE MIEMBROS (
+    id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre VARCHAR2(50) NOT NULL,
+    apellidos VARCHAR2(50) NOT NULL,
+    email VARCHAR2(50) NOT NULL,
+    telefono VARCHAR2(50),
+    fecha_registro DATE NOT NULL,
+    tipo_membresia VARCHAR2(50) NOT NULL,
+    fecha_expiracion DATE,
+    ultima_asistencia DATE,
+    activo NUMBER (1) DEFAULT 1 NOT NULL
+);
+
+INSERT INTO MIEMBROS (nombre, apellidos, email, telefono,
+    fecha_registro, tipo_membresia, fecha_expiracion)
+VALUES ('Ana', 'Martínez', 'ana.martinez@email.com', NULL,
+    TO_DATE('2025-02-01', 'yyyy-mm-dd'), 'Anual', 
+    TO_DATE('2025-03-15', 'yyyy-mm-dd'))
+
+INSERT INTO MIEMBROS (nombre, apellidos, email, telefono,
+    fecha_registro, tipo_membresia, fecha_expiracion, ultima_asistencia)
+VALUES ('Carlos', 'Pérez', 'carlos.perez@email.com', 555-1234,
+    TO_DATE('2025-01-10', 'yyyy-mm-dd'), 'Mensual', 
+    NULL, TO_DATE('2025-01-20', 'yyyy-mm-dd'));
+
+UPDATE miembros
+SET ultima_asistencia = TO_DATE('2025-01-25', 'yyyy-mm-dd')
+WHERE nombre = 'Carlos' AND apellidos = 'Pérez';
+
+
+
+UPDATE MIEMBROS
+SET activo = 0
+WHERE id IN (
+    SELECT id FROM MIEMBROS
+    WHERE email = 'ana.martinez@email.com'
+)
+
+*******************************************************
+https://github.com/chekulhan/Desarrollo-Web/tree/main/UF1845-Acceso-a-Datos/sqlite
+sqlite
+/sqlite-backend/appProductos.js
+    /models/productoModel.js
+
+*******************
+sqlite extension VSC
+sqlite3 extension VSC -- OJO SEGURIDAD¿?
+
+fichero /sqlite-backend/queries.sql
+    TECLEAR 
+        SELECT * FROM productos;
+    boton derecho run query
+
+*******************
+ACTIVIDAD sqlite
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/sqlite/01-sqlite.introduccion.md
+Actividad - miembros de un gimnasio
+El objectivo de esta tarea es construir unos comandos de SQL (DML) para generar 2 informes para un gimnasio, sobre sus miembros o socios. Al hacerlo, habrá que cargar la base de datos con datos de usuarios (INSERT).
+
+-- Tabla de miembros del gimnasio
+CREATE TABLE miembros (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,  -- ID único para cada miembro
+  nombre TEXT NOT NULL,                  -- Nombre del miembro
+  email TEXT UNIQUE NOT NULL,            -- Correo electrónico único
+  telefono TEXT,                         -- Número de teléfono
+  fecha_registro DATE NOT NULL,          -- Fecha de registro del miembro
+  tipo_membresia TEXT NOT NULL,          -- Tipo de membresía (Ej: Mensual, Anual)
+  fecha_expiracion DATE,                 -- Fecha de expiración de la membresía
+  ultima_asistencia DATE,                -- Fecha de la última vez que asistió al gimnasio
+  activo BOOLEAN NOT NULL DEFAULT 1      -- Estado si el miembro está activo (1 = activo, 0 = inactivo)
+);
+
+SELECT * FROM miembros;
+
+drop table miembros;
+
+INSERT INTO miembros (nombre, email, telefono, fecha_registro, tipo_membresia, ultima_asistencia)
+VALUES
+('Ixchel', 'i@hotmail.com', '688688688', '2024-01-19', 'Anual', '2024-07-19'),
+('Pepe', 'p@hotmail.com', '686999999', '2024-12-01', 'Mensual', '2025-03-01'),
+('Jose', 'j@hotmail.com', '688008688', '2024-10-01', 'Anual', '2025-02-09'),
+('Maria', 'm@hotmail.com', '633008688', '2025-01-01', 'Mensual', CURRENT_DATE)
+
+INSERT INTO miembros (nombre, email, telefono, fecha_registro, tipo_membresia, ultima_asistencia, activo)
+VALUES
+('Alvaro', 'a@hotmail.com', '688688777', '2024-02-19', 'Anual', '2024-06-19', 0)
+
+Crear un sistema para sacar 2 informes usando comandos de SQL a partir de la tabla de miembros.
+
+Informe de miembros activos e inactivos:
+
+Mostrar los miembros que están activos y los que están inactivos (según el campo activo).
+Informe de miembros que no han asistido en un mes:
+
+Mostrar los miembros cuya ultima_asistencia es anterior a un mes (considerando la fecha actual).
+
+SELECT * FROM miembros WHERE ACTIVO = 0;
+SELECT * FROM miembros WHERE ACTIVO = 1;
+
+SELECT * FROM miembros 
+WHERE ultima_asistencia < DATE('now', '-1 month')
+    OR ultima_asistencia IS NULL
+
+
+****************
+Actividad - IoT con VITE
+CREAR FRONTEND CON VITE
+
+npm create vite@latest iot-react-sql --template react
+react
+JAVASCRIPT
+
+
+cd iot-react-sql
+npm install
+npm install sql.js
+npm run dev
+
+
+***************
+Actividad gimnasio
+backend con express y sqlite3 (npm install sqlite3)
+frontend con react
