@@ -1,0 +1,190 @@
+https://github.com/chekulhan/Desarrollo-Web/tree/main/UF1845-Acceso-a-Datos/postgres
+
+en Documents
+crear fichero docker-compose.yml
+pegar https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/docker-compose.yml
+
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres       <-- dejar ya que es valor por defecto
+      POSTGRES_PASSWORD: postgres    <-- dejar ya que es valor por defecto
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: MYEMAIL@XXXXX.eus <---cambiar email al nuestro
+      PGADMIN_DEFAULT_PASSWORD: postgres
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+
+
+en docker terminal en /Documents
+docker compose up -d
+
+docker exec -it postgres-db bin/bash
+
+cd var
+cd lib
+cd postgresql
+cd data  (donde se guardan los ficheros de configuración)
+cd /
+psql -U postgres (abre un interface de comandos)
+
+en postgres=#
+SELECT * FROM pg_database;   (muestra datos de da base de datos)
+    esp para pagina siguiente
+    q para salir
+
+SELECT * FROM pg_tables;
+
+SELECT * FROM information_schema.tables;  (es standard en sql)
+SELECT * FROM pg_catalog.pg_tables;       (es propio de postgresql)
+
+\du
+\dt 
+\?
+\copyright
+
+\q cerramos usuario y volvemos al contenedor
+
+exit
+exit
+docker compose down  (borra contenedor pero imagen se mantiene)
+********************************
+postgresql
+en navegador ponemos localhost:5050 y entramos en la interfaz
+entrar con
+    ja.rodriguez@aulanz.net
+    postgres
+
+dentro
+    boton derecho en servers (a la izq)
+    general
+    nombre postgres
+    conexion
+    nombre postgres
+    usuario y passw : postgres
+
+a la izq
+    servers
+        postgres
+            Bases de datos
+            Boton derecho en Bases de datos - crear - base de datos
+            nombre: demo
+            salvar
+a la izq
+bases de datos
+demo
+esquemas
+tablas
+    crear
+    tabla
+        nombre
+        TableSpace
+            pg_default (que es /data)
+        Columnas
+            +
+            nombre: id
+            tipo datos: integer
+            activar 
+                es nulo
+                clave primaria
+            pinchar en lapiz
+                Rescticiones
+                    identity
+                    defecto: 1
+    Secuencias
+        boton derecho tabla1_id_seq
+        propiedades
+            definicion
+            owned by (para enlazar la secuencia y al borrar tabla borrar también secuencia)
+                tabla1
+                id
+    tabla
+        boton derecho
+        ver/editar
+        todas las filas
+    secuencias
+        boton derecho crear
+
+
+    tabla
+        botonderecho
+        crear
+            nombre: tabla2
+            columnas
+                añadir columna y en la derecha 
+                    Defecto
+                        nextval('tabla2_id_seq)
+    borrar tabla2
+
+        crear
+            tabla3
+            columnas
+                id  integer
+
+                valor   character varing
+                valores charactger varing[]
+        script insert
+            INSERT INTO public.tabla3(
+            valor, valores)
+            VALUES ('hola', ARRAY['hola', 'adios', 'ta luego']);
+
+            select * from tabla3;
+        
+        tambien vale
+            INSERT INTO public.tabla3(
+            valor, valores)
+            VALUES ('hola', ARRAY['hola', 'adios', 'ta luego']);
+
+            select * from tabla3;
+                2	"hola"	"{hola2,adios2,""ta luego2""}"
+
+        tambien vale
+            INSERT INTO public.tabla3(
+            valor, valores)
+            VALUES ('hola', '{"hola2", "adios2", "ta luego2"}');
+
+            select * from tabla3;
+
+        seleccionando
+            select * from tabla3 where valores[1]= 'hola2';
+
+        seleccionando
+            select * from tabla3 where valores[1]= 'hola2';
+            "hola"	"adios"
+                "hola"	"ta luego"
+                "hola"	"hola2"
+                "hola"	"adios2"
+                "hola"	"ta luego2"
+        
+    crear tabla4
+    
+    INSERT INTO public.tabla4(
+	id, notas)
+	VALUES ('Pepo', '{"cinco", "seis", "diez siete"}');
+    SELECT * FROM  tabla4;
+
+    INSERT INTO public.tabla4(
+	id, notas)
+	VALUES ('Alvaro', ARRAY [5, 6, 5]);
+    SELECT * FROM  tabla4;
+
+
+
+

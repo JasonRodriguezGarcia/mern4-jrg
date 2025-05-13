@@ -224,7 +224,7 @@ WHERE ultima_asistencia < DATE('now', '-1 month')
 
 ****************
 Actividad - IoT con VITE
-CREAR FRONTEND CON VITE
+CREAR FRONTEND CON VITE en directorio iot-react-sql
 
 npm create vite@latest iot-react-sql --template react
 react

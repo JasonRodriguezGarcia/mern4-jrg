@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react';
 import initSqlJs from 'sql.js';
 
 const SmartDoor = () => {
-  const [db, setDb] = useState(null);
+  const [db, setDb] = useState(null); // guarda en un estado la base de datos
   const [logs, setLogs] = useState([]);
+  const [id, setId] = useState([])
+  const [userExist, setUserExist] = useState(0)
+  const [errorMessage, setErrorMessage] = useState("")
 
   useEffect(() => {
     initSqlJs({
@@ -15,9 +18,12 @@ const SmartDoor = () => {
       db.run(`CREATE TABLE IF NOT EXISTS logs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         doorId TEXT,
-        ... // continuar con el resto de la tabla
-      );`);
-      
+        userId NUMBER,
+        status TEXT,
+        timestamp DATE
+        );`);
+        
+        // ... // continuar con el resto de la tabla
   
       setDb(db);
     }).catch(err => {
@@ -25,7 +31,23 @@ const SmartDoor = () => {
     });
   }, []);
 
-  const simulateLockAction = () => {
+  const simulateLockAction = async () => {
+    try {
+      const response = await fetch (`http://localhost:5000/api/v1/gimnasio/search/${id}`)
+      const miembro = await response.json()
+      if (!response.ok) {
+        throw new Error ("Error en consulta de datos")
+      }
+      console.log(miembro.resultado)
+      if (miembro.resultado == 0) 
+        setErrorMessage("Usuario no existente")
+      else
+        setErrorMessage("")
+    }
+    catch(error) {
+      console.log("Error al buscar Id de miembro: ", error)
+    }
+
     if (!db) return;
 
     const doorId = 'front_door';
@@ -33,12 +55,13 @@ const SmartDoor = () => {
     const status = Math.random() > 0.5 ? 'locked' : 'unlocked';
     const timestamp = new Date().toISOString();
 
+    console.log("Imprimiendo valores: ", doorId, userId, status, timestamp)
     db.run(
-      'INSERT INTO logs (doorId, .....) VALUES (?, ?, ?, ?);',
+      'INSERT INTO logs (doorId, userID, status, timestamp) VALUES (?, ?, ?, ?);',
       [doorId, userId, status, timestamp]
     );
 
-    const res = db.exec('SELECT * FROM ......;');
+    const res = db.exec('SELECT * FROM logs;');
     if (res[0]) {
       const cols = res[0].columns;
       const values = res[0].values;
@@ -52,6 +75,10 @@ const SmartDoor = () => {
   return (
     <div style={{ padding: '1rem' }}>
       <h2>Smart Door Lock Logs</h2>
+      <label name="idUsuario"> Introduce ID usuario</label>
+      <input type="number" name="idUsuario" onChange={(e)=> setId(e.target.value)} />
+      {errorMessage && <h2>{errorMessage}</h2>}
+      <br />
       <button onClick={simulateLockAction}>Simular Lock/Unlock</button>
       
       <ul>

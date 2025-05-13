@@ -18,6 +18,17 @@ export function informeActivos() {
     });
   });
 }
+
+export function buscarId(id) {
+  return new Promise((resolve, reject) => {
+    db.all(`SELECT * FROM miembros WHERE id = ?`, [id], (err, rows) => {
+      if (err) return reject(err);
+      resolve(rows);
+    });
+  });
+}
+
+
 // export function addProducto(nombre, precio, stock) {
 //   return new Promise((resolve, reject) => {
 //     db.run(`INSERT INTO productos(nombre, precio, stock) VALUES (?, ?, ?)`,
