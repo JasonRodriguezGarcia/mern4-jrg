@@ -242,4 +242,10 @@ Actividad gimnasio
 backend con express y sqlite3 (npm install sqlite3)
 frontend con react
 
-guardando
+guardando backend de la actividad en /express-backend
+dbsqlite.js - datos de nuestra base de datos sqlite
+mydb.sqlite - base de datos creada en el ejercicio sqlite-backend del día 09Mayo y usada hoy (12Mayo) en la que 
+creamos la base de datos de un gimnasio con una tabla Miembros (ver unas líneas más arriba)
+index.js - añadimos el gimnasioRouter
+    /routes/gimnasio.js - añadimos las rutas para la actividad gimnasio, que llamarán a las funciones de gimnasioModel
+    /models/gimnasioModel.js - Contiene todas las funciones para el manejo CRUD de la base de datos.

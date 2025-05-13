@@ -1,8 +1,8 @@
 import { Router} from 'express';
 // import dbsqlite from '../dbsqlite.js'; // importamos PouchDB
-import { validateQuery, validateUserId } from '../middleware/users.js';
-import { authenticateToken } from '../middleware/login.js';
-import jwt from 'jsonwebtoken';
+// import { validateQuery, validateUserId } from '../middleware/users.js';
+// import { authenticateToken } from '../middleware/login.js';
+// import jwt from 'jsonwebtoken';
 import { informeActivos } from '../models/gimnasioModel.js';
 
 const router = Router()
@@ -10,38 +10,10 @@ const router = Router()
 router.get('/informes', async(req, res) => { // ojo con el order al poner este gues
     const miembros = await informeActivos();
     console.log(miembros);
-    // if (productos.length === 0) console.log('No products found.');
-    // else {
-    // productos.forEach(p => {
-    //     console.log(`${p.id}: ${p.nombre} | $${p.precio} | Stock: ${p.stock}`);
-    // });
-    // }
 
     res.json (miembros)
-    // const {nombre, edad} = req.query
-    // try {
-    //     const selector = {
-    //         $or: [
-    //             {nombre: nombre},
-    //             {edad: {$gt: parseInt(edad)}}
-
-    //         ]
-    //     }
-    //     console.log(selector)
-
-    //     // OJO--- NUEVA FORMA DE BUSCAR CON .FIND, NO CON .ALLDOCS EN EL EJEMPLO DE CARS
-    //     const result = await db.find({
-    //         selector,
-    //         fields: ['_id', '_rev', 'nombre', 'edad'],
-    //         limit: 10
-    //     })
-    //     res.json(result)
-    // }
-    // catch (error) {
-    //     console.log(error)
-    // }
-    // res.json(nombre)
 })
+
 
 router.get('/search', async(req, res) => { // ojo con el order al poner este gues
     const {nombre, edad} = req.query

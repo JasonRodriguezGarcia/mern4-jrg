@@ -103,7 +103,7 @@ BORRAR DATOS
 
 https://github.com/chekulhan/Desarrollo-Web/tree/main/UF1845-Acceso-a-Datos/sqlite
 
-Crear carpeta principal /sql-backend
+Crear carpeta principal /sqlite-backend
 crear appUsers.js, db.js, /models/userModel.js
 
 npm init -y
@@ -117,3 +117,12 @@ Cambiar en package.json
 
 npm install sqlite3
 npm install prompt-sync
+
+appUsers.js y userModel.js
+Fichero en node.js que hace de frontend llamando a distintas funciones que están en userModel.js que son las que
+manejan las distintas operaciones de CRUD (Create, Read, Update, Delete) con la base de datos en sqlite
+
+appProductos.js y productoModel.js siguen el mismo patrón
+
+Dichos userModel y productoModel usan el fichero db.js que contiene toda la información de la base de datos
+a usar mydb.sqlite

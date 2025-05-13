@@ -14,7 +14,7 @@ y ya se abrirá nuestro container con la imagen de Python
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1844-Entorno-Servidor/desarrollo-sw/07-herramientas.md
 programar
 Actividad
-Aqui tienes el psuedocode para un programa de Python para gestionar tu playlist de canciones, usando comandos de la consola como input(), print().
+Aqui tienes el pseudocode para un programa de Python para gestionar tu playlist de canciones, usando comandos de la consola como input(), print().
 playlist.py
 
 Mostrar mensaje de bienvenida
