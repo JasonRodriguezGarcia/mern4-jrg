@@ -21,7 +21,7 @@ async function main() {
 1. Listar users
 2. Agregar user
 3. Actualizar user
-4. Borrrar user
+4. Borrar user
 5. Exit`);
 
     const choice = prompt('Choose an option: ').trim();
@@ -44,21 +44,20 @@ async function main() {
         }
 
         case '3': {
+            // terminar esta funcionalidad ...
           const updateId = prompt('Enter user ID to update: ');
           const newName = prompt('Enter new name: ');
           await updateUser(updateId, newName)
           console.log(`User updated with ID: ${updateId}`)
           break;
-          // terminar esta funcionalidad ...
         }
 
         case '4': {
+            // terminar esta functionalidad ...
           const deleteId = prompt('Enter user ID to delete: ');
           await deleteUser(deleteId)
           console.log(`User deleted with ID: ${deleteId}`)
           break;
-          
-          // terminar esta functionalidad ...
         }
 
         case '5':

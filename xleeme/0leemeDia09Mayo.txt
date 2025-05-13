@@ -120,7 +120,10 @@ npm install prompt-sync
 
 appUsers.js y userModel.js
 Fichero en node.js que hace de frontend llamando a distintas funciones que están en userModel.js que son las que
-manejan las distintas operaciones de CRUD (Create, Read, Update, Delete) con la base de datos en sqlite
+manejan las distintas operaciones de CRUD (Create, Read, Update, Delete) con la base de datos en sqlite. Ahora estas
+operaciones con la base de datos se basan en retornar PROMESAS que envuelven la acción a realizar con la base de 
+datos SQLite, devolviendo un error o un resultado que puede ser un NUMERO DE ID en el caso de borrar, actualizar, borrar 
+o UNA CADENA JSON en el caso de listar todos.
 
 appProductos.js y productoModel.js siguen el mismo patrón
 
