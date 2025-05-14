@@ -1,0 +1,47 @@
+
+ir a Documentos
+donde tenemos el docker-compose
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/02-postgres-introduccion.md
+
+Actividad 1
+Videojuegos
+
+(hacer a mano, no copiar la creación)
+CREATE TABLE public.videojuegos2
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
+    titulo character varying(50),
+    genero character varying(50),
+    lanzamiento integer,
+    calificacion numeric(3, 1),
+    PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+INSERT INTO videojuegos (titulo, genero, lanzamiento, calificacion) VALUES
+('The Legend of Zelda', 'Aventura', 1986, 9.5),
+('Minecraft', 'Sandbox', 2011, 9.0),
+('Among Us', 'Social', 2018, 8.2),
+('Fortnite', 'Battle Royale', 2017, 7.8),
+('Super Mario Bros', 'Plataforma', 1985, 9.7),
+('Tetris', 'Puzzle', 1984, 9.3);
+
+Buscar juegos lanzados después del año 2000
+SELECT * FROM videojuegos
+WHERE lanzamiento > 2000;
+
+Ordenar los datos por calificación descendente
+SELECT * FROM videojuegos
+ORDER BY calificacion DESC;
+
+Filtrar por género de 'Aventura'
+SELECT * FROM videojuegos
+WHERE genero = 'Aventura';
+
+Ver solo los títulos y sus calificaciones
+SELECT titulo, calificacion FROM videojuegos;
+
+SELECT concat(titulo ,' - ', lanzamiento) as TitLanz, genero, calificacion
+FROM videojuegos
+ORDER BY calificacion DESC;
