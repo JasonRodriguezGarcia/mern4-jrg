@@ -1,5 +1,11 @@
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/introduccion-oracle.md
 
+interfaz grafica de sqlite en:
+livesql.oracle.com/next
+
+usuario: micorreoempleo
+
+
 Actividad DDL - CREATE
 CREATE TABLE productos (
   id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -65,11 +71,12 @@ VALUES ('Blusa', 29.99, NULL, TO_DATE('2025-04-01', 'yyyy-mm-dd')),
 ('Pantalón', 39.99, 30, TO_DATE('2025-03-15', 'yyyy-mm-dd')),
 ('Chaqueta', 99.99, NULL, NULL),
 ('Vestido', 59.50, 40,  TO_DATE('2025-04-05', 'yyyy-mm-dd')),
-('Camiseta basica', 14.99, 100, NULL , NULL);
+('Camiseta basica', 14.99, 100, NULL);
 
 
 ACTIVIDAD MIEMBROS
-Trabajas como administrador de la base de datos en un gimnasio. Durante el dia, estas recibiendo muchos correos. Crear los comandos SQL para introducir los datos basado en la información que te llega desde el buzón de correo:
+Trabajas como administrador de la base de datos en un gimnasio. Durante el dia, estas recibiendo muchos correos.
+Crear los comandos SQL para introducir los datos basado en la información que te llega desde el buzón de correo:
 
 ****************
 Asunto: Solicitud de alta en el gimnasio
@@ -230,7 +237,6 @@ npm create vite@latest iot-react-sql --template react
 react
 JAVASCRIPT
 
-
 cd iot-react-sql
 npm install
 npm install sql.js
@@ -241,11 +247,15 @@ npm run dev
 Actividad gimnasio
 backend con express y sqlite3 (npm install sqlite3)
 frontend con react
+por un lado hacer un par de rutas para conseguir 2 informes cualquera recibiendo datos del backend (queda pending)
+por otro lado hacer una ruta para comprobar la id de usuario miembro introducido en el componente SmartDoor.jsx y 
+  que lo compruebe en backend mandando respuesta con el resultado
 
 guardando backend de la actividad en /express-backend
 dbsqlite.js - datos de nuestra base de datos sqlite
 mydb.sqlite - base de datos creada en el ejercicio sqlite-backend del día 09Mayo y usada hoy (12Mayo) en la que 
 creamos la base de datos de un gimnasio con una tabla Miembros (ver unas líneas más arriba)
 index.js - añadimos el gimnasioRouter
-    /routes/gimnasio.js - añadimos las rutas para la actividad gimnasio, que llamarán a las funciones de gimnasioModel
-    /models/gimnasioModel.js - Contiene todas las funciones para el manejo CRUD de la base de datos.
+  /routes/gimnasio.js - añadimos las rutas para la actividad gimnasio, que llamarán a las funciones de gimnasioModel
+  /models/gimnasioModel.js - Contiene todas las funciones para el manejo CRUD de la base de datos.
+

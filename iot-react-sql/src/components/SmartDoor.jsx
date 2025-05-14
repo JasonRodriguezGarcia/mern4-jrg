@@ -34,13 +34,18 @@ const SmartDoor = () => {
   const simulateLockAction = async () => {
     try {
       const response = await fetch (`http://localhost:5000/api/v1/gimnasio/search/${id}`)
-      const miembro = await response.json()
       if (!response.ok) {
-        throw new Error ("Error en consulta de datos")
-      }
+          throw new Error ("Error en consulta de datos")
+        }
+      const miembro = await response.json()
       console.log(miembro.resultado)
-      if (miembro.resultado == 0) 
+      if (miembro.resultado == 0) {
         setErrorMessage("Usuario no existente")
+        setTimeout(() => {
+          setErrorMessage('')
+        }, 3000);
+        return
+      }
       else
         setErrorMessage("")
     }
@@ -77,7 +82,7 @@ const SmartDoor = () => {
       <h2>Smart Door Lock Logs</h2>
       <label name="idUsuario"> Introduce ID usuario</label>
       <input type="number" name="idUsuario" onChange={(e)=> setId(e.target.value)} />
-      {errorMessage && <h2>{errorMessage}</h2>}
+      {errorMessage && <h3>{errorMessage}</h3>}
       <br />
       <button onClick={simulateLockAction}>Simular Lock/Unlock</button>
       

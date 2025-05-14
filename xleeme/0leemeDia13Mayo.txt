@@ -1,0 +1,254 @@
+En Docker podemos abrir un a imagen de sqlite y trabajar en un entorno sqlite
+Crear un contenedor interactivo de SQLite:
+  docker run -it --name sqlite keinos/sqlite3 sh
+     (si quitamos el sh directamente vamos a sqlite3, se pone por si tenemos que escribir algún comando en shell)
+
+escribir
+
+sqlite3 (y cambia el prompt indicando que estamos en sqlite entorno)
+sqlite>
+.quit (para salir al sh)
+sqlite3 (para entrar)
+.quit (para salir a shell)
+exit (para salir sistema de archivos de comandos de windows)
+pero el container esta arrancado
+para entrar otra vez podemos 
+  1-  parar el container con: docker stop sqlite
+      borrarlo: docker rm sqlite
+      volverlo a abrir: docker run -it --name sqlite keinos/sqlite3
+  2- si no usamos el comando al final con "sh" al cerrar el sqlite3 pasamos al command de windows y el container
+    esta parado pero no arrancado
+    para arrancarlo: docker start sqlite 
+    para abrir sql: docker exec -it sqlite sh (podemos quitar sh para que al salir de sqlite el container se pare)
+
+ya dentro de sqlite3
+
+sqlite> CREATE TABLE demo (valor TEXT);
+sqlite> INSERT INTO demo (valor) VALUES ('Hola');
+sqlite> SELECT * FROM demo;
+Hola
+sqlite> .mode json 
+sqlite> SELECT * FROM demo;
+[{"valor":"Hola"}]
+sqlite> .mode csv
+sqlite> SELECT * FROM demo;
+Hola
+sqlite> .headers ON  
+sqlite> SELECT * FROM demo;
+valor
+Hola
+sqlite> .tables
+demo
+sqlite> .schema demo
+CREATE TABLE demo (valor TEXT);
+sqlite> SELECT * FROM sqlite_master;
+type,name,tbl_name,rootpage,sql
+table,demo,demo,2,"CREATE TABLE demo (valor TEXT)"
+sqlite> PRAGMA table_info(demo);
+cid,name,type,notnull,dflt_value,pk
+0,valor,TEXT,0,,0
+sqlite> PRAGMA journal_mode;
+journal_mode
+memory
+TODO SE GUARDA EN MEMORIA Y SE BORRA AL salir
+
+
+**************************
+https://github.com/chekulhan/Desarrollo-Web/tree/main/UF1845-Acceso-a-Datos/postgres
+en Documents
+crear fichero docker-compose.yml
+pegar https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/docker-compose.yml
+
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres       <-- dejar ya que es valor por defecto (borrar comentario y "<--" al pegar al fichero el texto)
+      POSTGRES_PASSWORD: postgres    <-- dejar ya que es valor por defecto (borrar comentario y "<--" al pegar al fichero el texto)
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: MYEMAIL@XXXXX.eus <---cambiar email al nuestro (borrar comentario y "<--" al pegar al fichero el texto)
+      PGADMIN_DEFAULT_PASSWORD: postgres
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+
+
+en docker terminal en /Documents
+docker compose up -d
+
+docker exec -it postgres-db bin/bash
+
+cd var
+cd lib
+cd postgresql
+cd data  (donde se guardan los ficheros de configuración)
+cd /
+psql -U postgres (abre un interface de comandos de postgresql)
+
+en postgres=#
+SELECT * FROM pg_database;   (muestra datos de da base de datos)
+    j ó k para línea siguiente o anterior
+    esp para pagina siguiente
+    q para salir
+
+SELECT * FROM pg_tables;
+
+SELECT * FROM information_schema.tables;  (es standard en sql, muestra todas las tablas en la base de datos actual)
+SELECT * FROM pg_catalog.pg_tables;       ( muestra lo mismo que la anterior pero los resultados son propios de postgresql)
+
+\du (muestra atributos de usuarios de la base de datos y sus privilegios asociados)
+\dt (muestra información de las tablas de la base de datos actual)
+\?
+\copyright
+
+\q cerramos usuario y volvemos al contenedor
+
+exit
+exit
+docker compose down  (borra contenedor pero imagen se mantiene)
+********************************
+postgresql
+en navegador ponemos localhost:5050 y entramos en la interfaz de postgresql del fichero docker_composer
+OJO AL ENTRAR SELECCIONAR EN ESPAÑOL EN LA OPCION DE ABAJO
+entrar con
+    ja.rodriguez@aulanz.net
+    postgres  (contraseña del fichero docker_composer)
+
+dentro
+    boton derecho en servers (a la izq)
+    register - servidor
+    en pestaña general
+    nombre postgres
+    conexion
+    nombre postgres
+    usuario: postgres
+    contraseña : postgres
+    boton SALVAR
+
+a la izq
+    servers
+        postgres
+            Bases de datos
+            Boton derecho en Bases de datos - crear - base de datos
+            nombre: demo
+            salvar
+a la izq
+dentro de SERVERS aparecerá un icono de POSTGRES y lo abrimos 
+bases de datos boton DERECHO - CREAR - BASE DE DATOS
+Base de datos pondremos: demo
+boton SALVAR
+abrimos DEMO y de él colgarán distintas líneas
+esquemas
+public
+tablas
+    crear
+    tabla
+        nombre: tabla1
+        TableSpace
+            pg_default (que es /data)
+        Columnas (pestañas de arriba)
+            +
+            nombre: id
+            tipo datos: integer
+            activar 
+                no nulo
+                clave primaria
+            pinchar en lapiz (a la izq de la línea en la que estamos)
+                Restricciones
+                  dejar en NONE (si dejamos en NONE tendremos que crear secuencia para que cuando se cree un registro asigne automaticamente valor)
+                  ó poner IDENTITY que creará una Secuencia
+                      by DEFAULT 
+                      inicio: 1  
+                boton SALVAR
+    Secuencias (a la izquierda antes que "Tablas")
+          o desplegar, dentro aparece tabla1_id_seq SI EN LAS LÍNEAS DE ARRIBA SELECCIONAMOS IDENTITY
+        boton derecho en Secuencias crear
+          nombre: tabla1_id_seq
+          definicion
+          bajar con el raton hasta que aparezca
+          owned by (para enlazar la secuencia con tabla1 y al borrar tabla borrar también secuencia)
+              tabla1
+              id
+          boton SALVAR
+    tabla
+        boton derecho
+        ver/editar
+        todas las filas
+
+    tabla
+        botonderecho
+        crear
+            nombre: tabla2
+            columnas
+                añadir columna id - integer y en la derecha 
+                    Defecto
+                        nextval('tabla2_id_seq)
+    borrar tabla2
+
+        crear
+            tabla3
+            columnas
+                id  integer
+                valor   character varing
+                valores character varing[]
+        script insert
+            INSERT INTO public.tabla3(
+            valor, valores)
+            VALUES ('hola', ARRAY['hola', 'adios', 'ta luego']);
+
+            select * from tabla3;
+        
+        tambien vale
+            INSERT INTO public.tabla3(
+            valor, valores)
+            VALUES ('hola', ARRAY['hola', 'adios', 'ta luego']);
+
+            select * from tabla3;
+                2	"hola"	"{hola2,adios2,""ta luego2""}"
+
+        tambien vale
+            INSERT INTO public.tabla3(
+            valor, valores)
+            VALUES ('hola', '{"hola2", "adios2", "ta luego2"}');
+
+            select * from tabla3;
+
+        seleccionando
+            select * from tabla3 where valores[1]= 'hola2';
+
+        seleccionando
+            select * from tabla3 where valores[1]= 'hola2';
+            "hola"	"adios"
+                "hola"	"ta luego"
+                "hola"	"hola2"
+                "hola"	"adios2"
+                "hola"	"ta luego2"
+        
+    crear tabla4
+    
+    INSERT INTO public.tabla4(
+	id, notas)
+	VALUES ('Pepo', '{"cinco", "seis", "diez siete"}');
+    SELECT * FROM  tabla4;
+
+    INSERT INTO public.tabla4(
+	id, notas)
+	VALUES ('Alvaro', ARRAY [5, 6, 5]);
+    SELECT * FROM  tabla4;
+
+
