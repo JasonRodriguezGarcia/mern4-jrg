@@ -5,7 +5,6 @@ livesql.oracle.com/next
 
 usuario: micorreoempleo
 
-
 Actividad DDL - CREATE
 CREATE TABLE productos (
   id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -49,6 +48,21 @@ SELECT * FROM USER_SEQUENCES; -- TAMBIEN SALE LA SECUENCIA NUESTRA DIRECTAMENTE
 
 INSERT INTO PRODUCTOS (id, nombre, precio)
 VALUES (productos_seq.NEXTVAL, 'CAMISA', 29.99); -- USANDO SEQUENCE CREADO
+************************************************
+
+CON UNA EXTENSION EN VISUAL STUDIO CODE, podemos ejecutar consultas en una base de datos sqlite. En ellas podremos hacer
+TODO tipo de instrucciones, desde crear tablas, insertar, borrar, ...
+La extension se llama SQLite creada por alexcvzz.
+Una vez instalada si pulsamos CTRL+SHIFT+P apareceremos en una barra superior del VSC (Visual Studio Code) en la que si
+tecleamos SQLITE, aparecerán varias opciones pero la que nos interesa es "SQLite: New Query" que es la usaremos para
+introducir nuestras instrucciones SQL.
+Teclearemos nuestras instrucciones y podemos o bien ejecutar todo o solo una línea (seleccionar línea y boton derecho 
+seleccionar Run Selected Query).
+Al ejecutar una primera vez una instruccion SQL, buscará las bases de datos disponibles apareciéndo en la parte superior,
+nosotros seleccionaremos la nuestra.
+
+Estas instrucciones se pueden grabar en fichero y tendrá la extension .sql
+
 
 Actividad
 Preparar la base de datos con los siguientes datos de la tienda de Zara:

@@ -3,14 +3,15 @@ import { Router} from 'express';
 // import { validateQuery, validateUserId } from '../middleware/users.js';
 // import { authenticateToken } from '../middleware/login.js';
 // import jwt from 'jsonwebtoken';
-import { informeActivos, buscarId } from '../models/gimnasioModel.js';
+import { informe, buscarId } from '../models/gimnasioModel.js';
 
 const router = Router()
 
-router.get('/informes', async(req, res) => { // ojo con el order al poner este gues
-    const miembros = await informeActivos();
+router.get('/informes/:tipo', async(req, res) => { // ojo con el order al poner este gues
+    const {tipo} = req.params
+    const miembros = await informe(tipo == 'activos'? 1 : 0);
+    console.log("tipo: ", tipo)
     console.log(miembros);
-
     res.json (miembros)
 })
 

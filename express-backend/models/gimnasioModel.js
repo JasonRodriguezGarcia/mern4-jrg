@@ -10,9 +10,9 @@ import db from '../dbsqlite.js';
     //   )`);
     // }
     
-export function informeActivos() {
+export function informe(tipo) {
   return new Promise((resolve, reject) => {
-    db.all(`SELECT * FROM miembros WHERE activo = 1`, [], (err, rows) => {
+    db.all(`SELECT * FROM miembros WHERE activo = ?`, [tipo], (err, rows) => {
       if (err) return reject(err);
       resolve(rows);
     });
