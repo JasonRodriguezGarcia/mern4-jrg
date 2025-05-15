@@ -1,0 +1,190 @@
+docker compose up -d
+entrar en interface OJO EN ESPAÑOL
+email Nazaret como usuario
+postgres como pa ssw
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/03-db.relationships.md
+
+Pruebas
+
+Opciones de relaciones
+Demo:
+```sql
+CREATE SCHEMA IF NOT EXISTS scott;
+
+-- Create DEPT table
+CREATE TABLE scott.dept (
+    deptno INTEGER PRIMARY KEY,
+    dname  VARCHAR(14),
+    loc    VARCHAR(13)
+);
+
+-- Create EMP table
+CREATE TABLE scott.emp (
+    empno    INTEGER PRIMARY KEY,
+    ename    VARCHAR(10),
+    job      VARCHAR(9),
+    mgr      INTEGER,
+    hiredate DATE,
+    sal      NUMERIC(7, 2),
+    comm     NUMERIC(7, 2),
+    deptno   INTEGER REFERENCES scott.dept(deptno)
+);
+
+-- Insert sample rows into DEPT
+INSERT INTO scott.dept (deptno, dname, loc) VALUES
+(10, 'ACCOUNTING', 'NEW YORK'),
+(20, 'RESEARCH', 'DALLAS'),
+(30, 'SALES', 'CHICAGO'),
+(40, 'OPERATIONS', 'BOSTON');
+
+-- Insert sample rows into EMP
+INSERT INTO scott.emp (empno, ename, job, mgr, hiredate, sal, comm, deptno) VALUES
+(7839, 'KING',   'PRESIDENT', NULL,     DATE '1981-11-17', 5000.00, NULL, 10),
+(7566, 'JONES',  'MANAGER',   7839,     DATE '1981-04-02', 2975.00, NULL, 20),
+(7698, 'BLAKE',  'MANAGER',   7839,     DATE '1981-05-01', 2850.00, NULL, 30),
+(7782, 'CLARK',  'MANAGER',   7839,     DATE '1981-06-09', 2450.00, NULL, 10),
+(7788, 'SCOTT',  'ANALYST',   7566,     DATE '1982-12-09', 3000.00, NULL, 20),
+(7902, 'FORD',   'ANALYST',   7566,     DATE '1981-12-03', 3000.00, NULL, 20),
+(7844, 'TURNER', 'SALESMAN',  7698,     DATE '1981-09-08', 1500.00,  0.00, 30),
+(7900, 'JAMES',  'CLERK',     7698,     DATE '1981-12-03',  950.00, NULL, 30),
+(7654, 'MARTIN', 'SALESMAN',  7698,     DATE '1981-09-28', 1250.00, 1400.00, 30),
+(7499, 'ALLEN',  'SALESMAN',  7698,     DATE '1981-02-20', 1600.00, 300.00, 30),
+(7521, 'WARD',   'SALESMAN',  7698,     DATE '1981-02-22', 1250.00, 500.00, 30),
+(7934, 'MILLER', 'CLERK',     7782,     DATE '1982-01-23', 1300.00, NULL, 10),
+(7876, 'ADAMS',  'CLERK',     7788,     DATE '1983-01-12', 1100.00, NULL, 20),
+(7369, 'SMITH',  'CLERK',     7902,     DATE '1980-12-17',  800.00, NULL, 20);
+
+
+```
+
+
+En el interface web de Postgresql
+BOTON derecho en Esquemas
+    herramientas de consultas y pegamos el código de arriba
+    ejecutar script
+OJO ACTUALIZAR Esquemas PARA QUE COJA LOS CAMBIOS
+
+SELECT * FROM scott.emp;
+
+DELETE FROM scott.dept
+WHERE deptno = 10;
+
+da error
+ERROR:  update or delete on table "dept" violates foreign key constraint "emp_deptno_fkey" on table "emp"
+Key (deptno)=(10) is still referenced from table "emp". 
+
+Estado SQL: 23503
+Detalle: Key (deptno)=(10) is still referenced from table "emp".
+
+UPDATE scott.dept
+SET deptno = 100
+WHERE deptno = 10;
+ERROR:  update or delete on table "dept" violates foreign key constraint "emp_deptno_fkey" on table "emp"
+Key (deptno)=(10) is still referenced from table "emp". 
+
+Estado SQL: 23503
+Detalle: Key (deptno)=(10) is still referenced from table "emp".
+
+UPDATE scott.dept
+SET deptno = 400
+WHERE deptno = 0;
+
+UPDATE 0
+Consulta retornó exitosamente en 70 msec.
+
+ahora borramos en Restriciones emp_deptno_key y lo creamos de nuevo pero añadiendo 
+actualizacion NULL
+borrado cascade
+
+## Actividad 1
+Agregar la clave foránea a la tabla de comentarios para que haga referencia a la tabla de publicaciones. Esto significa que cada comentario debe estar asociado a una publicación existente.
+
+Si el usuario cambia el id de una publicación, se eliminarán todos los comentarios asociados a esa publicación.
+
+```sql
+
+-- Create the posts table, lo crea en Esquema public
+CREATE TABLE posts (
+    post_id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create the comments table (no foreign key yet)
+CREATE TABLE comments (
+    comment_id SERIAL PRIMARY KEY,
+    post_id INTEGER NOT NULL,
+    author TEXT NOT NULL,
+    comment TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert a few sample posts
+INSERT INTO posts (title, content) VALUES
+('Welcome to our blog', 'This is the first post.'),
+('Learning SQL', 'Today we discuss foreign keys.'),
+('Cascade deletes', 'Why they matter.');
+
+-- Insert up to 10 sample comments (linked to post_id)
+INSERT INTO comments (post_id, author, comment) VALUES
+(1, 'Alice', 'Great first post!'),
+(1, 'Bob', 'Thanks for the intro.'),
+(2, 'Charlie', 'Foreign keys are tricky but useful.'),
+(2, 'Dana', 'This helped me a lot.'),
+(2, 'Eli', 'Any tips for joins?'),
+(3, 'Fiona', 'I love cascade deletes!'),
+(3, 'George', 'Cascades saved me so much time.'),
+(3, 'Hana', 'Should I always use them?'),
+(3, 'Ivan', 'What are the risks?'),
+(3, 'Jill', 'Great explanation, thanks!');
+
+
+
+crear clave foránea en comment post_id y además en accíon en actualizacion y borrado en CASCADA
+esta clave enlaza con posts por post_id
+
+
+# JOINS
+
+```sql
+-- Agregamos un nuevo empleado que no está en la tabla de departamentos
+(1234, 'JON',  'SMITH',     7839,     DATE '1980-12-17',  800.00, NULL, NULL);
+```
+
+
+creamos carpeta /db-postgres donde pasaremos estructuras de bbdd
+para conseguir estructuras boton derecho SCRIPTS - CREATE
+empezaremos primero por el esquema EUROVISION
+luego por las tablas una a una
+
+EUROVISION COMPONENTES EN /iot-eract-sql
+
+
+POSTGRESS LOCAL
+base datos en 1 archivo que esta en un contenedor de Docker con postgres
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/pg-query1.js
+ojo 
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/db-pg.js
+    datos conexion a la bbdd
+
+en /nodejs prueba de postgres
+    crear fichero db-pg.js
+    cambiar 
+        database: 'demo' ó 'postgres'
+
+    postgresql en frontend node-postgres.com
+        npm install pg
+    crear fichero pg-query1.js
+        ojo borrar una linea de return repetida
+    en linea terminal
+        node pg-query1.js
+
+adaptar este pg-quer1.js a backend-express tipo /models/gimnasioModel.js y /router/gimnasio.js
+y crear las rutas oportunas para el ejercicio EUROVISION que cuelga del postgres en docker
+
+crear en iot-react-sql (proyecto ya creado con anterioridad con Vite en lugar de React) el frontend
+para EUROVISION (solamente el envío del voto y listado de clasificación)
+    npm install @mui/material @mui/styled-engine @emotion/styled
+    npm install react-router-dom ó npm install react-router-dom@6

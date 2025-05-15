@@ -1,0 +1,22 @@
+INSERT INTO eurovision.votantes (nombre, email, ip_address, "codigoPais")
+VALUES
+    ('Anna Svensson', 'anna.swe@example.com', '192.168.1.1', 'SWE'),
+    ('Carlos Pérez', 'carlos.esp@example.com', '192.168.1.2', 'ESP'),
+    ('Giulia Rossi', 'giulia.ita@example.com', '192.168.1.3', 'ITA'),
+    ('Emma Jansen', 'emma.nld@example.com', '192.168.1.4', 'NLD'),
+    ('João Silva', 'joao.prt@example.com', '192.168.1.5', 'PRT'),
+    ('Noa Levi', 'noa.isr@example.com', '192.168.1.6', 'GBR'),
+    ('Olena Petrenko', 'olena.ukr@example.com', '192.168.1.7', 'UKR'),
+    ('Luc Dupont', 'luc.fra@example.com', '192.168.1.8', 'FRA'),
+    ('Erik Hansen', 'erik.nor@example.com', '192.168.1.9', 'NOR'),
+    ('Sophie Brown', 'sophie.gbr@example.com', '192.168.1.10', 'GBR'),
+    ('Mikko Virtanen', 'mikko.fin@example.com', '192.168.1.11', 'FIN'),
+    ('Katrin Saar', 'katrin.est@example.com', '192.168.1.12', 'EST'),
+    ('Liam Smith', 'liam.aus@example.com', '192.168.1.13', 'ESP'),
+    ('Johann Gruber', 'johann.aut@example.com', '192.168.1.14', 'AUT'),
+    ('Maria Fernandez', 'maria2.esp@example.com', '192.168.1.15', 'ESP'),
+    ('David Cohen', 'david.isr@example.com', '192.168.1.16', 'SWE'),
+    ('Elisa Moretti', 'elisa.ita@example.com', '192.168.1.17', 'ITA'),
+    ('Henrik Nilsson', 'henrik.swe@example.com', '192.168.1.18', 'SWE'),
+    ('Isabelle Laurent', 'isabelle.fra@example.com', '192.168.1.19', 'FRA'),
+    ('Nina Popova', 'nina.ukr@example.com', '192.168.1.20', 'UKR');

@@ -100,6 +100,16 @@ cd data  (donde se guardan los ficheros de configuración)
 cd /
 psql -U postgres (abre un interface de comandos de postgresql)
 
+**************
+IMPORTANTE USAR SOLAMENTE MINUSCULAS Y ESPACIAR NOMBRES DE CAMPOS COMPUESTOS CON GUION BAJO
+NO VALEN
+codigoPais
+codigo Pais
+
+VALE
+codigo_pais
+*******************
+
 en postgres=#
 SELECT * FROM pg_database;   (muestra datos de da base de datos)
     j ó k para línea siguiente o anterior
