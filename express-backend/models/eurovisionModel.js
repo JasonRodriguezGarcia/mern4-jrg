@@ -42,6 +42,19 @@ export async function getVotos() {
   }
 }
 
+export async function getActuaciones() {
+  try {
+    const result = await pool.query("SELECT * FROM eurovision.actuaciones;");
+    return result.rows;
+    //return result.rows[0].total;
+
+  } catch (err) {
+    console.error('Error:', err.message);
+    throw err;
+  }
+}
+
+
 export async function sendVotos(votoEmitido) {
   try {
     // const result = await pool.query("SELECT * FROM eurovision.votantes;");
@@ -49,9 +62,8 @@ export async function sendVotos(votoEmitido) {
     const result = await pool.query(`INSERT INTO eurovision.votos 
         ("idVotante", "idActuacion", "fechaVoto", voto)
         VALUES ($1, $2, $3, $4);`, [idVotante, idActuacion, fechaVoto, voto])
-    console.log(rows)
-    return result.rows[0];
-    //return result.rows[0].total;
+    // console.log("imprimo result: ", result)
+    return result;
 
   } catch (err) {
     console.error('Error:', err.message);

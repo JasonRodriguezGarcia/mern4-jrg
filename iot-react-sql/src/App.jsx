@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css'
 import SmartDoor from './components/SmartDoor'
 import InformesComponent from './components/InformesComponent'
-import EurovisionPage from './pages/EurovisionPage';
+import EurovisionVotePage from './pages/EurovisionVotePage';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -12,7 +12,7 @@ function App() {
     // <>
     <BrowserRouter>
       <Routes>
-      <Route path="/" element={<EurovisionPage />} />
+      <Route path="/" element={<EurovisionVotePage />} />
 
         {/* <Route path="/propdrilling" element={<PropDrillingHomePage />} />
         <Route path="/propdrilling2" element={<PropDrillingHomePage2 />} />

@@ -3,7 +3,7 @@ import { Router} from 'express';
 // import { validateQuery, validateUserId } from '../middleware/users.js';
 // import { authenticateToken } from '../middleware/login.js';
 // import jwt from 'jsonwebtoken';
-import { getVotantes, getVotos, sendVotos } from '../models/eurovisionModel.js';
+import { getVotantes, getVotos, getActuaciones, sendVotos } from '../models/eurovisionModel.js';
 
 const router = Router()
 
@@ -19,8 +19,15 @@ router.get('/votos', async(req, res) => { // ojo con el order al poner este gues
     res.json (votos)
 })
 
+router.get('/actuaciones', async(req, res) => { // ojo con el order al poner este gues
+    const actuaciones = await getActuaciones();
+    console.log(actuaciones);
+    res.json (actuaciones)
+})
+
 router.post('/votos', async(req, res) => { // ojo con el order al poner este gues
     const votoEmitido = req.body
+    console.log("Recibido en backend: ", votoEmitido)
     const resultVoto = await sendVotos(votoEmitido);
     console.log(resultVoto);
     res.json (resultVoto)
