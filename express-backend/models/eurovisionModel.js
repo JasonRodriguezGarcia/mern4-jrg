@@ -63,7 +63,8 @@ export async function sendVotos(votoEmitido) {
         ("idVotante", "idActuacion", "fechaVoto", voto)
         VALUES ($1, $2, $3, $4);`, [idVotante, idActuacion, fechaVoto, voto])
     // console.log("imprimo result: ", result)
-    return result;
+    // return result;
+    return {success: true, message: "OK"}
 
   } catch (err) {
     console.error('Error:', err.message);

@@ -20,7 +20,8 @@ const PORT = process.env.PORT || 5000;
 const HOSTNAME = "127.0.0.1"
 
 // Middleware
-
+// Servir archivos desde la carpeta 'public'
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
 // cors() permite el acceso entre dominios (Cross-Origin Resource Sharing).
 // Esto es necesario cuando tienes React y Express en distintos orígenes (por ejemplo, React en localhost:3000 y Express en localhost:5000).
 // Sin esto, el navegador bloquearía las peticiones por razones de seguridad.

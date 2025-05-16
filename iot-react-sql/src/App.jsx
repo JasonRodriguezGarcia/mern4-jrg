@@ -4,6 +4,7 @@ import './App.css'
 import SmartDoor from './components/SmartDoor'
 import InformesComponent from './components/InformesComponent'
 import EurovisionVotePage from './pages/EurovisionVotePage';
+import EurovisionRankingPage from './pages/EurovisionRankingPage';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -13,6 +14,7 @@ function App() {
     <BrowserRouter>
       <Routes>
       <Route path="/" element={<EurovisionVotePage />} />
+      <Route path="/ranking" element={<EurovisionRankingPage />} />
 
         {/* <Route path="/propdrilling" element={<PropDrillingHomePage />} />
         <Route path="/propdrilling2" element={<PropDrillingHomePage2 />} />

@@ -1,0 +1,402 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 17.5 (Debian 17.5-1.pgdg120+1)
+-- Dumped by pg_dump version 17.4
+
+-- Started on 2025-05-16 14:28:50 UTC
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 6 (class 2615 OID 16437)
+-- Name: eurovision; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA eurovision;
+
+
+ALTER SCHEMA eurovision OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 222 (class 1259 OID 16461)
+-- Name: actuaciones; Type: TABLE; Schema: eurovision; Owner: postgres
+--
+
+CREATE TABLE eurovision.actuaciones (
+    nombre_artista character varying(50),
+    code_pais character(3),
+    titulo_cancion character varying(50),
+    id integer NOT NULL
+);
+
+
+ALTER TABLE eurovision.actuaciones OWNER TO postgres;
+
+--
+-- TOC entry 223 (class 1259 OID 16464)
+-- Name: actuaciones_id_seq; Type: SEQUENCE; Schema: eurovision; Owner: postgres
+--
+
+ALTER TABLE eurovision.actuaciones ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME eurovision.actuaciones_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 221 (class 1259 OID 16439)
+-- Name: paises; Type: TABLE; Schema: eurovision; Owner: postgres
+--
+
+CREATE TABLE eurovision.paises (
+    pais character varying(50),
+    code_pais character(3) NOT NULL
+);
+
+
+ALTER TABLE eurovision.paises OWNER TO postgres;
+
+--
+-- TOC entry 226 (class 1259 OID 16490)
+-- Name: votantes; Type: TABLE; Schema: eurovision; Owner: postgres
+--
+
+CREATE TABLE eurovision.votantes (
+    "idVotante" integer NOT NULL,
+    nombre character varying(50),
+    email character varying(50),
+    ip_address character varying(15),
+    "codigoPais" character(3)
+);
+
+
+ALTER TABLE eurovision.votantes OWNER TO postgres;
+
+--
+-- TOC entry 225 (class 1259 OID 16489)
+-- Name: votantes_idVotante_seq; Type: SEQUENCE; Schema: eurovision; Owner: postgres
+--
+
+CREATE SEQUENCE eurovision."votantes_idVotante_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE eurovision."votantes_idVotante_seq" OWNER TO postgres;
+
+--
+-- TOC entry 3415 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: votantes_idVotante_seq; Type: SEQUENCE OWNED BY; Schema: eurovision; Owner: postgres
+--
+
+ALTER SEQUENCE eurovision."votantes_idVotante_seq" OWNED BY eurovision.votantes."idVotante";
+
+
+--
+-- TOC entry 224 (class 1259 OID 16483)
+-- Name: votos; Type: TABLE; Schema: eurovision; Owner: postgres
+--
+
+CREATE TABLE eurovision.votos (
+    "idVotante" integer NOT NULL,
+    "idActuacion" integer NOT NULL,
+    "fechaVoto" date,
+    voto numeric(3,1)
+);
+
+
+ALTER TABLE eurovision.votos OWNER TO postgres;
+
+--
+-- TOC entry 3243 (class 2604 OID 16493)
+-- Name: votantes idVotante; Type: DEFAULT; Schema: eurovision; Owner: postgres
+--
+
+ALTER TABLE ONLY eurovision.votantes ALTER COLUMN "idVotante" SET DEFAULT nextval('eurovision."votantes_idVotante_seq"'::regclass);
+
+
+--
+-- TOC entry 3405 (class 0 OID 16461)
+-- Dependencies: 222
+-- Data for Name: actuaciones; Type: TABLE DATA; Schema: eurovision; Owner: postgres
+--
+
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Loreen', 'SWE', 'Tattoo', 21);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Chanel', 'ESP', 'SloMo', 22);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Måneskin', 'ITA', 'Zitti e buoni', 23);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Duncan Laurence', 'NLD', 'Arcade', 24);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Salvador Sobral', 'PRT', 'Amar pelos dois', 25);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Netta', 'GBR', 'Toy', 26);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Kalush Orchestra', 'UKR', 'Stefania', 27);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Barbara Pravi', 'FRA', 'Voilà', 28);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Go_A', 'UKR', 'Shum', 29);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('TIX', 'NOR', 'Fallen Angel', 30);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Cornelia Jakobs', 'SWE', 'Hold Me Closer', 31);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Sam Ryder', 'GBR', 'Space Man', 32);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Blanca Paloma', 'ESP', 'Eaea', 33);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('La Zarra', 'FRA', 'Évidemment', 34);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Käärijä', 'FIN', 'Cha Cha Cha', 35);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Noa Kirel', 'FRA', 'Unicorn', 36);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Marco Mengoni', 'ITA', 'Due vite', 37);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Alika', 'EST', 'Bridges', 38);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Voyager', 'PRT', 'Promise', 39);
+INSERT INTO eurovision.actuaciones OVERRIDING SYSTEM VALUE VALUES ('Teya & Salena', 'AUT', 'Who the Hell is Edgar?', 40);
+
+
+--
+-- TOC entry 3404 (class 0 OID 16439)
+-- Dependencies: 221
+-- Data for Name: paises; Type: TABLE DATA; Schema: eurovision; Owner: postgres
+--
+
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Albania', 'ALB');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Andorra', 'AND');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Austria', 'AUT');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Belarus', 'BLR');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Belgium', 'BEL');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Bosnia and Herzegovina', 'BIH');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Bulgaria', 'BGR');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Croatia', 'HRV');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Cyprus', 'CYP');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Czechia', 'CZE');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Denmark', 'DNK');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Estonia', 'EST');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Faroe Islands', 'FRO');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Finland', 'FIN');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('France', 'FRA');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Germany', 'DEU');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Gibraltar', 'GIB');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Greece', 'GRC');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Guernsey', 'GGY');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Holy See', 'VAT');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Hungary', 'HUN');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Iceland', 'ISL');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Ireland', 'IRL');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Isle of Man', 'IMN');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Italy', 'ITA');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Jersey', 'JEY');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Latvia', 'LVA');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Liechtenstein', 'LIE');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Lithuania', 'LTU');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Luxembourg', 'LUX');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Malta', 'MLT');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Moldova', 'MDA');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Monaco', 'MCO');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Montenegro', 'MNE');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Netherlands', 'NLD');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('North Macedonia', 'MKD');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Norway', 'NOR');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Poland', 'POL');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Portugal', 'PRT');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Romania', 'ROU');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Russia', 'RUS');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('San Marino', 'SMR');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Serbia', 'SRB');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Slovakia', 'SVK');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Slovenia', 'SVN');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Spain', 'ESP');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Svalbard and Jan Mayen', 'SJM');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Sweden', 'SWE');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Switzerland', 'CHE');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Ukraine', 'UKR');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('United Kingdom', 'GBR');
+INSERT INTO eurovision.paises OVERRIDING SYSTEM VALUE VALUES ('Åland Islands', 'ALA');
+
+
+--
+-- TOC entry 3409 (class 0 OID 16490)
+-- Dependencies: 226
+-- Data for Name: votantes; Type: TABLE DATA; Schema: eurovision; Owner: postgres
+--
+
+INSERT INTO eurovision.votantes VALUES (4, 'Pepe Smith', 'pepe@smith.com', '208.50.35.22', 'AND');
+INSERT INTO eurovision.votantes VALUES (5, 'Joe Martin', 'joe@martin.com', '120.51.33.55', 'BEL');
+INSERT INTO eurovision.votantes VALUES (6, 'Mara Van der Heubel', 'mara@vdh.com', '220.31.51.1', 'NLD');
+INSERT INTO eurovision.votantes VALUES (66, 'Anna Svensson', 'anna.swe@example.com', '192.168.1.1', 'SWE');
+INSERT INTO eurovision.votantes VALUES (67, 'Carlos Pérez', 'carlos.esp@example.com', '192.168.1.2', 'ESP');
+INSERT INTO eurovision.votantes VALUES (68, 'Giulia Rossi', 'giulia.ita@example.com', '192.168.1.3', 'ITA');
+INSERT INTO eurovision.votantes VALUES (69, 'Emma Jansen', 'emma.nld@example.com', '192.168.1.4', 'NLD');
+INSERT INTO eurovision.votantes VALUES (70, 'João Silva', 'joao.prt@example.com', '192.168.1.5', 'PRT');
+INSERT INTO eurovision.votantes VALUES (71, 'Noa Levi', 'noa.isr@example.com', '192.168.1.6', 'GBR');
+INSERT INTO eurovision.votantes VALUES (72, 'Olena Petrenko', 'olena.ukr@example.com', '192.168.1.7', 'UKR');
+INSERT INTO eurovision.votantes VALUES (73, 'Luc Dupont', 'luc.fra@example.com', '192.168.1.8', 'FRA');
+INSERT INTO eurovision.votantes VALUES (74, 'Erik Hansen', 'erik.nor@example.com', '192.168.1.9', 'NOR');
+INSERT INTO eurovision.votantes VALUES (75, 'Sophie Brown', 'sophie.gbr@example.com', '192.168.1.10', 'GBR');
+INSERT INTO eurovision.votantes VALUES (76, 'Mikko Virtanen', 'mikko.fin@example.com', '192.168.1.11', 'FIN');
+INSERT INTO eurovision.votantes VALUES (77, 'Katrin Saar', 'katrin.est@example.com', '192.168.1.12', 'EST');
+INSERT INTO eurovision.votantes VALUES (78, 'Liam Smith', 'liam.aus@example.com', '192.168.1.13', 'ESP');
+INSERT INTO eurovision.votantes VALUES (79, 'Johann Gruber', 'johann.aut@example.com', '192.168.1.14', 'AUT');
+INSERT INTO eurovision.votantes VALUES (80, 'Maria Fernandez', 'maria2.esp@example.com', '192.168.1.15', 'ESP');
+INSERT INTO eurovision.votantes VALUES (81, 'David Cohen', 'david.isr@example.com', '192.168.1.16', 'SWE');
+INSERT INTO eurovision.votantes VALUES (82, 'Elisa Moretti', 'elisa.ita@example.com', '192.168.1.17', 'ITA');
+INSERT INTO eurovision.votantes VALUES (83, 'Henrik Nilsson', 'henrik.swe@example.com', '192.168.1.18', 'SWE');
+INSERT INTO eurovision.votantes VALUES (84, 'Isabelle Laurent', 'isabelle.fra@example.com', '192.168.1.19', 'FRA');
+INSERT INTO eurovision.votantes VALUES (85, 'Nina Popova', 'nina.ukr@example.com', '192.168.1.20', 'UKR');
+
+
+--
+-- TOC entry 3407 (class 0 OID 16483)
+-- Dependencies: 224
+-- Data for Name: votos; Type: TABLE DATA; Schema: eurovision; Owner: postgres
+--
+
+INSERT INTO eurovision.votos VALUES (4, 25, '2025-05-10', 10.0);
+INSERT INTO eurovision.votos VALUES (5, 21, '2025-05-10', 12.0);
+INSERT INTO eurovision.votos VALUES (6, 30, '2025-05-11', 9.0);
+INSERT INTO eurovision.votos VALUES (82, 24, '2025-05-11', 5.5);
+INSERT INTO eurovision.votos VALUES (66, 21, '2025-05-11', 6.5);
+INSERT INTO eurovision.votos VALUES (67, 28, '2025-05-12', 7.5);
+INSERT INTO eurovision.votos VALUES (68, 23, '2025-05-12', 9.5);
+INSERT INTO eurovision.votos VALUES (69, 24, '2025-05-12', 5.0);
+INSERT INTO eurovision.votos VALUES (70, 27, '2025-05-13', 11.5);
+INSERT INTO eurovision.votos VALUES (71, 28, '2025-05-13', 8.5);
+INSERT INTO eurovision.votos VALUES (72, 32, '2025-05-13', 9.0);
+INSERT INTO eurovision.votos VALUES (73, 33, '2025-05-14', 11.0);
+INSERT INTO eurovision.votos VALUES (74, 34, '2025-05-14', 12.0);
+INSERT INTO eurovision.votos VALUES (75, 35, '2025-05-14', 6.0);
+INSERT INTO eurovision.votos VALUES (76, 36, '2025-05-14', 4.0);
+INSERT INTO eurovision.votos VALUES (77, 37, '2025-05-14', 7.5);
+INSERT INTO eurovision.votos VALUES (78, 38, '2025-05-14', 10.0);
+INSERT INTO eurovision.votos VALUES (79, 39, '2025-05-14', 5.5);
+INSERT INTO eurovision.votos VALUES (80, 40, '2025-05-14', 9.5);
+
+
+--
+-- TOC entry 3416 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: actuaciones_id_seq; Type: SEQUENCE SET; Schema: eurovision; Owner: postgres
+--
+
+SELECT pg_catalog.setval('eurovision.actuaciones_id_seq', 40, true);
+
+
+--
+-- TOC entry 3417 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: votantes_idVotante_seq; Type: SEQUENCE SET; Schema: eurovision; Owner: postgres
+--
+
+SELECT pg_catalog.setval('eurovision."votantes_idVotante_seq"', 86, true);
+
+
+--
+-- TOC entry 3248 (class 2606 OID 16469)
+-- Name: actuaciones actuaciones_pkey; Type: CONSTRAINT; Schema: eurovision; Owner: postgres
+--
+
+ALTER TABLE ONLY eurovision.actuaciones
+    ADD CONSTRAINT actuaciones_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3244 (class 2606 OID 16506)
+-- Name: votos comprobarVoto; Type: CHECK CONSTRAINT; Schema: eurovision; Owner: postgres
+--
+
+ALTER TABLE eurovision.votos
+    ADD CONSTRAINT "comprobarVoto" CHECK (((voto >= (1)::numeric) AND (voto <= (12)::numeric))) NOT VALID;
+
+
+--
+-- TOC entry 3246 (class 2606 OID 16471)
+-- Name: paises paises_pkey; Type: CONSTRAINT; Schema: eurovision; Owner: postgres
+--
+
+ALTER TABLE ONLY eurovision.paises
+    ADD CONSTRAINT paises_pkey PRIMARY KEY (code_pais);
+
+
+--
+-- TOC entry 3252 (class 2606 OID 16591)
+-- Name: votantes restringir_email; Type: CONSTRAINT; Schema: eurovision; Owner: postgres
+--
+
+ALTER TABLE ONLY eurovision.votantes
+    ADD CONSTRAINT restringir_email UNIQUE NULLS NOT DISTINCT (email);
+
+
+--
+-- TOC entry 3254 (class 2606 OID 16495)
+-- Name: votantes votantes_pkey; Type: CONSTRAINT; Schema: eurovision; Owner: postgres
+--
+
+ALTER TABLE ONLY eurovision.votantes
+    ADD CONSTRAINT votantes_pkey PRIMARY KEY ("idVotante");
+
+
+--
+-- TOC entry 3250 (class 2606 OID 16508)
+-- Name: votos votos_pkey; Type: CONSTRAINT; Schema: eurovision; Owner: postgres
+--
+
+ALTER TABLE ONLY eurovision.votos
+    ADD CONSTRAINT votos_pkey PRIMARY KEY ("idVotante", "idActuacion");
+
+
+--
+-- TOC entry 3258 (class 2606 OID 16496)
+-- Name: votantes fk_codePais; Type: FK CONSTRAINT; Schema: eurovision; Owner: postgres
+--
+
+ALTER TABLE ONLY eurovision.votantes
+    ADD CONSTRAINT "fk_codePais" FOREIGN KEY ("codigoPais") REFERENCES eurovision.paises(code_pais) NOT VALID;
+
+
+--
+-- TOC entry 3255 (class 2606 OID 16477)
+-- Name: actuaciones fk_codigoPais; Type: FK CONSTRAINT; Schema: eurovision; Owner: postgres
+--
+
+ALTER TABLE ONLY eurovision.actuaciones
+    ADD CONSTRAINT "fk_codigoPais" FOREIGN KEY (code_pais) REFERENCES eurovision.paises(code_pais) NOT VALID;
+
+
+--
+-- TOC entry 3256 (class 2606 OID 16519)
+-- Name: votos fk_idActuacion; Type: FK CONSTRAINT; Schema: eurovision; Owner: postgres
+--
+
+ALTER TABLE ONLY eurovision.votos
+    ADD CONSTRAINT "fk_idActuacion" FOREIGN KEY ("idActuacion") REFERENCES eurovision.actuaciones(id) NOT VALID;
+
+
+--
+-- TOC entry 3257 (class 2606 OID 16514)
+-- Name: votos fk_idVotante; Type: FK CONSTRAINT; Schema: eurovision; Owner: postgres
+--
+
+ALTER TABLE ONLY eurovision.votos
+    ADD CONSTRAINT "fk_idVotante" FOREIGN KEY ("idVotante") REFERENCES eurovision.votantes("idVotante") NOT VALID;
+
+
+-- Completed on 2025-05-16 14:28:51 UTC
+
+--
+-- PostgreSQL database dump complete
+--
+

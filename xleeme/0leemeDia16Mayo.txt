@@ -1,0 +1,77 @@
+Copias seguridad backup
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/07-admin.backup.md
+
+5050 en navegador y entramos
+abrir servidor dev
+    nombre postgres
+
+boton derecho encima de una base de datos
+    Respaldar
+
+    pestaña General
+        nombre: jason1backup.txt (normalmente día)
+        formato: plain (por ser .txt)
+    data options
+        Pre-Datos: Activar (esquemas y tablas)
+        Datos: activar
+        Post-datos: activar (procedimientos, indices, funciones)
+        Blob: desactivar
+    query options
+    Opciones
+        Deshabilitar disparadores (defecto)
+    Pestaña objetos
+        seleccionar esquema eurovision
+
+    boton RESPALDO
+
+    usa pg_dump para crear fichero RESPALDO
+    /var/lib/pgadmin/storage/ja.rodriguez_aulanz.net/jason1backup.txt
+
+para verlo
+en docker ir a pg_admin
+
+docker exec -it pgadmin sh
+cd /var/lib/pgadmin/storage/ja.rodriguez_aulanz.net
+ls
+aparecerá nuestro fichero de copia .txt
+
+cat jason1backup.txt para verlo
+
+copiar de un sitio a otro
+salimos del contenedor
+con  exit
+
+copiamos fichero nuestro.txt a directorio activo de nuestro ordenador (Documentos)
+docker cp pgadmin:/var/lib/pgadmin/storage/ja.rodriguez_aulanz.net/jason1backup.txt ./jason1backup.txt
+
+copiar de documentos un fichero a raiz de docker
+docker cp test.txt pgadmin:/test.txt
+
+crear bbdd backup en interface web
+restaurar copia .txt en backup
+boton derecho en backup - restaurar (IMPORTANTE HAY QUE PULSAR BOTON ENCIMA DE BBDD !!!)
+    formato: plain
+    nombre: /jason1backup.txt
+
+borrar tabla emp en scott
+boton derecho restaurar
+
+hacer backup diferenciales no hay en postgres de forma nativa
+
+entrar en postgress
+docker exec -it postgres-db /bin/bash
+
+pg_dump
+ejecutar pg_dump con programacion por fechas para nuestros backups pero ahora
+hacemos una copia rápida
+    pg_dump -U postgres -F p -f jason3backup.txt demo
+la copia la deja en el directorio actual
+
+También hay pg_restore
+
+
+SELECT a.nombre_artista, a.code_pais, a.titulo_cancion, a.id, SUM(v.voto) as nota
+	FROM eurovision.votos v
+	RIGHT JOIN eurovision.actuaciones a
+	ON a.id = v."idActuacion"
+	GROUP BY a.nombre_artista, a.code_pais, a.titulo_cancion, a.id;

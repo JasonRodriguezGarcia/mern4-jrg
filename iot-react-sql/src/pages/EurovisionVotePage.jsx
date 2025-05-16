@@ -42,7 +42,7 @@ const EurovisionVotePage = () => {
     const [closeViewDialog, setCloseViewDialog] = useState(true)
 
     const lineasDatosVotantes = votantes.map((votante, index) => (
-        <MenuItem key={index} value={votante.idVotante}>{votante.idVotante}= {votante.nombre} - {votante.codigoPais}</MenuItem>
+        <MenuItem key={index} value={votante.idVotante}>({votante.idVotante}) {votante.nombre} - {votante.codigoPais}</MenuItem>
     ))
 
     const lineasDatosVoto = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((voto) => (
@@ -127,11 +127,11 @@ const EurovisionVotePage = () => {
                     body: JSON.stringify(votacion)
                 }
             )
-            const respuesta = await (response.json())
+            const respuesta = await response.json();
             console.log("Respuesta del backend en frontend: ", respuesta)
-            // if (!response.ok) {
-            //     throw new Error('Network response was not ok');
-            // }
+            if (!response.success) {
+                throw new Error('Network response was not ok');
+            }
             console.log("Mandar fetch")
         } catch (error) {
             console.log("Error al llamar desde frontend: ", error.message);
@@ -189,53 +189,53 @@ const EurovisionVotePage = () => {
                     }}
                 >
                     <Box component="div" sx={{display: "flex", gap: "15px", padding: "15px"}}>
-                            <FormControl fullWidth>
-                            {/* <FormControl sx={{width: "50%"}}> */}
-                                <InputLabel id="demo-simple-select-label">Voter</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={idVotante}
-                                    label="Votante"
-                                    onChange={(e)=> handleIdVotante(e)}
-                                     sx={{fontSize: "30px"}}
-                                >
-                                    {lineasDatosVotantes}
-                                    {/* <MenuItem value={10}>Ten</MenuItem>
-                                    <MenuItem value={20}>Twenty</MenuItem>
-                                    <MenuItem value={30}>Thirty</MenuItem> */}
-                                </Select>
-                            </FormControl>
-                            <FormControl sx={{width: 100}}>
-                                <InputLabel id="demo-simple-select-label2">Note</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label2"
-                                    id="demo-simple-select2"
-                                    value={voto}
-                                    label="Voto"
-                                    onChange={(e)=> handleVoto(e)}
+                        <FormControl fullWidth>
+                        {/* <FormControl sx={{width: "50%"}}> */}
+                            <InputLabel id="demo-simple-select-label">Voter</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={idVotante}
+                                label="Votante"
+                                onChange={(e)=> handleIdVotante(e)}
                                     sx={{fontSize: "30px"}}
-                                >
-                                    {lineasDatosVoto}
-                                    {/* <MenuItem value={10}>Ten</MenuItem>
-                                    <MenuItem value={20}>Twenty</MenuItem>
-                                    <MenuItem value={30}>Thirty</MenuItem> */}
-                                </Select>
-                            </FormControl>
-
-                        {/* <TextField id="idVotante" label="idVotante" value={idVotante} variant="filled" onChange={(e)=> setIdVotante(e.target.value)} required/>
-                        <TextField id="voto" label="voto" variant="filled" onChange={(e)=> setVoto(e.target.value)} required/> */}
+                            >
+                                {lineasDatosVotantes}
+                                {/* <MenuItem value={10}>Ten</MenuItem>
+                                <MenuItem value={20}>Twenty</MenuItem>
+                                <MenuItem value={30}>Thirty</MenuItem> */}
+                            </Select>
+                        </FormControl>
+                        <FormControl sx={{width: 100}}>
+                            <InputLabel id="demo-simple-select-label2">Note</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label2"
+                                id="demo-simple-select2"
+                                value={voto}
+                                label="Voto"
+                                onChange={(e)=> handleVoto(e)}
+                                sx={{fontSize: "30px"}}
+                            >
+                                {lineasDatosVoto}
+                                {/* <MenuItem value={10}>Ten</MenuItem>
+                                <MenuItem value={20}>Twenty</MenuItem>
+                                <MenuItem value={30}>Thirty</MenuItem> */}
+                            </Select>
+                        </FormControl>
+                    {/* <TextField id="idVotante" label="idVotante" value={idVotante} variant="filled" onChange={(e)=> setIdVotante(e.target.value)} required/>
+                    <TextField id="voto" label="voto" variant="filled" onChange={(e)=> setVoto(e.target.value)} required/> */}
                     </Box>
                     <TableContainer component={Paper} sx={{height: "60vh", overflow: "auto"}}>
-                    <Table sx={{ minWidth: 200 }} aria-label="simple table">
+                    <Table stickyHeader sx={{ minWidth: 650 }} size="small" aria-label="simple table">
                         <TableHead>
-                        <TableRow>
-                            {/* <TableCell>Marca</TableCell> */}
-                            <TableCell align="right" sx={{fontSize: "20px"}}>Image</TableCell>
-                            <TableCell align="right" sx={{fontSize: "20px"}}>Nombre artista</TableCell>
-                            <TableCell align="right" sx={{fontSize: "20px"}}>Pais</TableCell>
-                            <TableCell align="right" sx={{fontSize: "20px"}}>Titulo Cancion</TableCell>
-                        </TableRow>
+                            <TableRow>
+                                {/* <TableCell>Marca</TableCell> */}
+                                <TableCell align="right" sx={{fontSize: "20px"}}>Image</TableCell>
+                                <TableCell align="right" sx={{fontSize: "20px"}}>Nombre artista</TableCell>
+                                <TableCell align="right" sx={{fontSize: "20px"}}>Pais</TableCell>
+                                <TableCell align="right" sx={{fontSize: "20px"}}>Titulo Cancion</TableCell>
+                                <TableCell align="right" sx={{fontSize: "20px"}}> </TableCell>
+                            </TableRow>
                         </TableHead>
                         <TableBody>
                         {actuaciones.map((actuacion, index) => (
@@ -246,8 +246,11 @@ const EurovisionVotePage = () => {
                             >
                             <TableCell component="th" scope="row" align="right">
                                 <Box component="img"
-                                src={`../../assets/images/${index}.jpg`} 
-                                sx={{with: "80px", height: "80px", transition: "all 1s", boxShadow: "10px 10px 10px 5px",
+                                src={`http://localhost:5000/images/${index}.jpg`}  alt={`imagen${index}`}
+                                sx={{with: "80px", height: "80px", transition: "all 1s", 
+                                        boxShadow: "10px 10px 10px 5px",
+                                        boxSizing: "border-box",
+                                        display: "cover",
                                         "&:hover": {
                                             transform: "scale(2.5)",
                                             cursor: "pointer",
@@ -280,8 +283,8 @@ const EurovisionVotePage = () => {
                         {/* <Button type="submit"variant="contained" color="primary">
                             Submit Vote !!
                         </Button> */}
-                        <Button type="button" onClick={()=> navigate('/')} variant="contained" color="primary">
-                            Cancel
+                        <Button type="button" onClick={()=> navigate('/ranking')} variant="contained" color="primary">
+                            RANKING
                         </Button>
                     </Box>
                 </Box>
