@@ -19,6 +19,15 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 // fin dialog
+
+// para dialogVideo
+import {
+  IconButton
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import SmartDisplayIcon from "@mui/icons-material/SmartDisplay";
+
+
 //para select
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -33,22 +42,26 @@ const EurovisionVotePage = () => {
     const navigate = useNavigate()
     const [idVotante, setIdVotante] = useState("")
     const [idActuacion, setIdActuacion] = useState(0)
-    const [voto, setVoto] = useState(1)
+    const [voto, setVoto] = useState(0)
     const [actuaciones, setActuaciones] = useState([])
     const [votantes, setVotantes] = useState([])
     const [selectVotante, setSelectVotante] = useState(0)
     const [errorMessage, setErrorMessage] = useState("")
     const [openViewDialog, setOpenViewDialog] = useState(false);
+    const [openViewDialogVideo, setOpenViewDialogVideo] = useState(false)
     const [closeViewDialog, setCloseViewDialog] = useState(true)
+    const [urlVideo, setUrlVideo] = useState('')
 
     const lineasDatosVotantes = votantes.map((votante, index) => (
         <MenuItem key={index} value={votante.idVotante}>({votante.idVotante}) {votante.nombre} - {votante.codigoPais}</MenuItem>
     ))
 
-    const lineasDatosVoto = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((voto) => (
-        <MenuItem key={voto} value={voto}>{voto}</MenuItem>
-    ))
-
+    // const lineasDatosVoto = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((voto) => (
+    //     <MenuItem key={voto} value={voto}>{voto}</MenuItem>
+    // ))
+    const lineasDatosVoto = Array.from({ length: 13 }, (_, i) => (
+        <MenuItem key={i} value={i}>{i}</MenuItem>
+    ));
 
     useEffect(() => {
         const getActuaciones = async () => {
@@ -89,6 +102,11 @@ const EurovisionVotePage = () => {
 
     const handleFormSubmit = () => {
 
+    }
+
+    const handleOpenDialogVideo = (url) => {
+        setUrlVideo(url)
+        setOpenViewDialogVideo(true)
     }
 
     const handleIdVotante = (e) => {
@@ -153,6 +171,7 @@ const EurovisionVotePage = () => {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
+                        {voto == 0 ? <> Ouch ... That really hurts !! <br /> </>: voto == 12 ? <> You really love this song !! <br /> </> : ""}
                         Pls confirm Vote !!
                     </DialogContentText>
                 </DialogContent>
@@ -168,7 +187,53 @@ const EurovisionVotePage = () => {
                         Cancel
                     </Button>
                 </DialogActions>
-             </Dialog>
+            </Dialog>
+
+            <Dialog
+                open={openViewDialogVideo}
+                onClose={()=> setOpenViewDialogVideo(false)}
+                // maxWidth="md"
+                fullWidth
+
+                aria-labelledby="viewDescription-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <IconButton
+                    onClick={()=> setOpenViewDialogVideo(false)}
+                    sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        color: "white",
+                        zIndex: 10
+                    }}
+                >
+                    <CloseIcon />
+                    {/* Close */}
+                </IconButton>
+                <DialogContent
+                    sx={{
+                        padding: 0,
+                        display: "flex",
+                        justifyContent: "center",
+                        backgroundColor: "black"
+                    }}
+                    >
+                    <iframe
+                        width="100%"
+                        height="480"
+                        src= {`https://www.youtube.com/embed/${urlVideo}?autoplay=1`}
+                        // src="https://www.youtube.com/embed/BvVxhbCW9rw"
+                        // src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                        //  src="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                        title="YouTube video"
+                        allow="autoplay; encrypted-media"
+                        allowFullScreen
+                        style={{ border: "none" }}
+                    ></iframe>
+                </DialogContent>
+            </Dialog>
+
 
             {/* {datosEvents && datosEvents.map((evento, index) => (     */}
             <Typography variant="h2" component="h2">
@@ -201,9 +266,6 @@ const EurovisionVotePage = () => {
                                     sx={{fontSize: "30px"}}
                             >
                                 {lineasDatosVotantes}
-                                {/* <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem> */}
                             </Select>
                         </FormControl>
                         <FormControl sx={{width: 100}}>
@@ -217,20 +279,15 @@ const EurovisionVotePage = () => {
                                 sx={{fontSize: "30px"}}
                             >
                                 {lineasDatosVoto}
-                                {/* <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem> */}
                             </Select>
                         </FormControl>
-                    {/* <TextField id="idVotante" label="idVotante" value={idVotante} variant="filled" onChange={(e)=> setIdVotante(e.target.value)} required/>
-                    <TextField id="voto" label="voto" variant="filled" onChange={(e)=> setVoto(e.target.value)} required/> */}
                     </Box>
                     <TableContainer component={Paper} sx={{height: "60vh", overflow: "auto"}}>
                     <Table stickyHeader sx={{ minWidth: 650 }} size="small" aria-label="simple table">
                         <TableHead>
                             <TableRow>
-                                {/* <TableCell>Marca</TableCell> */}
                                 <TableCell align="right" sx={{fontSize: "20px"}}>Image</TableCell>
+                                <TableCell align="right" sx={{fontSize: "20px"}}>Media</TableCell>
                                 <TableCell align="right" sx={{fontSize: "20px"}}>Nombre artista</TableCell>
                                 <TableCell align="right" sx={{fontSize: "20px"}}>Pais</TableCell>
                                 <TableCell align="right" sx={{fontSize: "20px"}}>Titulo Cancion</TableCell>
@@ -240,37 +297,45 @@ const EurovisionVotePage = () => {
                         <TableBody>
                         {actuaciones.map((actuacion, index) => (
                             <TableRow
-                            key={index}
-                            sx={{padding: "10px inherit 10px inherit"}}
-                            //   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                key={index}
+                                sx={{padding: "10px inherit 10px inherit"}}
                             >
-                            <TableCell component="th" scope="row" align="right">
-                                <Box component="img"
-                                src={`http://localhost:5000/images/${index}.jpg`}  alt={`imagen${index}`}
-                                sx={{with: "80px", height: "80px", transition: "all 1s", 
-                                        boxShadow: "10px 10px 10px 5px",
-                                        boxSizing: "border-box",
-                                        display: "cover",
-                                        "&:hover": {
-                                            transform: "scale(2.5)",
-                                            cursor: "pointer",
-                                        }
-                                ,}}
-                                />
-                                {/* {actuacion.picture} */}
-                            </TableCell>
-                            <TableCell align="right">{actuacion.nombre_artista}</TableCell>
-                            <TableCell align="right">{actuacion.code_pais}</TableCell>
-                            <TableCell align="right">{actuacion.titulo_cancion}</TableCell>
-                            <TableCell align="right">
-                                <ButtonGroup variant="contained" aria-label="Basic button group">
-                                    <Button title="Submit Vote !!"  
-                                    onClick={()=> handleDialog(actuacion.id)}
-                                    sx={{ backgroundColor: "green", color: "white", fontSize: "20px"}}>
-                                    🗳vote
+                                <TableCell component="th" scope="row" align="right">
+                                    <Box component="img"
+                                    // src={`http://localhost:5000/images/${index}.jpg`} alt={`imagen${index}`}
+                                    // https://img.youtube.com/vi/${video.idvideo}/0.jpg
+                                    // src={"https://img.youtube.com/vi/BvVxhbCW9rw/0.jpg"}  alt={`imagen${index}`}
+                                    src={`https://img.youtube.com/vi/${actuacion.url_artista}/0.jpg`}  alt={`imagen${index}`}
+                                    sx={{width: "60px", height: "60px", transition: "all 1s", 
+                                            boxShadow: "10px 10px 10px 5px",
+                                            boxSizing: "border-box",
+                                            objectFit: "cover",
+                                            "&:hover": {
+                                                transform: "scale(2)",
+                                            }
+                                    ,}}
+                                    />
+                                    {/* {actuacion.picture} */}
+                                </TableCell>
+                                <TableCell align="right"
+                                >
+                                    <Button variant="contained" title="Play video" color="primary" onClick={()=> handleOpenDialogVideo(actuacion.url_artista)}>
+                                        {/* Play */}
+                                        <SmartDisplayIcon/>
                                     </Button>
-                                </ButtonGroup>
-                            </TableCell>
+                                </TableCell>
+                                <TableCell align="right">{actuacion.nombre_artista}</TableCell>
+                                <TableCell align="right">{actuacion.code_pais}</TableCell>
+                                <TableCell align="right">{actuacion.titulo_cancion}</TableCell>
+                                <TableCell align="right">
+                                    <ButtonGroup variant="contained" aria-label="Basic button group">
+                                        <Button title="Submit Vote !!"  
+                                        onClick={()=> handleDialog(actuacion.id)}
+                                        sx={{ backgroundColor: "green", color: "white", fontSize: "20px"}}>
+                                        🗳vote
+                                        </Button>
+                                    </ButtonGroup>
+                                </TableCell>
                             </TableRow>
                         ))}
                         </TableBody>

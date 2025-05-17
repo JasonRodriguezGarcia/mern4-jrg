@@ -34,3 +34,22 @@ INSERT INTO eurovision.votantes (nombre, email, ip_address, "codigoPais") VALUES
 ('Marek Kowalski', 'marek.kowalski@example.com', '192.168.1.8', 'SWE'),
 ('Pierre Dupont', 'pierre.dupont@example.com', '192.168.1.9', 'FRA'),
 ('Katarina Jovanović', 'katarina.jovanovic@example.com', '192.168.1.10', 'SRB');
+
+INSERT INTO eurovision.votantes (
+    nombre, email, ip_address, "codigoPais"
+) VALUES
+('Andrej Novak', 'andrej.novak@example.com', '192.168.2.1', 'SVN'),
+('Nina Petrović', 'nina.petrovic@example.com', '192.168.2.2', 'HRV'),
+('Timo Laine', 'timo.laine@example.com', '192.168.2.3', 'FIN'),
+('Álvaro Costa', 'alvaro.costa@example.com', '192.168.2.4', 'PRT'),
+('Roksana Wójcik', 'roksana.wojcik@example.com', '192.168.2.5', 'POL'),
+('Henrik Sørensen', 'henrik.sorensen@example.com', '192.168.2.6', 'DNK'),
+('Isabelle Laurent', 'isabelle.laurent@example.com', '192.168.2.7', 'BEL'),
+('Kristaps Ozols', 'kristaps.ozols@example.com', '192.168.2.8', 'LVA'),
+('Matteo Ricci', 'matteo.ricci@example.com', '192.168.2.10', 'ITA'),
+('Emma Nilsen', 'emma.nilsen@example.com', '192.168.2.11', 'NOR'),
+('Stefan Popescu', 'stefan.popescu@example.com', '192.168.2.13', 'ROU'),
+('Georgios Papadopoulos', 'georgios.papadopoulos@example.com', '192.168.2.15', 'GRC'),
+('Anton Ivanov', 'anton.ivanov@example.com', '192.168.2.16', 'BGR'),
+('Éva Tóth', 'eva.toth@example.com', '192.168.2.17', 'HUN'),
+('Jakub Dvořák', 'jakub.dvorak@example.com', '192.168.2.18', 'CZE');
