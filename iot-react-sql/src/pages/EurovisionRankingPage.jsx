@@ -44,7 +44,7 @@ const EurovisionRankingPage = () => {
     useEffect(() => {
         const getActuaciones = async () => {
             try {
-                const response = await fetch (`http://localhost:5000/api/v1/eurovision/actuaciones`)
+                const response = await fetch (`http://localhost:5000/api/v1/eurovision/ranking`)
                 if (!response.ok) {
                     throw new Error ("Error en consulta de actuaciones")
                 }

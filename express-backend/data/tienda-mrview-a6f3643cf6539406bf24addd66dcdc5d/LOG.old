@@ -1,5 +1,5 @@
-2025/05/17-23:24:13.615 4a90 Recovering log #6
-2025/05/17-23:24:13.615 4a90 Level-0 table #8: started
-2025/05/17-23:24:13.619 4a90 Level-0 table #8: 339 bytes OK
-2025/05/17-23:24:13.624 4a90 Delete type=0 #6
-2025/05/17-23:24:13.624 4a90 Delete type=3 #4
+2025/05/18-17:27:03.111 4d0 Recovering log #61
+2025/05/18-17:27:03.111 4d0 Level-0 table #63: started
+2025/05/18-17:27:03.111 4d0 Level-0 table #63: 237 bytes OK
+2025/05/18-17:27:03.120 4d0 Delete type=0 #61
+2025/05/18-17:27:03.120 4d0 Delete type=3 #59

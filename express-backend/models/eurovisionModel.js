@@ -42,16 +42,20 @@ export async function getVotos() {
   }
 }
 
-export async function getActuaciones() {
-  try {
-    const result = await pool.query("SELECT * FROM eurovision.actuaciones;");
-    return result.rows;
-    //return result.rows[0].total;
+export async function getActuacionesRanking(selectRanking) {
+    try {
+        const selectedQuery = 
+            selectRanking   ? `SELECT a.nombre_artista, a.code_pais, a.titulo_cancion, a.id, SUM(v.voto) as nota FROM eurovision.votos v RIGHT JOIN eurovision.actuaciones a ON a.id = v."idActuacion" GROUP BY a.nombre_artista, a.code_pais, a.titulo_cancion, a.id;`
+                            : "SELECT * FROM eurovision.actuaciones;"
 
-  } catch (err) {
-    console.error('Error:', err.message);
-    throw err;
-  }
+        const result = await pool.query(selectedQuery);
+        return result.rows;
+        //return result.rows[0].total;
+
+    } catch (err) {
+        console.error('Error:', err.message);
+        throw err;
+    }
 }
 
 
