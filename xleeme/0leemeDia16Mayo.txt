@@ -75,3 +75,5 @@ SELECT a.nombre_artista, a.code_pais, a.titulo_cancion, a.id, SUM(v.voto) as not
 	RIGHT JOIN eurovision.actuaciones a
 	ON a.id = v."idActuacion"
 	GROUP BY a.nombre_artista, a.code_pais, a.titulo_cancion, a.id;
+
+let temp = [...data].sort((firstItem, secondItem) => firstItem.ano - secondItem.ano)

@@ -42,8 +42,7 @@ const EurovisionVotePage = () => {
     const navigate = useNavigate()
     const [idVotante, setIdVotante] = useState("")
     const [idActuacion, setIdActuacion] = useState(0)
-    // const [voto, setVoto] = useState(0)
-    const [votoLineaActuacion, setVotoLineaActuacion] = useState(0)
+    const [voto, setVoto] = useState(0)
     const [actuaciones, setActuaciones] = useState([])
     const [votantes, setVotantes] = useState([])
     const [selectVotante, setSelectVotante] = useState(0)
@@ -52,9 +51,6 @@ const EurovisionVotePage = () => {
     const [openViewDialogVideo, setOpenViewDialogVideo] = useState(false)
     const [closeViewDialog, setCloseViewDialog] = useState(true)
     const [urlVideo, setUrlVideo] = useState('')
-    const [lineasDatosVoto, setLineasDatosVoto] = useState(Array.from({ length: 12 }, (_, i) => (
-        <MenuItem key={i+1} value={i+1}>{i+1}</MenuItem>
-    )));
 
     const lineasDatosVotantes = votantes.map((votante, index) => (
         <MenuItem key={index} value={votante.idVotante}>({votante.idVotante}) {votante.nombre} - {votante.codigoPais}</MenuItem>
@@ -63,17 +59,9 @@ const EurovisionVotePage = () => {
     // const lineasDatosVoto = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((voto) => (
     //     <MenuItem key={voto} value={voto}>{voto}</MenuItem>
     // ))
-    // const lineasDatosVoto = Array.from({ length: 12 }, (_, i) => (
-    //     <MenuItem key={i+1} value={i+1}>{i+1}</MenuItem>
-    // ));
-
-    useEffect(() => {
-    console.log("Actuaciones actualizadas: ", actuaciones);
-    if(actuaciones.length > 0) {
-        console.log("Primer objeto:", actuaciones[0]);
-        console.log("Claves del primer objeto:", Object.keys(actuaciones[0]));
-    }
-    }, [actuaciones]);
+    const lineasDatosVoto = Array.from({ length: 13 }, (_, i) => (
+        <MenuItem key={i} value={i}>{i}</MenuItem>
+    ));
 
     useEffect(() => {
         const getActuaciones = async () => {
@@ -83,14 +71,8 @@ const EurovisionVotePage = () => {
                     throw new Error ("Error en consulta de actuaciones")
                 }
                 const datos = await response.json()
-                // Añadir propiedad votoLinea con valor "" vacio
-                const datosConVotoLinea = datos.map(actuacion => ({
-                    ...actuacion,
-                    votoLinea: ""
-                }))
                 console.log("Actuaciones: ", datos)
-                console.log("datosConVotoLinea: ", datosConVotoLinea)
-                setActuaciones(datosConVotoLinea)
+                setActuaciones(datos)
                 setErrorMessage("")
             }
             catch(error) {
@@ -131,25 +113,10 @@ const EurovisionVotePage = () => {
         setIdVotante(e.target.value)
         console.log("evento select votante: ", e)
     }
-    const handleVoto = (e, indexActuacion) => {
-        // Actualiza el voto para la actuación correspondiente a su linea (index)
-        const newActuaciones = [...actuaciones]; // copia de actuaciones
-        const anteriorVotoLinea = newActuaciones[indexActuacion].voto // copia dato voto anterior
-        newActuaciones[indexActuacion].votoLinea = e.target.value
-        setActuaciones(newActuaciones);
-        console.log("Nuevo voto actualizado: ", newActuaciones[indexActuacion].votoLinea);
-
-        if (e.target.value !== "") {
-            // Si selecciona un número, hay que quitarlo de la lista del select
-            const nuevoLineasDatosVoto = lineasDatosVoto.filter((voto) => voto.key != e.target.value)
-            // setLineasDatosVoto ([...nuevoLineasDatosVoto])
-            console.log("lineasDatosVoto: ", lineasDatosVoto)
-            console.log("nuevoLinasDatosVoto: ", nuevoLineasDatosVoto)
-            debugger
-        }
-        // setVoto(e.target.value)
-        // console.log("evento select voto: ", e)
-        // console.log("imprimo state voto seleccionado: ", voto)
+    const handleVoto = (e) => {
+        setVoto(e.target.value)
+        console.log("evento select voto: ", e)
+        console.log("imprimo state voto seleccionado: ", voto)
     }
     const handleDialog = (id) => {
         setOpenViewDialog(true)
@@ -166,7 +133,9 @@ const EurovisionVotePage = () => {
             fechaVoto: new Date(),
             voto: parseInt(voto)
         }
+        debugger
         console.log("Votacion: ", votacion)
+        console.log("linea en blanco")
         try {
             // fetch POST y pasar user como cuerpo (body)
             const response = await fetch('http://localhost:5000/api/v1/eurovision/votos',
@@ -202,7 +171,7 @@ const EurovisionVotePage = () => {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        {/* {voto == 0 ? <> Ouch ... That really hurts !! <br /> </>: voto == 12 ? <> You really love this song !! <br /> </> : ""} */}
+                        {voto == 0 ? <> Ouch ... That really hurts !! <br /> </>: voto == 12 ? <> You really love this song !! <br /> </> : ""}
                         Pls confirm Vote !!
                     </DialogContentText>
                 </DialogContent>
@@ -299,17 +268,29 @@ const EurovisionVotePage = () => {
                                 {lineasDatosVotantes}
                             </Select>
                         </FormControl>
+                        <FormControl sx={{width: 100}}>
+                            <InputLabel id="demo-simple-select-label2">Note</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label2"
+                                id="demo-simple-select2"
+                                value={voto}
+                                label="Voto"
+                                onChange={(e)=> handleVoto(e)}
+                                sx={{fontSize: "30px"}}
+                            >
+                                {lineasDatosVoto}
+                            </Select>
+                        </FormControl>
                     </Box>
                     <TableContainer component={Paper} sx={{height: "60vh", overflow: "auto"}}>
                     <Table stickyHeader sx={{ minWidth: 650 }} size="small" aria-label="simple table">
                         <TableHead>
                             <TableRow>
-                                <TableCell align="right" sx={{fontSize: "20px"}}>Media</TableCell>
                                 <TableCell align="right" sx={{fontSize: "20px"}}>Image</TableCell>
-                                <TableCell align="right" sx={{fontSize: "20px"}}>Artist Name</TableCell>
-                                <TableCell align="right" sx={{fontSize: "20px"}}>Country</TableCell>
-                                <TableCell align="right" sx={{fontSize: "20px"}}>Song title</TableCell>
-                                {true && <TableCell align="right" sx={{fontSize: "20px"}}>Qualification</TableCell>}
+                                <TableCell align="right" sx={{fontSize: "20px"}}>Media</TableCell>
+                                <TableCell align="right" sx={{fontSize: "20px"}}>Nombre artista</TableCell>
+                                <TableCell align="right" sx={{fontSize: "20px"}}>Pais</TableCell>
+                                <TableCell align="right" sx={{fontSize: "20px"}}>Titulo Cancion</TableCell>
                                 <TableCell align="right" sx={{fontSize: "20px"}}> </TableCell>
                             </TableRow>
                         </TableHead>
@@ -319,13 +300,6 @@ const EurovisionVotePage = () => {
                                 key={index}
                                 sx={{padding: "10px inherit 10px inherit"}}
                             >
-                                <TableCell align="right"
-                                >
-                                    <Button variant="contained" title="Play video" color="primary" onClick={()=> handleOpenDialogVideo(actuacion.url_artista)}>
-                                        {/* Play */}
-                                        <SmartDisplayIcon/>
-                                    </Button>
-                                </TableCell>
                                 <TableCell component="th" scope="row" align="right">
                                     <Box component="img"
                                     // src={`http://localhost:5000/images/${index}.jpg`} alt={`imagen${index}`}
@@ -343,29 +317,16 @@ const EurovisionVotePage = () => {
                                     />
                                     {/* {actuacion.picture} */}
                                 </TableCell>
+                                <TableCell align="right"
+                                >
+                                    <Button variant="contained" title="Play video" color="primary" onClick={()=> handleOpenDialogVideo(actuacion.url_artista)}>
+                                        {/* Play */}
+                                        <SmartDisplayIcon/>
+                                    </Button>
+                                </TableCell>
                                 <TableCell align="right">{actuacion.nombre_artista}</TableCell>
                                 <TableCell align="right">{actuacion.code_pais}</TableCell>
                                 <TableCell align="right">{actuacion.titulo_cancion}</TableCell>
-                                {true &&
-                                    <TableCell align="right">
-                                        {/* {actuacion.votoLinea} */}
-                                        <FormControl sx={{width: 75}}>
-                                            <InputLabel id="demo-simple-select-label2">Note</InputLabel>
-                                            <Select
-                                                labelId="demo-simple-select-label2"
-                                                id="demo-simple-select2"
-                                                value={actuacion.votoLinea}
-                                                label="Voto"
-                                                onChange={(e)=> handleVoto(e, index)}
-                                                sx={{fontSize: "30px"}}
-                                            >
-                                                <MenuItem value="">None</MenuItem>
-                                                {lineasDatosVoto}
-                                            </Select>
-                                        </FormControl>
-
-
-                                    </TableCell>}
                                 <TableCell align="right">
                                     <ButtonGroup variant="contained" aria-label="Basic button group">
                                         <Button title="Submit Vote !!"  
