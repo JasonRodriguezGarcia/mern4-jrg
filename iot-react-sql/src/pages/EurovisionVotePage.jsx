@@ -256,8 +256,6 @@ const EurovisionVotePage = () => {
                         height="480"
                         src= {`https://www.youtube.com/embed/${urlVideo}?autoplay=1`}
                         // src="https://www.youtube.com/embed/BvVxhbCW9rw"
-                        // src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                        //  src="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
                         title="YouTube video"
                         allow="autoplay; encrypted-media"
                         allowFullScreen
@@ -331,9 +329,9 @@ const EurovisionVotePage = () => {
                                 </TableCell>
                                 <TableCell component="th" scope="row" align="right">
                                     <Box component="img"
-                                    // src={`http://localhost:5000/images/${index}.jpg`} alt={`imagen${index}`}
-                                    // https://img.youtube.com/vi/${video.idvideo}/0.jpg
-                                    // src={"https://img.youtube.com/vi/BvVxhbCW9rw/0.jpg"}  alt={`imagen${index}`}
+                                    // https://www.youtube.com/watch?v=BvVxhbCW9rw
+                                    // src="https://www.youtube.com/embed/BvVxhbCW9rw" para iframe
+                                    // src="https://img.youtube.com/vi/BvVxhbCW9rw/0.jpg"}  alt="Imagen"} para ver imagen
                                     src={`https://img.youtube.com/vi/${actuacion.url_artista}/0.jpg`}  alt={`imagen${index}`}
                                     sx={{width: "60px", height: "60px", transition: "all 1s", 
                                             boxShadow: "10px 10px 10px 5px",
@@ -366,8 +364,6 @@ const EurovisionVotePage = () => {
                                                 {lineasDatosVoto}
                                             </Select>
                                         </FormControl>
-
-
                                     </TableCell>}
                                 <TableCell align="right">
                                     <ButtonGroup variant="contained" aria-label="Basic button group">
