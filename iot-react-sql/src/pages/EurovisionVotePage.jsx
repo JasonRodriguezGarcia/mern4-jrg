@@ -118,8 +118,9 @@ const EurovisionVotePage = () => {
 
     }, [])
 
-    const handleFormSubmit = () => {
-
+    const handleFormSubmit = (e) => {
+        // e.preventDefault()
+        alert("submitted !!")
     }
 
     const handleOpenDialogVideo = (url) => {
@@ -235,7 +236,7 @@ const EurovisionVotePage = () => {
                         position: "absolute",
                         top: 8,
                         right: 8,
-                        color: "white",
+                        color: "red",
                         zIndex: 10
                     }}
                 >
@@ -321,7 +322,9 @@ const EurovisionVotePage = () => {
                             >
                                 <TableCell align="right"
                                 >
-                                    <Button variant="contained" title="Play video" color="primary" onClick={()=> handleOpenDialogVideo(actuacion.url_artista)}>
+                                    <Button variant="contained" title="Play video" color="primary" onClick={()=> handleOpenDialogVideo(actuacion.url_artista)}
+                                        sx= {{backgroundColor: "red"}}
+                                    >
                                         {/* Play */}
                                         <SmartDisplayIcon/>
                                     </Button>
@@ -382,13 +385,15 @@ const EurovisionVotePage = () => {
                     </TableContainer>
                     {/* <TextField value={date} id="date" variant="filled" onChange={(e)=> setDate(e.target.value)} disabled={true}/> */}
 
-                    {/* <Button type="submit" onClick={handleFormSubmit} variant="contained" color="primary"> */}
                     <Box sx={{display: "flex", gap: "20px", justifyContent: "center"}}>
+                        <Button type="submit" variant="contained" color="primary">
+                            SUBMIT VOTE !!
+                        </Button>
                         {/* <Button type="submit"variant="contained" color="primary">
                             Submit Vote !!
                         </Button> */}
                         <Button type="button" onClick={()=> navigate('/ranking')} variant="contained" color="primary">
-                            RANKING
+                            Go to RANKING
                         </Button>
                     </Box>
                 </Box>

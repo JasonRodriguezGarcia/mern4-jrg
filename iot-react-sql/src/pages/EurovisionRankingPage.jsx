@@ -41,6 +41,12 @@ const EurovisionRankingPage = () => {
     const [openViewDialog, setOpenViewDialog] = useState(false);
     const [closeViewDialog, setCloseViewDialog] = useState(true)
 
+
+    useEffect(()=> {
+        console.log("ordenado: ", actuaciones)
+
+    }, [actuaciones])
+
     useEffect(() => {
         const getActuaciones = async () => {
             try {
@@ -50,7 +56,8 @@ const EurovisionRankingPage = () => {
                 }
                 const datos = await response.json()
                 console.log("Actuaciones: ", datos)
-                setActuaciones(datos)
+
+                setActuaciones([...datos].sort((a, b) => b.nota - a.nota))
                 setErrorMessage("")
             }
             catch(error) {
@@ -72,11 +79,11 @@ const EurovisionRankingPage = () => {
                         <TableHead>
                             <TableRow>
                                 {/* <TableCell>Marca</TableCell> */}
-                                <TableCell align="right" sx={{fontSize: "20px"}}>PUNTOS</TableCell>
-                                <TableCell align="right" sx={{fontSize: "20px"}}>Pais</TableCell>
+                                <TableCell align="right" sx={{fontSize: "20px"}}>POINTS</TableCell>
+                                <TableCell align="right" sx={{fontSize: "20px"}}>Country</TableCell>
                                 <TableCell align="center" sx={{fontSize: "20px"}}>Image</TableCell>
-                                <TableCell align="right" sx={{fontSize: "20px"}}>Nombre artista</TableCell>
-                                <TableCell align="right" sx={{fontSize: "20px"}}>Titulo Cancion</TableCell>
+                                <TableCell align="right" sx={{fontSize: "20px"}}>Artist name</TableCell>
+                                <TableCell align="right" sx={{fontSize: "20px"}}>Song title</TableCell>
                                 {/* <TableCell align="right" sx={{fontSize: "20px"}}> </TableCell> */}
                             </TableRow>
                         </TableHead>
@@ -87,12 +94,12 @@ const EurovisionRankingPage = () => {
                             sx={{padding: "10px inherit 10px inherit"}}
                             //   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                            <TableCell align="right">NOTA</TableCell>
+                            <TableCell align="right" sx={{fontSize: "20px"}}>{actuacion.nota}</TableCell>
                             <TableCell align="right">{actuacion.code_pais}</TableCell>
                             <TableCell component="th" scope="row" align="right">
                                 <Box component="img"
                                 src={`http://localhost:5000/images/${index}.jpg`}  alt={`imagen${index}`}
-                                sx={{with: "80px", height: "80px", transition: "all 1s",
+                                sx={{with: "70px", height: "70px", transition: "all 1s",
                                         margin: "auto", 
                                         boxShadow: "10px 10px 10px 5px",
                                         boxSizing: "border-box",
