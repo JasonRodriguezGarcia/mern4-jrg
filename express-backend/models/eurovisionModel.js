@@ -75,13 +75,28 @@ export async function sendVotos(votoEmitido) {
     throw err;
   }
 }
-// export function getVotantes(tipo) {
-//   return new Promise((resolve, reject) => {
-//     db.all(`SELECT * FROM miembros WHERE activo = ?`, [tipo], (err, rows) => {
-//       if (err) return reject(err);
-//       resolve(rows);
-//     });
-//   });
+
+// export async function sendVotosMultiples(votosEmitidos) {
+//     const stringVotos = `INSERT INTO eurovision.votos 
+//         ("idVotante", "idActuacion", "fechaVoto", voto) `
+//     votosEmitidos.map(voto => (
+//         stringVotos += (`VALUES (${votosEmitidos.idVotante}, ${votosEmitidos.idActuacion}, ${votosEmitidos.fechaVoto}, ${votosEmitidos.voto}),`)
+//     ))
+//     stringVotos = st
+//     try {
+
+//         const {idVotante, idActuacion, fechaVoto, voto} = votoEmitido
+//         const result = await pool.query(`INSERT INTO eurovision.votos 
+//             ("idVotante", "idActuacion", "fechaVoto", voto)
+//             VALUES ($1, $2, $3, $4);`, [idVotante, idActuacion, fechaVoto, voto])
+//         // console.log("imprimo result: ", result)
+//         // return result;
+//         return {success: true, message: "OK"}
+
+//     } catch (err) {
+//         console.error('Error:', err.message);
+//         throw err;
+//     }
 // }
 
 // export function buscarId(id) {

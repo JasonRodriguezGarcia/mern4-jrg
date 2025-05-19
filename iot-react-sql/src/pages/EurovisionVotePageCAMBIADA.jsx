@@ -110,10 +110,10 @@ const EurovisionVotePage = () => {
 
     }, [])
 
-    const handleFormSubmit = (e) => {
-        // e.preventDefault()
-        alert("submitted !!")
-    }
+    // const handleFormSubmit = (e) => {
+    //     // e.preventDefault()
+    //     alert("submitted !!")
+    // }
 
     const handleOpenDialogVideo = (url) => {
         setUrlVideo(url)
@@ -141,29 +141,34 @@ const EurovisionVotePage = () => {
             debugger
         }
     }
-    const handleDialog = (id) => {
+    const handleFormSubmit = () => {
+        e.preventDefault()
+        if (actuaciones.length == 0) {
+            alert("No hay actuaciones")
+            return
+        }
         setOpenViewDialog(true)
-        setIdActuacion(id)
-        console.log("Actuacion seleccionada: ", id)
+        // setIdActuacion(id)
+        // console.log("Actuacion seleccionada: ", id)
     }
-    const handleSendVote = async () => {
+    const handleSendVotes = async () => {
         // mandar voto
         setOpenViewDialog(false)
             // crear user con datos de inputs
-        const votacion = {
-            idVotante: parseInt(idVotante),
-            idActuacion: idActuacion,
-            fechaVoto: new Date(),
-            voto: parseInt(voto)
-        }
-        console.log("Votacion: ", votacion)
+        // const votacion = {
+        //     idVotante: parseInt(idVotante),
+        //     idActuacion: idActuacion,
+        //     fechaVoto: new Date(),
+        //     voto: parseInt(voto)
+        // }
+        // console.log("Votacion: ", votacion)
         try {
             // fetch POST y pasar user como cuerpo (body)
-            const response = await fetch('http://localhost:5000/api/v1/eurovision/votos',
+            const response = await fetch('http://localhost:5000/api/v1/eurovision/votosmultiples',
                 {
                     method: 'POST',
                     headers: {'Content-type': 'application/json; charset=UTF-8'},
-                    body: JSON.stringify(votacion)
+                    body: JSON.stringify(actuaciones)
                 }
             )
             const respuesta = await response.json();
@@ -198,7 +203,7 @@ const EurovisionVotePage = () => {
                 </DialogContent>
                 <DialogActions>
                     {/* <Button onClick={()=> setOpenViewDialog(false)}>Disagree</Button> */}
-                    <Button onClick={handleSendVote} 
+                    <Button onClick={handleSendVotes} 
                         variant="contained" autoFocus sx={{backgroundColor: "green"}}
                     >
                         VOTE !!
@@ -298,7 +303,7 @@ const EurovisionVotePage = () => {
                                 <TableCell align="right" sx={{fontSize: "20px"}}>Country</TableCell>
                                 <TableCell align="right" sx={{fontSize: "20px"}}>Song title</TableCell>
                                 {true && <TableCell align="right" sx={{fontSize: "20px"}}>Qualification</TableCell>}
-                                <TableCell align="right" sx={{fontSize: "20px"}}> </TableCell>
+                                {/* <TableCell align="right" sx={{fontSize: "20px"}}> </TableCell> */}
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -354,7 +359,7 @@ const EurovisionVotePage = () => {
                                             </Select>
                                         </FormControl>
                                     </TableCell>}
-                                <TableCell align="right">
+                                {/* <TableCell align="right">
                                     <ButtonGroup variant="contained" aria-label="Basic button group">
                                         <Button title="Submit Vote !!"  
                                         onClick={()=> handleDialog(actuacion.id)}
@@ -362,7 +367,7 @@ const EurovisionVotePage = () => {
                                         🗳vote
                                         </Button>
                                     </ButtonGroup>
-                                </TableCell>
+                                </TableCell> */}
                             </TableRow>
                         ))}
                         </TableBody>

@@ -39,6 +39,18 @@ router.post('/votos', async(req, res) => {
     res.json (resultVoto)
 })
 
+router.post('/votosmultiples', async(req, res) => {
+    const votosEmitidos = req.body
+    console.log("Recibido en backend: ", votosEmitidos)
+
+    for (let index = 0; index < votosEmitidos.length; index++) {
+        const resultVoto = await sendVotos(votosEmitidos);
+    }
+    // const resultVotosMultiples = await sendVotosMultiples(votosEmitidos);
+    // console.log(resultVotosMultiples);
+    res.json ({restultado: "OK"})
+})
+
 // router.get('/informes/:tipo', async(req, res) => { // ojo con el order al poner este gues
 //     const {tipo} = req.params
 //     const miembros = await informe(tipo == 'activos'? 1 : 0);
