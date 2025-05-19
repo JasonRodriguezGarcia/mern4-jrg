@@ -298,7 +298,7 @@ const EurovisionVotePage = () => {
                                 <TableCell align="right" sx={{fontSize: "20px"}}>Country</TableCell>
                                 <TableCell align="right" sx={{fontSize: "20px"}}>Song title</TableCell>
                                 {true && <TableCell align="right" sx={{fontSize: "20px"}}>Qualification</TableCell>}
-                                <TableCell align="right" sx={{fontSize: "20px"}}> </TableCell>
+                                {/* <TableCell align="right" sx={{fontSize: "20px"}}> </TableCell> */}
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -354,7 +354,7 @@ const EurovisionVotePage = () => {
                                             </Select>
                                         </FormControl>
                                     </TableCell>}
-                                <TableCell align="right">
+                                {/* <TableCell align="right">
                                     <ButtonGroup variant="contained" aria-label="Basic button group">
                                         <Button title="Submit Vote !!"  
                                         onClick={()=> handleDialog(actuacion.id)}
@@ -362,7 +362,7 @@ const EurovisionVotePage = () => {
                                         🗳vote
                                         </Button>
                                     </ButtonGroup>
-                                </TableCell>
+                                </TableCell> */}
                             </TableRow>
                         ))}
                         </TableBody>

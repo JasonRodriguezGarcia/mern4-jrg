@@ -1,0 +1,414 @@
+   Actividad 2 (usar comandos en el contenedor de postgress sin pg_admin (5050) osea a mano)
+Estas accediendo a PostgreSQL desde un contenedor Docker. Tienes el siguiente archivo SQL que queieres ejecutar
+ usando la linea de comandos >>psql. Te dicen que puedes copiar el archivo de texto al contenedor, y ejecutar el
+  comando psql desde dentro del contenedor.
+
+docker cp psql.test1.sql postgres-db:/psql.test1.sql   -- copiar el archivo al contenedor
+
+>> psql -U postgres -d erp -f psql.test1.sql       -- ejecutar el archivo SQL desde la linea de comandos   
+
+>> psql -U postgres -d erp -f psql.test1.sql > output.log  -- pipe el output a un archivo
+-- Connectar a la base de datos
+\c demo
+
+-- Mostrar todas las tablas
+\dt
+
+-- Create a table AL NO INDICAR SQUEMA SE COPIA EN SQUEMA PUBLIC DE LA BASE DE DATOS
+CREATE TABLE test1 (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    joined TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Seed data
+INSERT INTO test1 (name) VALUES
+  ('Alice'), ('Bob');
+
+-- Verify the rows
+SELECT * FROM test1;
+
+-- Show tables again
+\dt
+Ahora, repetir el proceso pero con un archivo de sql para mostrar todas las columnas de una tabla. 
+Usar INFORMATION_SCHEMA.columns.
+
+Crear fichero en /Documentos en pc psql.test1.sql y copiar el contenido de arriba
+Entramos en el contenedor de postgress
+    docker exec -it postgres-db sh
+teclar (-U usuario, -d database)
+    psql -U postgres -d demo -f psql.test1.sql
+
+**********
+otra actividad
+Crear fichero en /Documentos en pc psql.test2.sqp y copiar contenido actividad:
+Repetir el proceso pero con un archivo de sql para mostrar todas las columnas de una tabla. Usar INFORMATION_SCHEMA.columns.
+    SELECT table_schema, table_name, column_name
+    FROM INFORMATION_SCHEMA.columns
+    WHERE table_name = 'test1'
+
+docker cp psql.test2.sql postgres-db:/psql.test2.sql
+docker exec -it postgres-db sh
+psql -U postgres -d demo -f psql.test2.sql
+
+******************************************
+¿Qué hace el siguiente código? Ejecutarlo.
+
+El siguiente código guardar en psql.test3.sql
+-- Ask the user for the table name
+\prompt 'Introducir un nombre de una tabla: ' tblname
+
+-- Use the input in a SELECT
+SELECT * FROM :tblname LIMIT 5;
+
+-- Describe the table structure
+\d :tblname
+
+docker cp psql.test3.sql postgres-db:/psql.test3.sql
+docker exec -it postgres-db sh
+psql -U postgres -d erp -f psql.test3.sql
+
+***************************
+en 5050
+herramientas consulta
+
+SELECT count(*) as Total_empleados
+FROM scott.emp;
+
+SELECT deptno, count(empno) as Total_empleados
+FROM scott.emp 
+GROUP BY deptno
+ORDER BY deptno;
+
+SELECT deptno, count(empno) as Total_empleados
+FROM scott.emp 
+GROUP BY deptno
+ORDER BY Total_empleados
+
+si tuviesemos el campo sexo
+SELECT deptno, sexo count(empno) as Total_empleados
+FROM scott.emp 
+GROUP BY deptno, sexo
+ORDER BY Total_empleados
+
+otro
+NO FUNCIONA
+SELECT deptno, sexo, count(empno) as Total_empleados
+FROM scott.emp 
+GROUP BY deptno, sexo
+ORDER BY Total_empleados
+HAVING total_empleados >=4
+
+FUNCIONA
+SELECT deptno, count(empno) as Total_empleados
+FROM scott.emp 
+GROUP BY deptno
+HAVING count(empno) >=4
+
+otro NO FUNCIONA, debido a que funciones como COUNT no funcionan en where
+SELECT deptno, count(empno) as Total_empleados
+FROM scott.emp 
+GROUP BY deptno
+WHERE Total_empleados >= 4
+ORDER BY Total_empleados
+
+COUNT(), MAX(), MIN()
+
+SELECT deptno, SUM(sal) AS salario_sumar
+FROM scott.emp 
+GROUP BY deptno
+HAVING SUM(sal) > 2000
+
+consulta con subconsultas
+SELECT deptno, SUM(sal) AS salario_sumar
+FROM scott.emp 
+GROUP BY deptno, empno
+HAVING empno IN (
+	SELECT empno
+	FROM scott.emp
+	WHERE empno IN (7839,  7521, 1234)
+)
+
+relacion 1 a varios
+SELECT *
+FROM scott.dept AS d
+INNER JOIN scott.emp AS e ON d.deptno = e.deptno
+ORDER BY d.deptno
+
+lef join rigth join
+SELECT *
+FROM scott.dept AS d
+LEFT JOIN scott.emp AS e ON d.deptno = e.deptno
+ORDER BY d.deptno
+
+SELECT *
+FROM scott.dept AS d
+LEFT JOIN scott.emp AS e ON d.deptno = e.deptno
+WHERE empno IS NULL
+ORDER BY d.deptno
+
+SELECT *
+FROM scott.dept AS d
+RIGHT JOIN scott.emp AS e ON d.deptno = e.deptno
+ORDER BY d.deptno
+
+saca todo
+SELECT *
+FROM scott.dept AS d
+FULL OUTER JOIN scott.emp AS e ON d.deptno = e.deptno
+ORDER BY d.deptno
+
+1 de cada que aparece en todos (OJO OCUPA MUCHOS RECURSOS )
+SELECT *
+FROM scott.dept AS d
+CROSS JOIN scott.emp AS e --ON d.deptno = e.deptno
+ORDER BY d.deptno
+
+***********************
+Actividades de JOIN
+
+CREATE SCHEMA IF NOT EXISTS blogs
+    AUTHORIZATION postgres;
+
+	
+CREATE TABLE blogs.posts (
+    post_id INTEGER PRIMARY KEY,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create the comments table without autoincrement and allow nullable post_id
+CREATE TABLE blogs.comments (
+    comment_id INTEGER PRIMARY KEY,
+    post_id INTEGER,
+    author TEXT NOT NULL,
+    comment TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert sample posts (with explicit post_id)
+INSERT INTO blogs.posts (post_id, title, content) VALUES
+(1, 'Welcome to our blog', 'This is the first post.'),
+(2, 'Learning SQL', 'Today we discuss foreign keys.'),
+(3, 'Cascade deletes', 'Why they matter.'),
+(4, 'No comments here', 'This post has no comments.');
+
+-- Insert sample comments (with explicit comment_id)
+INSERT INTO blogs.comments (comment_id, post_id, author, comment) VALUES
+(1, 1, 'Alice', 'Great first post!'),
+(2, 1, 'Bob', 'Thanks for the intro.'),
+(3, 2, 'Charlie', 'Foreign keys are tricky but useful.'),
+(4, 2, 'Dana', 'This helped me a lot.'),
+(5, 2, 'Eli', 'Any tips for joins?'),
+(6, 3, 'Fiona', 'I love cascade deletes!'),
+(7, 3, 'George', 'Cascades saved me so much time.'),
+(8, 3, 'Hana', 'Should I always use them?'),
+(9, 3, 'Ivan', 'What are the risks?'),
+(10, 3, 'Jill', 'Great explanation, thanks!'),
+(11, 99, 'Kevin', 'Is this post missing?'),   -- post_id = 99 does NOT exist in posts
+(12, NULL, 'Liam', 'No post id here either'); -- post_id is NULL
+
+Usando el esquema de blogs, realiza las siguientes consultas:
+
+Lista todos los posts y sus comentarios, mostrando el título del post, el autor del comentario y el texto del comentario.
+SELECT p.post_id, p.title, p.content, p.created_at, c.author, c.comment
+FROM blogs.posts p
+INNER JOIN public.comments c ON p.post_id = c.post_id;
+
+Muestra todos los posts y todos los comentarios, incluyendo posts sin comentarios y comentarios sin post asociado.
+SELECT p.post_id, p.title, p.content, p.created_at, c.author, c.comment
+FROM blogs.posts p
+FULL OUTER JOIN public.comments c ON p.post_id = c.post_id;
+
+Muestra todos los comentarios con el título del post al que pertenecen si existe. Incluye comentarios que no tengan
+un post válido (como los comentarios 11 y 12 ).
+SELECT p.post_id, p.title, p.content, p.created_at, c.author, c.comment
+FROM blogs.posts p
+RIGHT JOIN public.comments c ON p.post_id = c.post_id;
+
+Muestra todos los posts, y si tienen comentarios, muestra también los comentarios y sus autores. Para los posts sin
+ comentarios, debe mostrar NULL en las columnas de comentarios.
+SELECT p.post_id, p.title, p.content, p.created_at, c.author, c.comment
+FROM blogs.posts p
+LEFT JOIN public.comments c ON p.post_id = c.post_id;
+
+Cuenta cuántos comentarios tiene cada post, incluyendo los que no tienen comentarios.
+SELECT p.post_id, p.title, p.content, p.created_at, COUNT(*) AS CUENTA
+FROM blogs.posts p
+LEFT JOIN public.comments c ON p.post_id = c.post_id
+GROUP BY p.post_id, p.title, p.content, p.created_at
+ORDER BY p.post_id
+
+Muestra los IDs de lSELECT post_id, COUNT(comment_id) as Total_comentarios
+FROM blogs.comments
+GROUP by post_id
+HAVING COUNT(comment_id) >=4
+
+¿Qué hace el siguiente código? TIENE UNA SUBCONSULTA
+SELECT post_id, COUNT(*)
+FROM blogs.comments
+GROUP BY post_id
+HAVING COUNT(*) > (
+    SELECT AVG(comment_count) FROM (
+        SELECT COUNT(*) AS comment_count
+        FROM blogs.comments
+        GROUP BY post_id
+    ) AS counts
+);
+(solucion: cuenta los mayores que la media)
+
+*************
+
+|| es para contatenar en postgres
+SELECT ename || '-' || job AS titulo,sal AS salario, 2+5
+FROM scott.emp
+
+GUARDAR CONSULTAS PARA REUITILIZARLAS (VISTAS, QUE SE USAN NORMALMENTE PARA INFORMES)
+dentro del esquema
+    VISTAS
+    crear
+    vw_empleados
+    CODIGO
+        pegar consulta
+            SELECT ename || '-' || job AS titulo,sal AS salario, 2+5
+            FROM scott.emp;
+
+SELECT * FROM scott.vw_empleados;
+
+PODEMOS HACER QUE UNA VISTA SEA ACCESIBLE POR UN TIPO DE USUARIO
+
+INSERT INTO scott.vw_empleados (titulo, salario) -- DA ERROR PORQUE FALTAN DATOS DE LA TABLA BASE
+values ('pepe', 1000)
+
+funcionaria porque usa campos del VW
+UPDATE scott.vw_empleados SET salario = 2000
+WHERE salario = 1100
+
+PERMITIR QUE UNA VISTA SEA VISIBLE PARA UNOS Y OTROS NO
+EN LA VISTA 
+    PESTAÑA Seguridad
+
+****************
+EJERCICIOS
+CON ESTA ESTRUCTURA HAREMOS LOS EJERCICIOS, SE CREARA UN SQUEMA NUEVO LLAMADO tienda
+
+CREATE SCHEMA IF NOT EXISTS tienda
+    AUTHORIZATION postgres;
+
+CREATE TABLE tienda.productos (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100),
+    categoria VARCHAR(50),
+    precio DECIMAL(10,2)
+);
+
+CREATE TABLE tienda.ventas (
+    id SERIAL PRIMARY KEY,
+    producto_id INT REFERENCES tienda.productos(id),
+    cantidad INT,
+    fecha_venta DATE
+);
+
+INSERT INTO tienda.productos (nombre, categoria, precio) VALUES
+('Camiseta', 'Ropa', 20.00),
+('Pantalón', 'Ropa', 35.50),
+('Zapatos', 'Calzado', 50.00),
+('Sandalias', 'Calzado', 25.00),
+('Gorra', 'Accesorios', 15.00);
+
+INSERT INTO tienda.ventas (producto_id, cantidad, fecha_venta) VALUES
+(1, 3, '2025-05-01'),
+(2, 1, '2025-05-03'),
+(3, 2, '2025-05-05'),
+(1, 1, '2025-05-07'),
+(5, 4, '2025-05-10'),
+(4, 2, '2025-05-11');
+
+Actividad
+Crear una vista llamada "vw_productos_ropa_cara" que muestre los productos de la categoría "Ropa" con un 
+precio superior a 25 euros. La vista debe mostrar el nombre del producto y su precio.
+solucion (la lógica de negocios pasaría a la base de datos)
+SELECT nombre, precio
+FROM tienda.productos
+WHERE categoria = 'Ropa' AND precio > 25;
+
+Fijáte como funciona los comandos con fechas:
+
+SELECT NOW() + INTERVAL '2 day';
+devuelve: 2025-05-21 17:03:02.958421+00
+SELECT NOW() - INTERVAL '3 months';
+devuelve: 2025-08-19 17:04:34.390699+00
+
+SELECT NOW() + INTERVAL '1 year'
+2026-05-19 17:34:36.393095+00
+
+SELECT NOW()::date;  -- instruccion propia de postgres
+devuelve: 2025-05-19
+
+SELECT CAST(NOW() AS date);
+devuelve: 2025-05-19
+
+SELECT NOW()::date + INTERVAL '1 year'
+devuelve: 2026-05-19 00:00:00
+
+SELECT NOW() - INTERVAL '3 weeks'
+devuelve: SELECT NOW() - INTERVAL '3 weeks'
+
+✅ Supported units para INTERVAL '1 day' '2 hours' '30 minutes' '10 seconds' '3 months' '1 year' '5 days 3 hours
+ 20 minutes' (combined)
+
+Crear una vista llamada "vw_ventas_recientes" que muestre las ventas realizadas en los últimos 2 semanas. La 
+vista debe mostrar el nombre del producto, la cantidad vendida y la fecha de venta.
+SELECT p.nombre, v.cantidad, v.fecha_venta 
+FROM tienda.ventas v
+INNER JOIN tienda.productos p on v.producto_id = p.id
+WHERE fecha_venta >= (Now() - INTERVAL '2 weeks')
+
+probamos a parte con:
+SELECT * FROM tienda.vw_ventas_recientes;
+
+DAR ACCESO O NO DE UN USUARIO A UNA TABLA PERO SÍ A UNA VISTA
+
+EN VISTA PRINCIPAL
+ROLES DE LOGIN/GRUPOS
+    para crear usuario, 1º crear grupo, ya hay grupos creados pg_checkpoint, ...
+    crear Rolde Login/grupos
+        Privilegios
+            dejar heredar
+    salvar
+
+en esquema propiedades
+    Seguridad
+        añadir privilegio a nuestro usuario/grupo
+ir a la vista propiedades
+    seguridad
+        añadir usuario/grupo
+        privilegios SELECT
+
+crear servidor JON
+    jon_dev
+
+    usuario jon
+    pass    jon
+
+podemos usar
+SELECT * FROM scott.vw_empleados;
+
+no podremos usar
+SELECT * FROM scott.emp;
+
+ORDEN
+grupo CREAR
+esquema AÑADIR PRIV
+vista AÑADIR PRIV
+roles crear usuario pepe
+registar en servidor
+    general
+        nombre pepe_dev
+    conexion
+        nombre postgres
+        usuario pepe
+        passw pepe
+    salvar
+
