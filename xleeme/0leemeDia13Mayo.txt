@@ -91,14 +91,15 @@ volumes:
 en docker terminal en /Documents
 docker compose up -d
 
-docker exec -it postgres-db bin/bash
+entramos en el contenedor de postgres con terminal
+docker exec -it postgres-db /bin/bash
 
 cd var
 cd lib
 cd postgresql
 cd data  (donde se guardan los ficheros de configuración)
 cd /
-psql -U postgres (abre un interface de comandos de postgresql)
+psql -U postgres (abre un interface de comandos dentro de postgresql con el usuario postgres)
 
 **************
 IMPORTANTE USAR SOLAMENTE MINUSCULAS Y ESPACIAR NOMBRES DE CAMPOS COMPUESTOS CON GUION BAJO
@@ -110,13 +111,13 @@ VALE
 codigo_pais
 *******************
 
-en postgres=#
-SELECT * FROM pg_database;   (muestra datos de da base de datos)
+seguimos tecleando ya dentro de bin/
+SELECT * FROM pg_database;   (muestra datos de la base de datos, comando propio de postgres)
     j ó k para línea siguiente o anterior
     esp para pagina siguiente
     q para salir
 
-SELECT * FROM pg_tables;
+SELECT * FROM pg_tables;  (muestra tablas accesibles, comando propio de postgres)
 
 SELECT * FROM information_schema.tables;  (es standard en sql, muestra todas las tablas en la base de datos actual)
 SELECT * FROM pg_catalog.pg_tables;       ( muestra lo mismo que la anterior pero los resultados son propios de postgresql)

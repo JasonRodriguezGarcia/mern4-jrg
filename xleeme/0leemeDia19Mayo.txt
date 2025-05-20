@@ -1,13 +1,24 @@
    Actividad 2 (usar comandos en el contenedor de postgress sin pg_admin (5050) osea a mano)
-Estas accediendo a PostgreSQL desde un contenedor Docker. Tienes el siguiente archivo SQL que queieres ejecutar
+Estas accediendo a PostgreSQL desde un contenedor Docker. Tienes el siguiente archivo SQL que quieres ejecutar
  usando la linea de comandos >>psql. Te dicen que puedes copiar el archivo de texto al contenedor, y ejecutar el
   comando psql desde dentro del contenedor.
 
+Crear en pc/Documents el fichero psql.test1.sql
+Luego desde el terminal de docker
 docker cp psql.test1.sql postgres-db:/psql.test1.sql   -- copiar el archivo al contenedor
 
->> psql -U postgres -d erp -f psql.test1.sql       -- ejecutar el archivo SQL desde la linea de comandos   
+abrir el contenedor de docker de nuestro compose.yml (que ya está configurado con postgres-db y pg_admin)
+docker compose up -d
 
->> psql -U postgres -d erp -f psql.test1.sql > output.log  -- pipe el output a un archivo
+entrar en postgres
+docker exec -it postgres-db sh
+
+Una vez dentro abriemos nuestra base de datos postgres
+>> psql -U postgres -d postgres -f psql.test1.sql  -- ejecutar el archivo SQL desde la linea de comandos en postgres
+ó
+>> psql -U postgres -d postgres -f psql.test1.sql > output.log  -- pipe el output a un archivo
+
+Detalles del archivo psql.test1.sql
 -- Connectar a la base de datos
 \c demo
 
@@ -30,14 +41,16 @@ SELECT * FROM test1;
 
 -- Show tables again
 \dt
+
+
 Ahora, repetir el proceso pero con un archivo de sql para mostrar todas las columnas de una tabla. 
 Usar INFORMATION_SCHEMA.columns.
 
-Crear fichero en /Documentos en pc psql.test1.sql y copiar el contenido de arriba
+Crear fichero en /Documentos en pc psq2.test2.sql y copiar el contenido de arriba
 Entramos en el contenedor de postgress
     docker exec -it postgres-db sh
 teclar (-U usuario, -d database)
-    psql -U postgres -d demo -f psql.test1.sql
+    psql -U postgres -d demo -f psql2test2.sql
 
 **********
 otra actividad
@@ -373,24 +386,45 @@ DAR ACCESO O NO DE UN USUARIO A UNA TABLA PERO SÍ A UNA VISTA
 EN VISTA PRINCIPAL
 ROLES DE LOGIN/GRUPOS
     para crear usuario, 1º crear grupo, ya hay grupos creados pg_checkpoint, ...
-    crear Rolde Login/grupos
+    crear Role Login/grupos
+        General
+            nombre grupo_test1
         Privilegios
             dejar heredar
     salvar
 
-en esquema propiedades
+en esquema tienda propiedades
     Seguridad
-        añadir privilegio a nuestro usuario/grupo
-ir a la vista propiedades
+        privilegios
+            Beneficiario: añadir a nuestro usuario/grupo
+            Privilegios: Usage
+        Salvar
+ir a la vista vw_productos_ropa_cara propiedades del esquema tienda
     seguridad
-        añadir usuario/grupo
-        privilegios SELECT
+        privilegios
+            añadir usuario/grupo
+            privilegios SELECT
 
-crear servidor JON
-    jon_dev
+En roles (abajo) boton derecho
+    Crear - Rol de login/grupo
+        General
+            nombre jon
+        Definicion
+            contraseña jon
+        Privilegios
+            Activar Puede iniciar sesion
+        Afiliacion
+            Añadir Miembro de 
+                grupo_test1
 
-    usuario jon
-    pass    jon
+registrar (crear) servidor jon_dev
+    general
+        jon_dev
+    conexion
+        nombre postgres
+        usuario jon
+        pass    jon
+    salvar
 
 podemos usar
 SELECT * FROM scott.vw_empleados;
@@ -399,9 +433,9 @@ no podremos usar
 SELECT * FROM scott.emp;
 
 ORDEN
-grupo CREAR
-esquema AÑADIR PRIV
-vista AÑADIR PRIV
+grupo CREAR grupo sin login y luego usuario con login. El usuario lo añdiremos luego al grupo.
+(NO --> esquema AÑADIR en PRIV el grupo)
+vista AÑADIR en PRIV al grupo
 roles crear usuario pepe
 registar en servidor
     general
