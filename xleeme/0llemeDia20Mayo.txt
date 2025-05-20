@@ -1,0 +1,349 @@
+tipos join
+https://ingenieriadesoftware.es/tipos-sql-join-guia-referencia/
+
+Entramos en 5050
+query con
+    SELECT *
+    FROM scott.dept as d
+    inner JOIN scott.emp as e ON e.deptno = d.deptno
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/repaso-biblioteca.md
+
+
+CREATE SCHEMA IF NOT EXISTS biblioteca;
+
+
+CREATE TABLE biblioteca.socios (
+    id_socio SERIAL PRIMARY KEY,
+    nombre TEXT NOT NULL,
+    correo TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE biblioteca.libros (
+    id_libro SERIAL PRIMARY KEY,
+    titulo TEXT NOT NULL,
+    autor TEXT NOT NULL
+);
+
+CREATE TABLE biblioteca.prestamos (
+    id_prestamo SERIAL PRIMARY KEY,
+    id_socio INT REFERENCES biblioteca.socios(id_socio),
+    id_libro INT REFERENCES biblioteca.libros(id_libro),
+    fecha_prestamo DATE NOT NULL,
+    fecha_devolucion DATE
+);
+
+-- Socios
+INSERT INTO biblioteca.socios (nombre, correo) VALUES
+('Ana López', 'ana@correo.com'),         -- Ha hecho préstamos
+('Carlos Pérez', 'carlos@correo.com'),   -- Ha hecho préstamos
+('Lucía Gómez', 'lucia@correo.com'),     -- Ha hecho préstamos
+('Mario Díaz', 'mario@correo.com');      -- NO ha hecho ningún préstamo
+
+-- Libros
+INSERT INTO biblioteca.libros (titulo, autor) VALUES
+('Cien años de soledad', 'Gabriel García Márquez'),  -- Prestado
+('El túnel', 'Ernesto Sabato'),                      -- Prestado
+('Don Quijote de la Mancha', 'Miguel de Cervantes'), -- Prestado
+('Rayuela', 'Julio Cortázar');                       -- NO ha sido prestado
+
+-- Préstamos
+INSERT INTO biblioteca.prestamos (id_socio, id_libro, fecha_prestamo, fecha_devolucion) VALUES
+(1, 1, '2024-05-01', '2024-05-10'), -- Ana -> Cien años
+(1, 2, '2024-05-11', NULL),         -- Ana -> El túnel
+(2, 1, '2024-05-03', '2024-05-12'), -- Carlos -> Cien años
+(3, 3, '2024-05-05', NULL);         -- Lucía -> Don Quijote
+
+PARTE 1
+Llevar a cabo lo siguiente:
+
+Queremos saber si hay socios que aún no han realizado préstamos. Mostrar solo el socio que no ha realizado un
+ préstamo.
+SELECT s.nombre FROM biblioteca.prestamos p
+RIGHT JOIN biblioteca.socios s ON s.id_socio = p.id_socio
+WHERE p.id_prestamo IS NULL
+
+Muestra una lista de todos los préstamos, incluyendo el nombre del socio, el título del libro y la fecha del
+ préstamo.
+SELECT s.nombre, l.titulo, p.fecha_prestamo FROM biblioteca.prestamos p
+LEFT JOIN biblioteca.socios s ON s.id_socio = p.id_socio
+LEFT JOIN biblioteca.libros l ON l.id_libro = p.id_libro
+
+Queremos saber qué libros han sido prestados y cuáles no.
+SELECT l.titulo, l.autor FROM biblioteca.libros l
+LEFT JOIN biblioteca.prestamos p ON l.id_libro = p.id_libro
+WHERE p.fecha_prestamo IS NOT NULL
+
+Queremos saber qué libros estan actualmente prestados y a qué socio están prestados. Crear una vista llamada
+ "vw_libros_prestados" para esta consulta, dandole permisos de lectura a la aplicacion de Python para sacar los informes.
+SELECT * FROM biblioteca.libros l
+INNER JOIN biblioteca.prestamos p ON l.id_libro = p.id_libro
+WHERE p.fecha_devolucion IS NULL
+
+Añadir unos nuevos libros a la tabla libros. Escribir el código SQL. 'Ana Lopez' ha prestado dos libros más.
+INSERT INTO biblioteca.libros(
+	titulo, autor)
+	VALUES 
+	('La cosa', 'Eddy Murphy'),
+	('Como hacerse millonario', 'Ronaldo Trump');
+
+INSERT INTO biblioteca.prestamos (id_socio, id_libro, fecha_prestamo) 
+VALUES (1, 4, NOW()),
+(1, 4, NOW());
+
+Escribir el código SQL para insertar su prestámo. Hoy, "Lucía Gómez" ha devuelto su libro "Don Quijote de la Mancha".
+UPDATE biblioteca.prestamos
+SET fecha_devolucion=Now()
+WHERE id_socio = 3 AND id_libro = 3
+
+Queremos saber cuántos libros prestados tiene cada socio actualmente. Si el valor es mayor a 3, mostrar los
+ resultados. Si es menos de 3, no hay ningun problema, asi que no les mostramos. De nuevo, Crear una vista llamada
+  "vw_libros_prestados_importantes" para esta consulta, dandole permisos de lectura a la aplicacion de Python para
+   sacar los informes.
+
+******************
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/06-db.functions.md
+FUNCIONES
+
+select funciones
+
+CREATE FUNCTION scott.obtener_salario(p_empno INTEGER)
+RETURNS NUMERIC AS $$
+DECLARE
+    salario NUMERIC;
+BEGIN
+    SELECT sal INTO salario FROM scott.emp WHERE empno = p_empno;
+    RETURN salario;
+END;
+$$ LANGUAGE plpgsql;
+
+Crea funcion en Funciones dentro del esquema Scott
+uso en query cualquiera
+select scott.obtener_salario(7839);
+devuelve 5000.00
+
+select *, scott.obtener_salario(7839) FROM scott.emp
+
+select *, scott.obtener_salario(empno) FROM scott.emp
+
+SELECT * FROM scott.emp
+WHERE scott.obtener_salario(empno) > 1000
+
+crear consulta
+get_todos_empleados
+Definicion
+    tipo retorno
+        scott.emp --devolvera una tabla
+    Lenguage
+        sql
+    CODIGO
+        SELECT * FROM scott.emp;
+    options
+        activar returs a set
+    SALVAR
+
+usar en cualquier lado
+SELECT * FROM scott.get_todos_empleados();
+
+crear otra
+get_empleado
+    tipo retorno
+        record
+    añadir parametro
+        INTEGER
+        IN
+        ARGUMENTO _empno
+CODE
+    SELECT *
+    FROM scott.emp
+    WHERE empno = _empno;
+options
+    DEJAMOS IGUAL
+
+
+Crear FUNCIONA
+-- GET EMPLEADO COUNT
+    CODIGO  
+        SELECT COUNT(*) FROM scott.emp;
+
+SELECT scott.get_empleados_cuenta();
+
+-- MOSTRAR DEPT NOMBRE PARA UN EMPLEADO
+General
+    get_empleado_nombre
+Definicion
+    tipo del retorno character varing
+    Argumentos
+        tipo datos INTEGER
+        modo IN
+        argument name _empno
+    CODIGO
+        SELECT d.dname FROM scott.emp e
+        INNER JOIN scott.dept d on e.deptno = d.deptno
+        WHERE e.empno = _empno;
+SALVAR
+USO funcion
+    SELECT scott.get_empleado_nombre(7499)
+
+
+los mismo pero con plpsql
+SELECT ename, sal  -- valores out
+FROM scott.emp
+WHERE empno = 7839
+
+crear funcion test4
+tipo retorno record
+lenguaje plpsql
+Argumentos
+    integer
+    in
+    _empno
+
+    character varing
+    output
+    emp_name
+    numeric out emp_salario
+
+
+BEGIN
+
+SELECT ename, sal 
+INTO emp_name, emp_salario
+FROM scott.emp
+WHERE empno = _empno;
+
+END;
+
+
+SELECT * FROM scott.test4(7839)
+
+
+function test5
+tipo retorno numeric
+lenguaje plpgsql
+Argumentos
+    integer in _empno
+Codigo
+DECLARE
+	salario NUMERIC;
+	resultado NUMERIC;
+
+BEGIN
+	SELECT sal
+	INTO salario
+	FROM scott.emp
+	WHERE empno = _empno;
+		resultado := salario + 100;
+
+		--raise notice ' salario: %', resultado; -- IMPRIMIR EN PANTALL
+	RETURN resultado;
+END;
+
+SELECT * FROM scott.test5(7839)
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/repaso-biblioteca.md
+parte 2 
+
+definicion
+    tipo retorno integer
+    Argumentos
+        tipo datos integer IN _idsocio
+    Codigo
+SELECT count(*) FROM biblioteca.prestamos
+WHERE id_socio = _idsocio AND fecha_devolucion IS NULL
+
+OJO GUARDE LA FUNCION POR ERROR EN SQUEMA SCOTT DEBERIA SER BIBLIOTECA
+SELECT id_socio, nombre, scott.libros_prestados(id_socio) FROM biblioteca.socios
+
+
+
+inse upd dele procedimientos
+
+
+******************
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/07-db.indexes.md
+
+INDICES
+en postgress los indices con b-tree (autobalanceado) y no clustered, en sqlserver sí
+ventaja rendimiento consultas
+desventaja bajo rend en inserts
+
+SELECT * FROM clientes  -- seleccionar y boton E explain en los iconos de arriba de la consulta
+muesta consulta sequential scanning
+
+SELECT * FROM clientes WHERE id = 600 -- usa indice primario al pulsar Explain muestra que usa btree (balancing tree)
+
+SELECT * FROM clientes WHERE id > 600 and id <800 -- usa sequential
+SELECT * FROM clientes WHERE id > 600 and id <610 -- usa btree
+SELECT * FROM clientes WHERE email = 'cliente999@correo.com' -- usa sequential
+SELECT * FROM clientes WHERE saldo > 8000 -- usa sequential
+
+con esto revisamos qué tipo de búsquedas se hacen para cambiar para ver que va mejor
+
+en la tabla
+indices
+crear indice
+    generalnombre idx_email
+columnas
+    desactivar IS EXPRESSION
+    email ADD
+SALVAR
+
+SELECT * FROM clientes WHERE email = 'cliente999@correo.com'  -- AHORA USA btree
+SELECT * FROM clientes WHERE email IN ('cliente999@correo.com', 'cliente3@correo.com', 'cliente888@correo.com') -- tarda menos
+
+86ms
+
+121ms
+SELECT * FROM clientes
+WHERE UPPER(ciudad) ='MADRID'
+
+columnas
+    is EXPRESSION
+    expresion UPPER(CIUDAD)
+99ms
+
+en indice definicion (avanzado)
+FACTOR DE LLENADO 
+    90 (porcentaje)
+
+
+
+Actividad
+-- Se estan quejando los usuarios sobre el rendimiento de la aplicacion web al sacar un informe. Mejorar el 
+rendimiento de las siguientes consultas:
+
+SELECT *
+FROM orders
+WHERE product_name = 'Product_25';
+68ms
+
+SELECT *
+FROM orders
+WHERE order_date BETWEEN '2024-01-01' AND '2024-01-31';
+
+SELECT order_date
+FROM orders
+WHERE order_date BETWEEN '2024-01-01' AND '2025-01-31'; -- va algo más rápido respecto a la expresion anterior
+
+72ms
+63ms
+
+SELECT * 
+FROM orders
+ORDER BY customer_name DESC
+400ms
+152ms
+
+SELECT * FROM orders
+WHERE UPPER(product_name) IN ('PRODUCT_86', 'PRODUCT_13', 'PRODUCT_49');
+
+145ms
+90ms
+
+SELECT email, ciudad FROM clientes
+WHERE ciudad = 'Madrid' AND saldo > 8000;
+122ms
+85ms
+81ms
+
