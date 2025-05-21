@@ -100,6 +100,41 @@ Queremos saber cuántos libros prestados tiene cada socio actualmente. Si el val
  resultados. Si es menos de 3, no hay ningun problema, asi que no les mostramos. De nuevo, Crear una vista llamada
   "vw_libros_prestados_importantes" para esta consulta, dandole permisos de lectura a la aplicacion de Python para
    sacar los informes.
+PENDING¿?
+
+Crear esta función para sacar el nombre del autor, y pasando un identidad como parametro de entrada (IN): 
+biblioteca.get_autor_by_id(_id_libro integer). Usarlo como se ve en la imagen:
+defininicion
+    retorno character varing
+    tipo datos +
+        integer IN _idlibro
+SELECT biblioteca.get_autor2(5);
+SELECT *, biblioteca.get_autor2(id_libro) AS AUTOR
+FROM biblioteca.prestamos
+
+
+¿Podrias incluir tambien el titulo del libro? PODEMOS CREAR OTRO PERO SOLO DEVUELVE EL titulo
+O BIEN CREAR OTRO
+definicion
+    retorno record
+    plpsql
+
+    tipo datos +
+        integer IN _idlibro
+        TEXT OUT _autor
+        text out _titulo
+    CODIGO
+        begin
+
+        SELECT autor, titulo
+        INTO _autor, _titulo
+        FROM biblioteca.libros
+        WHERE id_libro = _idlibro;
+
+        END;
+
+ ¿Podrias crear una vista con este consulta?
+
 
 ******************
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/06-db.functions.md
@@ -392,3 +427,240 @@ DELETE FROM borraremp.empleados WHERE emp_id = 2;
 DROP SCHEMA IF EXISTS borraremp CASCADE;
 *************
 *************
+PARTE 3 Indices
+Nos dice que el correo electronico de los socios tiene que ser único, ya que muchos socios estan 
+registrando con el correo de sus amigos y familiares. Aplicar una restriccion único.
+
+¿Lo ves?
+
+SELECT indexname, indexdef
+FROM pg_indexes
+En la aplicacion de Python, se suele llevar a cabo los siguientes consultas. ¿Cómo mejorarías estas consultas con indices?
+
+SELECT * FROM biblioteca.libros WHERE titulo ILIKE '%cien%';
+80ms
+SELECT * FROM biblioteca.libros WHERE autor = 'Gabriel García Márquez';
+
+************
+
+PROCEDIMIENTOS ALMACENADOS
+es lenguaje plpgsql
+nomenclatura "usp_xxxxx"
+
+DO $$
+
+DECLARE
+	id integer := 0;
+
+BEGIN
+
+	RAISE NOTICE 'hola %', id;
+
+END;
+
+$$ language plpgsql
+
+
+******************
+esqueleto
+******************
+DO $$
+
+BEGIN
+
+END;
+
+$$ language plpgsql
+
+***************
+en postgres procedimiento para insert, update, delete EN OTROS NO SABEMOS
+
+DO $$ --sobra en procedimiento esto es para usar en query de pruebas
+
+DECLARE
+	id integer := 30;
+	nombre varchar(100);
+
+BEGIN
+
+	RAISE NOTICE 'hola %', id; -- CONSOLE.LOG
+	-- RAISE EXCEPTION 'ERROR !!! %', nombre; -- PARA MOSTRAR ERRORES 'EXECPTION'
+	SELECT dname 
+	INTO nombre 
+	FROM scott.dept
+	WHERE deptno = id;
+
+	RAISE NOTICE 'result: %', nombre;
+END;
+
+$$ language plpgsql --sobraría en procedimientos
+
+***************
+
+se llaman con CALL procedimiento
+CALL scott.print_deptname(10)
+
+***************
+EJECUTANTO EN CONSULTA SUELTA
+--CALL scott.print_deptname(10)
+
+DO $$
+
+DECLARE
+	id integer := 10; -- 20
+	nombre varchar(100);
+
+BEGIN
+
+	RAISE NOTICE 'hola %', id; -- CONSOLE.LOG
+	-- RAISE EXCEPTION 'ERROR !!! %', nombre; -- PARA MOSTRAR ERRORES 'EXECPTION'
+	SELECT dname 
+	INTO nombre 
+	FROM scott.dept
+	WHERE deptno = id;
+
+	IF nombre = 'ACCOUNTING' THEN
+		RAISE EXCEPTION 'No se pueden ver los datos de Contabilidad';
+	ELSE
+		RAISE EXCEPTION 'Hola %', nombre;
+	END IF;
+	RAISE NOTICE 'departamento: %', nombre;
+END;
+
+$$ language plpgsql
+
+*********
+probando en query SUELTA
+DO $$
+
+DECLARE
+
+	_deptno integer := 100;
+	_dname varchar(15) :='TESTING';
+	_loc varchar(100) := 'Bilbao';
+
+BEGIN
+
+	IF _loc = 'San Sebastian' THEN
+		RAISE EXCEPTION 'No se puede montar en SS';
+	ELSE
+		INSERT INTO scott.dept (deptno, dname, loc)
+		VALUES (_deptno, _dname, _loc);
+		RAISE NOTICE 'Hemos insertado % correctamente en %', _dname, _deptno;
+	END IF;
+END;
+
+$$ language plpgsql
+
+LUEGO EN PROCEDIMIENTO
+definicion
+    lenguaje plpgsql    --- OJO !!!
+    Argumentos
+        integer IN _deptno
+        character varing IN _dname
+        character varing IN _loc
+codigo
+BEGIN
+
+	IF _loc = 'San Sebastian' THEN
+		RAISE EXCEPTION 'No se puede montar en SS';
+	ELSE
+		INSERT INTO scott.dept (deptno, dname, loc)
+		VALUES (_deptno, _dname, _loc);
+		RAISE NOTICE 'Hemos insertado % correctamente en %', _dname, _deptno;
+	END IF;
+END;
+***************
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/08-db.storedprocedures.md
+EJEMPLO 3
+crear procedimiento
+
+plpgsql
+integer in _deptno
+
+BEGIN
+
+	IF EXISTS (SELECT 1 FROM scott.dept WHERE deptno = _deptno) THEN
+		DELETE FROM scott.dept WHERE deptno = _deptno;
+	ELSE
+		RAISE EXCEPTION 'deptno % no existe', _deptno;
+	END IF;
+END;
+
+CALL scott.delete_dept(40)
+
+***************
+Actividad 1: UPSERT 
+Actualizar el procedimiento de ejemplo 4 en la tabla scott.dept. Queremos que sea un UPSERT, es decir, si existe
+ lo actualizamos y si no existe lo insertamos.
+
+NOTAS: El término upsert proviene de la combinación de dos palabras en inglés: update (actualizar) y insert (insertar).
+ Un upsert es una operación en bases de datos que intenta insertar un nuevo registro, pero si ese registro ya existe 
+ (normalmente determinado por una clave primaria o única), en lugar de insertar un duplicado, actualiza el registro 
+ existente con los nuevos datos.
+
+Es decir, upsert = insertar si no existe, actualizar si existe.
+
+Ahora, cambiar el contenido del procedimiento para que use la sentencia ON CONFLICT de postgres:
+
+codigo
+DO $$
+
+DECLARE
+
+	_deptno integer := 50;
+	_dname varchar(15):= 'Ventas';
+	_loc varchar(15):= 'Beasain';
+	
+
+BEGIN
+
+	IF EXISTS (SELECT 1 FROM scott.dept WHERE deptno = _deptno) THEN
+		UPDATE scott.dept 
+		SET deptno = _deptno, dname = _dname, loc = _loc
+		WHERE deptno = _deptno;
+		RAISE NOTICE 'ACTUALIZACION CORRECTA';
+	ELSE
+		INSERT INTO scott.dept (deptno, dname, loc)
+		VALUES (_deptno, _dname, _loc);
+		RAISE NOTICE 'INSERCION CORRECTA';
+	END IF;
+		
+END;
+
+************
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/repaso-biblioteca.md
+PARTE 4 Stored Procedures
+BBDD BIBLIOTECA
+Validación de correo electrónico Crear un procedimiento almacenado que inserte un nuevo socio en la tabla socios. Agregar lógica de negocio para excluir cualquier correo electrónico que no contenga el dominio @nazaret.eus. Si el correo electrónico no es válido, el procedimiento debe lanzar una excepción (o mensaje) y no insertar el nuevo socio.
+PISTA:
+IF _correo NOT ILIKE '%@nazaret.eus' THEN
+Definicion
+    lenguaje    plpgsql
+    INTEGER IN _id_socio
+    character varing in _nombre
+    character varing in _correo
+
+codigo
+BEGIN
+
+	IF _correo NOT ILIKE '%@nazaret.eus' THEN
+		RAISE NOTICE 'CORREO NO VALIDO';
+	ELSE -- DESGLOSAR EL INSERT Y EL UPDATE Y PROBAR EN PYTHON
+		INSERT INTO biblioteca.socios (id_socio, nombre, correo)
+		VALUES (_id_socio, _nombre, _correo)
+		ON CONFLICT (id_socio)
+		DO UPDATE SET
+			nombre = EXCLUDED.nombre,
+			correo = EXCLUDED.correo;
+	END IF;		
+
+		
+END;
+
+testing
+CALL biblioteca.insert_update_socio_checking_email(21, 'Botones Sacarino', 'botones@gmail.com')
+
+
+
+

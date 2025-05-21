@@ -1,0 +1,147 @@
+integridad
+AQUI solo puede haber un teléfono,
+Aqui solo puede haber un email , ...
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/03-db.integridad.md
+
+IF NOT EXISTS CREATE TABLE contratistas (
+    id_contratista INT PRIMARY KEY,                 -- id_contratista debe ser único, ya que es la clave primaria
+    nombre VARCHAR(50) NOT NULL,                     -- nombre no puede ser nulo
+    apellido VARCHAR(50) NOT NULL,                   -- apellido no puede ser nulo
+    correo_electronico VARCHAR(100) UNIQUE,          -- correo electrónico debe ser único
+    telefono VARCHAR(15),                            -- teléfono con posible formato (check constraint)
+    fecha_contratacion DATE NOT NULL,                -- fecha de contratación no puede ser nula
+    salario DECIMAL(10, 2) CHECK (salario >= 0),     -- salario debe ser no negativo
+    id_departamento INT,                            -- departamento al que pertenece el contratista
+    puesto VARCHAR(50) CHECK (puesto IN ('Gerente', 'Desarrollador', 'Diseñador', 'Recursos Humanos')), -- puestos permitidos
+    fecha_nacimiento DATE CHECK (fecha_nacimiento <= CURRENT_DATE),  -- fecha de nacimiento debe ser en el pasado
+    edad INT CHECK (edad BETWEEN 18 AND 100),        -- edad debe estar entre 18 y 100 años
+    direccion VARCHAR(255),                          -- dirección del contratista
+    UNIQUE (telefono)                               -- garantizar que el teléfono sea único
+);
+
+Si revisamos la tabla con propiedades
+    restricciones
+        comprobar
+            veremos que salario hace algunas adaptaciones
+            que al comprobar devuelve un valor booleano
+        unico
+            veremos alguna adaptacion
+
+Actividad
+CREATE TABLE Productos (
+    id_producto INT,
+    nombre VARCHAR(100),
+    descripcion VARCHAR(255),
+    precio DECIMAL(10, 2),
+    cantidad INT,
+    categoria VARCHAR(50),
+    fecha_entrada DATE,
+    proveedor VARCHAR(100),
+    codigo_barra VARCHAR(50)
+);
+
+Data la siguiente tablas, añadir algún tipo de restricciones:
+
+Asegúrate de que el id_producto sea único y no nulo. Esto debe ser una clave primaria.
+    CREAR CLAVE PRIMARIA
+El codigo_barra debe ser único para cada producto. Añade una restricción UNIQUE para garantizar que no haya 
+productos con el mismo código de barras.
+    RESTRICIONES - UNICO
+El precio debe ser mayor que 0. Añade una restricción CHECK para asegurar que no se ingresen precios negativos.
+    RESTRICCIONES - COMPROBAR +
+        chk_precio 
+        precio > 0
+La cantidad debe ser mayor o igual a 10. Añade una restricción CHECK para asegurar que no haya cantidades negativas.
+Las categorías deben ser limitadas a: 'Electrónica', 'Ropa', 'Alimentos', 'Muebles'. Añade una restricción CHECK 
+para garantizar que los productos solo pertenezcan a estas categorías.
+    RESTRICCIONES - COMPROBAR +
+        chk_categoria
+        categoria IN ('Electrónica', 'Ropa', 'Alimentos', 'Muebles')
+La fecha_entrada debe ser una fecha válida y no puede ser futura. Añade una restricción CHECK para asegurar que
+    la fecha de entrada no sea mayor a la fecha actual.
+    RESTRICCIONES - COMPROBAR +
+        chk_fecha_entrada
+        fecha_entrada <= CURRENT_DATE
+Agregar un tipo de dato para el estado del producto (por ejemplo, 'disponible', 'agotado', 'en espera'). Esto 
+puede ser un ENUM o un tipo de dato personalizado.
+
+CREAR TIPO DE DATO (NO ES RECOMENDABLE DEBIDO A LA ESCALABILIDAD, SI AÑADIMOS NO HAY PEGA PERO SI MODIFICAMOS
+HAY QUE CAMBIAR CON CÓDIGO)
+TIPOS CREAR
+    nombre estado
+    definicion  
+        tipo enumeracion
+        +
+            disponible
+            agotado
+            en espera
+en tabla productos
+    añadir columna
+        estado_producto
+        tipo 
+            estado
+
+
+***************
+
+ORM
+OBJETO RELATIONAL MAPPING
+
+PHP - ORMS LARABEL SYMPHONY
+Python- ORM SQLALCHEMY
+
+CONFIGURACION
+
+************
+************
+************
+************
+ORM
+***
+directorio ORM
+python -m venv .venv
+.venv\Scripts\activate
+python -m pip install --upgrade pip
+pip install sqlalchemy psycopg2-binary
+
+crear pg_pg.python en orm
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+DB_USER = 'postgres'
+DB_PASS = 'postgres'
+DB_HOST = 'localhost'
+DB_PORT = '5432'
+DB_NAME = 'erp'
+
+engine = create_engine(f'postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}')
+
+# Create a configured "Session" class
+SessionLocal = sessionmaker(bind=engine)
+
+def get_session():
+    return SessionLocal()
+
+
+archivo ejemplo db_test.py
+python db_test.py
+from sqlalchemy import text
+from db_pg import get_session
+
+def test_connection(): 
+
+    session = get_session()
+
+    try:
+        # Execute raw SQL inside a session
+        result = session.execute(text("SELECT version();"))
+        rows = result.fetchall()
+        for row in rows:
+            print(row)
+    finally:
+        session.close()
+
+
+if __name__ == '__main__':
+    test_connection()
