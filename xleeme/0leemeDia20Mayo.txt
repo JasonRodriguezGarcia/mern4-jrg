@@ -347,3 +347,48 @@ WHERE ciudad = 'Madrid' AND saldo > 8000;
 85ms
 81ms
 
+*************
+EJERCICIO RAPIDO
+*************
+CREATE SCHEMA IF NOT EXISTS borraremp AUTHORIZATION postgres;
+
+CREATE TABLE borraremp.departamentos(
+	dept_id SERIAL PRIMARY KEY,
+	departamento TEXT
+);
+
+CREATE TABLE borraremp.empleados (
+	emp_id SERIAL PRIMARY KEY,
+	nombre TEXT,
+	dept_id INT REFERENCES borraremp.departamentos(dept_id)
+);
+
+INSERT INTO borraremp.departamentos (departamento)
+VALUES
+('VENTAS'),
+('INFORMATICA'),
+('CONTABILIDAD'),
+('MARKETING');
+
+INSERT INTO borraremp.empleados (nombre, dept_id)
+VALUES
+('PEPE', 1),
+('JUAN', 1),
+('MARIA', 2),
+('JOSE', 3),
+('ANTONIA', 4);
+
+UPDATE borraremp.empleados SET nombre = 'PEPA', dept_id = '4' WHERE emp_id = 1;
+UPDATE borraremp.departamentos SET departamento = 'COMERCIAL' WHERE departamento = 'VENTAS';
+UPDATE borraremp.empleados SET dept_id = null WHERE emp_id = 2;
+
+SELECT e.emp_id, e.nombre, e.dept_id, d.departamento FROM borraremp.empleados e
+INNER JOIN borraremp.departamentos d ON d.dept_id = e.dept_id
+ORDER BY e.nombre;
+
+DELETE FROM borraremp.empleados WHERE emp_id = 2;
+
+-- Eliminar el esquema y todo su contenido
+DROP SCHEMA IF EXISTS borraremp CASCADE;
+*************
+*************
