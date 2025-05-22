@@ -60,7 +60,7 @@ Llevar a cabo lo siguiente:
 Queremos saber si hay socios que aún no han realizado préstamos. Mostrar solo el socio que no ha realizado un
  préstamo.
 SELECT s.nombre FROM biblioteca.prestamos p
-RIGHT JOIN biblioteca.socios s ON s.id_socio = p.id_socio
+LEFT JOIN biblioteca.socios s ON s.id_socio = p.id_socio
 WHERE p.id_prestamo IS NULL
 
 Muestra una lista de todos los préstamos, incluyendo el nombre del socio, el título del libro y la fecha del
@@ -70,15 +70,15 @@ LEFT JOIN biblioteca.socios s ON s.id_socio = p.id_socio
 LEFT JOIN biblioteca.libros l ON l.id_libro = p.id_libro
 
 Queremos saber qué libros han sido prestados y cuáles no.
-SELECT l.titulo, l.autor FROM biblioteca.libros l
-LEFT JOIN biblioteca.prestamos p ON l.id_libro = p.id_libro
-WHERE p.fecha_prestamo IS NOT NULL
+SELECT l.titulo, l.autor, p.fecha_prestamo FROM biblioteca.libros l
+LEFT JOIN biblioteca.prestamos p ON l.id_libro = p.id_libro;
 
 Queremos saber qué libros estan actualmente prestados y a qué socio están prestados. Crear una vista llamada
  "vw_libros_prestados" para esta consulta, dandole permisos de lectura a la aplicacion de Python para sacar los informes.
 SELECT * FROM biblioteca.libros l
 INNER JOIN biblioteca.prestamos p ON l.id_libro = p.id_libro
 WHERE p.fecha_devolucion IS NULL
+EJECUTAR VISTA CON SELECT * FROM biblioteca.vw_libros_prestados;
 
 Añadir unos nuevos libros a la tabla libros. Escribir el código SQL. 'Ana Lopez' ha prestado dos libros más.
 INSERT INTO biblioteca.libros(
@@ -89,34 +89,52 @@ INSERT INTO biblioteca.libros(
 
 INSERT INTO biblioteca.prestamos (id_socio, id_libro, fecha_prestamo) 
 VALUES (1, 4, NOW()),
-(1, 4, NOW());
+(2, 3, NOW());
 
 Escribir el código SQL para insertar su prestámo. Hoy, "Lucía Gómez" ha devuelto su libro "Don Quijote de la Mancha".
 UPDATE biblioteca.prestamos
 SET fecha_devolucion=Now()
 WHERE id_socio = 3 AND id_libro = 3
 
-Queremos saber cuántos libros prestados tiene cada socio actualmente. Si el valor es mayor a 3, mostrar los
+Queremos saber cuántos libros prestados tiene cada socio actualmente. Si el valor es mayor o igual a 3, mostrar los
  resultados. Si es menos de 3, no hay ningun problema, asi que no les mostramos. De nuevo, Crear una vista llamada
   "vw_libros_prestados_importantes" para esta consulta, dandole permisos de lectura a la aplicacion de Python para
    sacar los informes.
 PENDING¿?
+1º HAREMOS QUE HAYA un libro prestado 3 veces
+UPDATE biblioteca.prestamos
+SET id_libro = 3
+WHERE id_socio = 1 AND id_libro = 2
+2º HAREMOS EL SQL suelto EN HERRAMIENTAS DE CONSULTA
+SELECT s.nombre, count(l.titulo) FROM biblioteca.prestamos p
+INNER JOIN biblioteca.socios s ON s.id_socio = p.id_socio
+INNER JOIN biblioteca.libros l ON l.id_libro = p.id_libro
+GROUP BY s.nombre
+HAVING count(l.titulo) >=3
+ORDER BY s.nombre;
+3º Crear Vista
+4º Ejecutar vista
+SELECT * FROM biblioteca.w_libros_prestados_importantes
 
-Crear esta función para sacar el nombre del autor, y pasando un identidad como parametro de entrada (IN): 
+
+Crear esta función para sacar el nombre del autor, y pasando un identidad libro como parametro de entrada (IN): 
 biblioteca.get_autor_by_id(_id_libro integer). Usarlo como se ve en la imagen:
 defininicion
     retorno character varing
     tipo datos +
         integer IN _idlibro
-SELECT biblioteca.get_autor2(5);
-SELECT *, biblioteca.get_autor2(id_libro) AS AUTOR
+codigo
+    SELECT l.autor FROM biblioteca.libros l
+    WHERE id_libro = _idlibro;
+USANDO FUNCION
+SELECT biblioteca.get_autor2(5); -- USO SUELTO
+SELECT *, biblioteca.get_autor2(id_libro) AS AUTOR -- USO COMO CAMPO EN UN SELECT USANDO COMO PARAMETRO id_libro
 FROM biblioteca.prestamos
-
 
 ¿Podrias incluir tambien el titulo del libro? PODEMOS CREAR OTRO PERO SOLO DEVUELVE EL titulo
 O BIEN CREAR OTRO
 definicion
-    retorno record
+    retorno record  -- OJO IMPORTANTE, ADEMAS NO DEJA OTRO TIPO POR EL RETORNO DE _autor y _titulo
     plpsql
 
     tipo datos +
@@ -133,7 +151,7 @@ definicion
 
         END;
 
- ¿Podrias crear una vista con este consulta?
+ ¿Podrias crear una vista con esta consulta?
 
 
 ******************
@@ -168,17 +186,33 @@ crear consulta
 get_todos_empleados
 Definicion
     tipo retorno
-        scott.emp --devolvera una tabla
+        scott.emp --devolvera una tabla OJO IMPORTANTE
     Lenguage
         sql
     CODIGO
         SELECT * FROM scott.emp;
     options
-        activar returs a set
+        activar retorna un conjunto  -- OJO IMPORTANTE SI DEVOLVEMOS TABLA
     SALVAR
 
 usar en cualquier lado
 SELECT * FROM scott.get_todos_empleados();
+RETORNA
+"(7839,KING,PRESIDENT,,1981-11-17,5000.00,,10)"
+"(7566,JONES,MANAGER,7839,1981-04-02,2975.00,,20)"
+"(7698,BLAKE,MANAGER,7839,1981-05-01,2850.00,,30)"
+"(7782,CLARK,MANAGER,7839,1981-06-09,2450.00,,10)"
+"(7788,SCOTT,ANALYST,7566,1982-12-09,3000.00,,20)"
+"(7902,FORD,ANALYST,7566,1981-12-03,3000.00,,20)"
+"(7844,TURNER,SALESMAN,7698,1981-09-08,1500.00,0.00,30)"
+"(7900,JAMES,CLERK,7698,1981-12-03,950.00,,30)"
+"(7654,MARTIN,SALESMAN,7698,1981-09-28,1250.00,1400.00,30)"
+"(7499,ALLEN,SALESMAN,7698,1981-02-20,1600.00,300.00,30)"
+"(7521,WARD,SALESMAN,7698,1981-02-22,1250.00,500.00,30)"
+"(7934,MILLER,CLERK,7782,1982-01-23,1300.00,,10)"
+"(7876,ADAMS,CLERK,7788,1983-01-12,1100.00,,20)"
+"(7369,SMITH,CLERK,7902,1980-12-17,800.00,,20)"
+
 
 crear otra
 get_empleado
@@ -195,17 +229,23 @@ CODE
 options
     DEJAMOS IGUAL
 
+USO
+select scott.get_empleado(7499);
+resultado
+"["7499","ALLEN","SALESMAN","7698","1981-02-20","1600.00","300.00","30"]"
 
-Crear FUNCIONA
+
+
+Crear FUNCION
 -- GET EMPLEADO COUNT
     CODIGO  
         SELECT COUNT(*) FROM scott.emp;
 
 SELECT scott.get_empleados_cuenta();
 
--- MOSTRAR DEPT NOMBRE PARA UN EMPLEADO
+-- CREAR FUNCION PARA MOSTRAR DEPT NOMBRE PARA UN EMPLEADO
 General
-    get_empleado_nombre
+    get_empleado_nombredept
 Definicion
     tipo del retorno character varing
     Argumentos
@@ -218,10 +258,29 @@ Definicion
         WHERE e.empno = _empno;
 SALVAR
 USO funcion
-    SELECT scott.get_empleado_nombre(7499)
-
+    SELECT scott.get_empleado_nombredept(7499)
+RETORNO
+"SALES"
+USO funcion
+    SELECT *, scott.get_empleado_nombredept(empno) FROM scott.emp;
+RETORNO
+7839	"KING"	"PRESIDENT"		"1981-11-17"	5000.00		10	"ACCOUNTING"
+7566	"JONES"	"MANAGER"	7839	"1981-04-02"	2975.00		20	"RESEARCH"
+7698	"BLAKE"	"MANAGER"	7839	"1981-05-01"	2850.00		30	"SALES"
+7782	"CLARK"	"MANAGER"	7839	"1981-06-09"	2450.00		10	"ACCOUNTING"
+7788	"SCOTT"	"ANALYST"	7566	"1982-12-09"	3000.00		20	"RESEARCH"
+7902	"FORD"	"ANALYST"	7566	"1981-12-03"	3000.00		20	"RESEARCH"
+7844	"TURNER"	"SALESMAN"	7698	"1981-09-08"	1500.00	0.00	30	"SALES"
+7900	"JAMES"	"CLERK"	7698	"1981-12-03"	950.00		30	"SALES"
+7654	"MARTIN"	"SALESMAN"	7698	"1981-09-28"	1250.00	1400.00	30	"SALES"
+7499	"ALLEN"	"SALESMAN"	7698	"1981-02-20"	1600.00	300.00	30	"SALES"
+7521	"WARD"	"SALESMAN"	7698	"1981-02-22"	1250.00	500.00	30	"SALES"
+7934	"MILLER"	"CLERK"	7782	"1982-01-23"	1300.00		10	"ACCOUNTING"
+7876	"ADAMS"	"CLERK"	7788	"1983-01-12"	1100.00		20	"RESEARCH"
+7369	"SMITH"	"CLERK"	7902	"1980-12-17"	800.00		20	"RESEARCH"
 
 los mismo pero con plpsql
+
 SELECT ename, sal  -- valores out
 FROM scott.emp
 WHERE empno = 7839
@@ -238,8 +297,7 @@ Argumentos
     output
     emp_name
     numeric out emp_salario
-
-
+Codigo
 BEGIN
 
 SELECT ename, sal 
@@ -249,8 +307,8 @@ WHERE empno = _empno;
 
 END;
 
-
-SELECT * FROM scott.test4(7839)
+USO
+SELECT * FROM scott.test4(7499); 
 
 
 function test5
@@ -462,7 +520,7 @@ $$ language plpgsql
 
 
 ******************
-esqueleto
+esqueleto para ejecutar en HERRAMIENTAS DE CONSULTA
 ******************
 DO $$
 
@@ -553,6 +611,7 @@ END;
 $$ language plpgsql
 
 LUEGO EN PROCEDIMIENTO
+nombre insert_departamentos
 definicion
     lenguaje plpgsql    --- OJO !!!
     Argumentos
@@ -570,6 +629,17 @@ BEGIN
 		RAISE NOTICE 'Hemos insertado % correctamente en %', _dname, _deptno;
 	END IF;
 END;
+
+Uso
+CALL scott.insert_departamentos(50, 'VENTAS', 'San Sebastian');
+resultado
+ERROR:  No se puede montar en SS
+CONTEXT:  PL/pgSQL function scott.insert_departamentos(integer,character varying,character varying) line 3 at RAISE 
+uso
+CALL scott.insert_departamento2(60, 'MARKETING', 'Estepona');
+resultado
+NOTICE:  Hemos insertado MARKETING correctamente en 60
+CALL
 ***************
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/08-db.storedprocedures.md
 EJEMPLO 3
