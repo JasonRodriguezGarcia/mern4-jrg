@@ -15,6 +15,6 @@ if __name__ == "__main__":
     # for dept in depts:
     #     print(dept)
 
-    # show_depts_and_emps()
+    show_depts_and_emps()
 
-    get_department_by_deptno(8300)
+    # get_department_by_deptno(10)
