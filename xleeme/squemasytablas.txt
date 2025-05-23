@@ -1,0 +1,8 @@
+-- SCHEMA: banco
+
+-- DROP SCHEMA IF EXISTS banco ;
+
+CREATE SCHEMA IF NOT EXISTS banco
+    AUTHORIZATION postgres;
+
+    
