@@ -1,0 +1,218 @@
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/09-db.triggers.md
+
+TRIGGERS O FUNCIONES DISPARADORAS
+Son funciones que se crean y añaden a una tabla y se activan cuando se hace una determinada acción inserta, modifica, borra
+Aparecen el concepto de estado de la tabla de la acción NEW y OLD que será
+*******
+OJO SI HAY VARIOS TRIGGERS IGUAL HAY QUE DESACTIVARLOS Y DEJAR UNO PARA PRUEBAS YA QUE SE PUEDEN AFECTAR UNOS A OTROS
+*******
+ ¿Qué es un trigger en PostgreSQL?
+Un trigger es un bloque de código que se ejecuta automáticamente cuando ocurre un evento específico en una tabla o vista, como:
+    Una inserción (INSERT)
+    Una actualización (UPDATE)
+    Una eliminación (DELETE)
+También puede activarse antes o después de ese evento.
+
+🧠 ¿Para qué sirven los triggers?
+Se usan para:
+    Validar o transformar datos antes de que se guarden.
+    Registrar cambios en una tabla de auditoría.
+    Mantener integridad referencial entre tablas.
+    Sincronizar datos entre tablas.
+    Prevenir ciertas operaciones.
+
+📋 Tipos de triggers en PostgreSQL
+Tipo de Trigger	Cuándo se ejecuta	Notas
+    BEFORE	Antes del evento (INSERT, etc.)	Puede modificar o anular la operación.
+    AFTER	Después del evento	Útil para auditoría o acciones derivadas.
+    INSTEAD OF	En lugar del evento (solo para vistas)	Se usa para personalizar el comportamiento en vistas.
+ Consideraciones
+    Solo se pueden usar funciones RETURNS TRIGGER con triggers.
+    Triggers pueden afectar el rendimiento si se usan en exceso o con lógica compleja.
+    Puedes tener múltiples triggers por evento, y definir su orden con WHEN o prioridades.
+
+Ejemplo 1:
+Queremos aplicar un trigger para que el puesto (JOB) este guardado en MAYÚSCULAS siempre. Aplicaremos un trigger al ejecutar
+ un comando de INSERT o UPDATE.
+
+INSERT INTO scott.emp (empno, ename, job, mgr, hiredate, sal, deptno)
+VALUES (1234, 'Alice', 'developer', NULL, CURRENT_DATE, 3000, 10);
+Empezamos creando una funcion que manejará los datos:
+
+CREATE OR REPLACE FUNCTION scott.uppercase_job()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- tenemos acceso a NEW y OLD tables, por ejemplo, NEW.job y OLD.job
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+Ahora, incluir la lógica que hay que aplicar:
+
+NEW.job = UPPER(NEW.job);
+Finalmente, aplicamos la funcion a la tabla como TRIGGER para disparar l INSERT y UPDATE.
+
+En el squema scott funciones disparadoras, crear funcion disparadora (trigger)
+General
+    nombre: trg_insert_empleado_job_mayusculas
+Definicion
+    tipo del retorno: disparador
+codigo
+BEGIN
+    -- tenemos acceso a NEW y OLD tables, por ejemplo,
+	-- NEW.job y OLD.job
+	-- este trigger al estar en un insert
+	-- usaremos NEW
+		NEW.job = UPPER(NEW.job);
+    RETURN NEW;
+END;
+
+Ir a tabla emp y desplegar, veremos Disparadores, Crear disparador
+general
+    nombre: trg_insert_empleado_job_mayusculas
+definicion
+    funcion de disparador: trg_insert_empleado_job_mayusculas
+eventos
+    Dispara: BEFORE
+    eventos
+        activar insert
+        podríamos activar update pero no 
+SALVAR
+
+herramientas de consulta ejecutar
+INSERT INTO scott.emp (empno, ename, job, mgr, hiredate, sal, deptno)
+VALUES (1234, 'Alice', 'developer', NULL, CURRENT_DATE, 3000, 10);
+
+*******************************
+Actividades
+Actividad 1 A veces, los usuarios se olvidan a pasar la fecha de comienzo (hire date) al INSERTar un nuevo empleado. 
+Aunque si se puede usar otras funciones de Postgres para llevarlo a cabo, crear un trigger para asignar un valor por 
+defecto (CURRENT_DATE), si no lo recibe.
+
+funcion trg_insert_emp_add_hiredate
+Definicion
+    tipo del retorno: disparador
+codigo
+BEGIN
+	IF NEW.hiredate IS NULL THEN
+		NEW.hiredate = CURRENT_DATE;
+	END IF;
+	RETURN NEW;
+END;
+
+tabla emp nueva funcion disparadora
+general
+    nombre: trg_insert_emp_add_hiredate
+definicion
+    funcion disparadora: trg_insert_emp_add_hiredate
+eventos
+    dispara BEFORE
+    eventos
+        activar INSERT
+
+tests
+INSERT INTO scott.emp (empno, ename, job, sal, deptno)
+VALUES (8888, 'Bob', 'CLERK', 2000, 30);
+
+SELECT empno, ename, hiredate FROM scott.emp WHERE empno = 8888;
+
+*******************************
+Actividad 2 Crear un trigger al INSERTar un empleado. Vamos a comprobar que el departamento tiene un presupuesto (crear variable)
+ suficiente para contratar nuevos empleados. Por ejemplo, si "Marketing" tienen 20,000 euros 
+ de presupuesto, si puede contratar (y insertar un nuevo empleado). Si es 10,000 o menos, entonces, NO. Habrá que 
+ añadir una nueva columna 'budget' y agregar unos datos.
+
+ALTER TABLE scott.dept
+ADD COLUMN IF NOT EXISTS budget numeric;
+No te olvides en agregar los datos.
+
+Ejecutarás un insert para un nuevo empleado asi:
+
+INSERT INTO scott.emp (empno, ename, job, sal, deptno)
+VALUES (8008, 'Bob', 'clerk', 2000, 10);
+Para ayudar, quizas quieres empezar desarrollando asi:
+
+DO $$
+DECLARE
+	-- ¿qué variables intermedios hace falta?
+	_deptno integer :=10 ;
+	
+BEGIN
+	SELECT budget INTO ....
+	
+  	IF ... THEN
+    	-- RAISE NOTICE 'No permitido';
+  --RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+PRUEBA EN EN HERRAMIENTA DE CONSULTA
+DO $$
+DECLARE
+	-- ¿qué variables intermedios hace falta?
+	_budget integer;
+	_max_budget integer := 2000;
+	_deptno integer := 30 ;
+BEGIN
+    -- comprobamos que el departamento tenga presupuesto
+    -- guardando el resultado en _budget
+	SELECT budget INTO _budget FROM scott.dept
+	WHERE deptno = _deptno;
+    -- mostramos prespuesto
+	RAISE NOTICE 'Presupuesto: %', _budget;
+	-- si el presupuesto recuperado arriba es menor que el _max_budget
+  	IF _budget < _max_budget THEN
+	  RAISE NOTICE 'NO HAY SUFICIENTE PRESUPUESTO';
+	ELSE
+	  RAISE NOTICE 'CONTRATADO';
+	  -- RETURN NEW;
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREAR FUNCION DISPARADORA trg_insert_emp_budget_check
+codigo
+DECLARE
+	-- ¿qué variables intermedios hace falta?
+	_budget integer;
+	-- _max_budget integer := 2000; YA NO HACEN FALTA PORQUE SE SACA DEL NEW
+	-- _deptno integer := 30 ;  YA NO HACEN FALTA PORQUE SE SACA DEL NEW
+BEGIN
+    -- comprobamos que el departamento tenga presupuesto
+    -- guardando el resultado en _budget
+	SELECT budget INTO _budget FROM scott.dept
+	WHERE deptno = NEW.deptno;
+    -- mostramos prespuesto
+	RAISE NOTICE 'Presupuesto: %', _budget;
+	-- si el presupuesto recuperado arriba es menor que el _max_budget
+  	IF _budget < NEW.sal THEN
+	  RAISE EXCEPTION 'NO HAY SUFICIENTE PRESUPUESTO';
+	ELSE
+	  RAISE NOTICE 'CONTRATADO';
+	  RETURN NEW;
+	END IF;
+END;
+
+añadir funcion trigger en emp
+DATOS EJEMPLO
+INSERT INTO scott.emp (empno, ename, job, sal, deptno)
+VALUES (8008, 'Bob', 'clerk', 2000, 10);
+INSERT INTO scott.emp (empno, ename, job, sal, deptno)
+VALUES (8008, 'Bob', 'clerk', 1400, 10);
+
+*****************************
+Avanzado Teniendo una table de auditar para lo departamentos, queremos mantener la historial de cambios: NOTA: Ver la 
+respuesta abajo con JSONB para una solución más flexible
+Quizas quiras añadir el usuario conectado también: SELECT current_user;
+
+-- Tabla para auditoría de cambios en departamento
+CREATE TABLE IF NOT EXISTS scott.dept_audit (
+    audit_id SERIAL PRIMARY KEY,
+    deptno INTEGER,
+    old_dname VARCHAR(14),
+    new_dname VARCHAR(14),
+    old_loc VARCHAR(13),
+    new_loc VARCHAR(13),
+    change_time TIMESTAMP DEFAULT now()
+);
+Insertar los cambios de OLD y NEW en los respectivos campos al ejecutar un UPDATE.
+
