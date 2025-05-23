@@ -1,0 +1,294 @@
+
+
+
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/repaso-biblioteca.md
+
+PARTE 4 Stored Procedures
+Validación de correo electrónico Crear un procedimiento almacenado que inserte un nuevo socio en la tabla socios.
+ Agregar lógica de negocio para excluir cualquier correo electrónico que no contenga el dominio @nazaret.eus. Si
+  el correo electrónico no es válido, el procedimiento debe lanzar una excepción (o mensaje) y no insertar el 
+  nuevo socio.
+PISTA:
+
+IF _correo NOT ILIKE '%@nazaret.eus' THEN
+CALL biblioteca.insert_socio_if_valid_email('Laura Martín', 'laura@nazaret.eus'); -- insertado
+CALL biblioteca.insert_socio_if_valid_email('Jon Ibarra', 'jon@gmail.com'); -- no insertado
+Crear un procedimiento almacenado para eliminar un libro solo si no esta protegido. El libro 'Don Quijote de la
+ Mancha' si esta protegido. ¿Habrá varias formas de llevar este a cabo, no? Piensa en la mejora opcion a largo 
+ plazo.
+
+procedimientos
+crear procedimiento para borrar un libro
+DO $$
+DECLARE
+	_idlibro INTEGER := 7;
+	_titulo VARCHAR(100) := 'Don Quijote de la Mancha';
+	_protegido BOOLEAN := true;
+BEGIN
+
+	SELECT titulo, protegido INTO _titulo, _protegido
+	FROM biblioteca.libros
+	WHERE id_libro = _idlibro;
+	
+	IF _protegido = true THEN
+		RAISE NOTICE 'ERROR. LIBRO PROTEGIDO';
+	ELSE
+		DELETE FROM biblioteca.libros
+		WHERE titulo = _titulo;
+		RAISE NOTICE 'LIBRO % BORRADO', _titulo;
+	END IF;	
+END;
+crear procedimiento
+Argumentos
+    integer IN _idlibro
+codigo
+DECLARE
+	_protegido BOOLEAN;
+	_titulo VARCHAR(100);
+BEGIN
+
+	SELECT titulo, protegido INTO _titulo, _protegido
+	FROM biblioteca.libros
+	WHERE id_libro = _idlibro;
+	
+	IF _protegido = true THEN
+		RAISE NOTICE 'ERROR. LIBRO PROTEGIDO';
+	ELSE
+		DELETE FROM biblioteca.libros
+		WHERE id_libro = _idlibro;
+		RAISE NOTICE 'LIBRO % BORRADO', _titulo;
+	END IF;	
+END;
+CALL delete_libro(3)
+NOTICE:  ERROR. LIBRO PROTEGIDO
+CALL
+CALL delete_libro(5)
+NOTICE:  LIBRO Como hacerse millonario BORRADO
+CALL
+
+
+
+Lógica de negocio para préstamos
+Vamos a crear un procedimiento almacenado que:
+Inserta un nuevo préstamo (prestamo) en la tabla biblioteca.prestamos.
+Pero solo si el socio NO tiene más de 1 préstamo activo (es decir, con fecha_devolucion IS NULL y la 
+cuenta es menos de 2). Piensa como vas a contar los préstamos activos. Habrá que usar una variable 
+(SELECT ... INTO) para contar los préstamos activos y luego decidir si se permite el nuevo préstamo o no.
+QUERY SUELTO
+DO $$
+DECLARE
+	_idsocio INTEGER := 4;
+	_idlibro INTEGER := 2;
+	_totallibros INTEGER := 3;
+	_cuentalibros INTEGER;
+BEGIN
+
+	SELECT count(*) INTO _cuentalibros
+	FROM biblioteca.prestamos
+	WHERE id_socio = _idsocio AND fecha_devolucion IS NULL;
+	RAISE NOTICE 'TIENES % LIBROS PARA DEVOLVER', _cuentalibros;
+	IF _cuentalibros >= _totallibros THEN
+		RAISE EXCEPTION 'TIENES MUCHOS LIBROS, NO PUEDES MAS';
+	ELSE
+		RAISE NOTICE 'PODEMOS PRESTAR MAS LIBROS';
+		INSERT INTO biblioteca.prestamos (id_socio, id_libro, fecha_prestamo)
+		VALUES (_idsocio, _idlibro, CURRENT_DATE);
+	END IF;	
+END;
+$$ language plpgsql
+
+procedimiento
+definicion
+    Argumentos
+        integer in _idsocio
+        integer in _idlibro
+codigo
+DECLARE
+	_totallibros INTEGER := 3;
+	_cuentalibros INTEGER;
+
+BEGIN
+
+	SELECT count(*) INTO _cuentalibros
+	FROM biblioteca.prestamos
+	WHERE id_socio = _idsocio AND fecha_devolucion IS NULL;
+	RAISE NOTICE 'TIENES % LIBROS PARA DEVOLVER', _cuentalibros;
+	IF _cuentalibros >= _totallibros THEN
+		RAISE EXCEPTION 'TIENES MUCHOS LIBROS, NO PUEDES MAS';
+	ELSE
+		RAISE NOTICE 'PODEMOS PRESTAR MAS LIBROS';
+		INSERT INTO biblioteca.prestamos (id_socio, id_libro, fecha_prestamo)
+		VALUES (_idsocio, _idlibro, CURRENT_DATE);
+	END IF;	
+END;
+
+**********
+
+TRIGGERS (DISPARADORES o funciones disparadores) OJO RENDIMIENTO SE REDUCE
+ASIGNAR TRIGGER A TABLA
+SE DISPARA CON ISERT O UPDATE O DELETE
+ANTES O DESPUEST DE LA ACCIONES
+SI TRIGGER ES DE ANTES - ES UN TIPO DE VALIDACION , PODEMOS COMPROBAR A OTRA SI ESTA AUTORIZADO
+SI TRIGGES ES DE DESPUES - PODEMOS MANDAR DATOS A UNA TABLA DE AUDITORIA (EJEMPLO)
+TENEMOS ACCESO A UNA TABLA NEW (OLD) Y OTRA OLD (BEFORE)
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/09-db.triggers.md
+
+insert acc NEW
+Delete acc OLD
+UPdate a los 2
+
+
+crear funcion que devuelve trigger y asignar a la tabla
+
+CREATE OR REPLACE FUNCTION scott.uppercase_job()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.job = UPPER(NEW.job);
+    NEW.ename = UPPER(NEW.ename);
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+asignar a empleados
+en tabla crear disparador
+definicion
+    disparador fila activado
+    elegir funcion disparador creada antes
+    eventos
+        cuando
+            insert
+            no activar pero update (en que columna dispararlo)
+
+ejecutar insert
+select * from  scott.emp
+
+INSERT INTO scott.emp (empno, ename, job, mgr, hiredate, sal, deptno)
+VALUES (1234, 'Alice', 'developer', NULL, CURRENT_DATE, 3000, 10);
+
+EJEMPLO
+VALIDACIÓN PARA QUE NO SE GUARDEN NULL EN dname
+null_dname_verificar
+crear funcion disparadora
+null_dname_verificar
+definicion
+    tipo trigger
+
+crear en tabla trigger
+trg_null_dname_verificar
+definicion
+    disparador ENABLE
+    disparador fila ACTIVADO
+
+eventos
+    dispara BEFORE
+    insert activado
+
+insertar datos
+INSERT INTO scott.dept (deptno, dname, loc)
+VALUES (300, NULL, 'SS')
+trg_null_dname_verificar
+
+
+CREAR trigger para que al actualizar tabla añada en audit
+crear funcion disparadora audit_dept
+definicion
+    trigger
+codigo
+BEGIN
+	INSERT INTO scott.audit_dept (valor, fecha, usuario)
+	VALUES (OLD.loc, NOW(), CURRENT_USER);
+	RETURN NEW;
+END;
+en tabla dept
+crear trigger trg_audit_dept
+definicion
+    disparador enable
+    disparador fila activado
+eventos
+    AFTER
+    update activado
+
+*******
+Actividades
+Actividad 1 A veces, los usuarios se olvidan a pasar la fecha de comienzo (hire date) al INSERTar un nuevo empleado.
+Aunque si se puede usar otras funciones de Postgres para llevarlo a cabo, crear un trigger para asignar un valor por
+defecto (CURRENT_DATE), si no lo recibe.
+
+
+funcion codigo
+BEGIN
+
+	IF NEW.hiredate IS NULL THEN -- SI ES NULO
+		NEW.hiredate = CURRENT_DATE; -- ASIGNAMOS VALOR
+	-- ELSE
+	END IF;
+	
+	RETURN NEW;
+
+END;
+INSERT INTO scott.emp (empno, ename, job, sal, deptno)
+VALUES (8888, 'Bob', 'CLERK', 2000, 30);
+DESABILITAR OTROS TRIGGERS !!!!!!!!!!!!!!!!!!
+
+SELECT empno, ename, hiredate FROM scott.emp WHERE empno = 8888;
+
+
+Actividad 2 Crear un trigger al INSERTar un empleado. Vamos a comprobar que el departamento tiene un presupuesto
+ suficiente para contratar nuevos empleados. Por ejemplo, si "Marketing" tienen 20,000 euros de presupuesto, si
+  puede contratar (y insertar un nuevo empleado). Si es 10,000 o menos, entonces, NO. Habrá que añadir una nueva 
+  columna 'budget' y agregar unos datos.
+FUNCION disparadora insert_empleado
+AÑADIMOS COLUMNA A MANO
+ALTER TABLE scott.dept
+ADD COLUMN IF NOT EXISTS budget numeric;
+No te olvides en actualizar los datos.
+
+Ejecutarás un insert para un nuevo empleado asi:
+
+INSERT INTO scott.emp (empno, ename, job, sal, deptno)
+VALUES (8888, 'Bob', 'clerk', 2000, 10);
+codigo funcion disparadora
+
+DECLARE
+	-- ¿qué variables intermedios hace falta?
+	-- _deptno integer :=10 ;
+	_budget integer;
+	_min_budget integer := 2500;
+	
+BEGIN
+	SELECT budget INTO _budget FROM scott.dept
+	WHERE deptno = NEW.deptno;
+	
+  	IF _budget < _min_budget THEN
+    	RAISE EXCEPTION 'No permitido';
+	ELSE
+		RAISE NOTICE 'PERMITIDO';
+  		RETURN NEW;
+	END IF;
+END;
+AÑADIR FUNCION A LA TABLA EMP
+
+*****
+https://github.com/chekulhan/Desarrollo-Web/tree/main/UF1845-Acceso-a-Datos/orm
+HASTA AHORA ESCRIBIAMOS SQL EN ORM (db_sp.py)
+abrir direct ORM
+activar entorno virtual
+
+.venv\Scripts\activate
+
+crear carpeta test
+crear carpeta models
+dentro archivo emp.py -- OJO PLANTILLA PRINCIPAL
+carpeta views
+en /orm/ fichero main.py
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/orm/02-relationships.md
+
+
+
+
+
+

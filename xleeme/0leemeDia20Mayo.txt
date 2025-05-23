@@ -531,7 +531,7 @@ END;
 $$ language plpgsql
 
 ***************
-en postgres procedimiento para insert, update, delete EN OTROS NO SABEMOS
+en postgres procedimiento para HACER ACCIONES (insert, update, delete EN OTROS NO POSTGRES A SABEL)
 
 DO $$ --sobra en procedimiento esto es para usar en query de pruebas
 
