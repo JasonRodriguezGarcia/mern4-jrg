@@ -16,8 +16,8 @@ class Dept(Base):
 
     employees = relationship('Emp', back_populates='department') # definicion relaciones
 
-    def __repr__(self):
-        return f"<Dept(deptno={self.deptno}, dname='{self.dname}', loc='{self.loc}', budget='{self.budget}')>"
+    # def __repr__(self):
+    #     return f"<Dept(deptno={self.deptno}, dname='{self.dname}', loc='{self.loc}', budget='{self.budget}')>"
 
     def __str__(self):
             # nicer string for print()
