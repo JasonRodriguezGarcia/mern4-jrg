@@ -10,6 +10,11 @@ Running command:
 En consola VSC (el pendrive donde lo voy a copiar esta en G:)
     docker cp pgadmin:/var/lib/pgadmin/storage/jasonrodriguezempleo_gmail.com/demo_24Mayo2025 G:\demo_24Mayo2025
     docker cp pgadmin:/var/lib/pgadmin/storage/jasonrodriguezempleo_gmail.com/postgres_24Mayo2025 G:\postgres_24Mayo2025
+copiar de pendrive a docker
+    docker cp G:\demo_24Mayo2025 pgadmin:/var/lib/pgadmin/storage/jasonrodriguezempleo_gmail.com/demo_24Mayo2025
+    docker cp G:\postgres_24Mayo2025 pgadmin:/var/lib/pgadmin/storage/jasonrodriguezempleo_gmail.com/postgres_24Mayo2025
+
+
 
 Perfecto, si vas a migrar datos de volúmenes Docker nombrados de un equipo a otro, aquí tienes una guía paso a paso con los 
 comandos exactos para hacerlo bien.
