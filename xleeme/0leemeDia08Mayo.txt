@@ -100,6 +100,9 @@ Crear Dockerfile
 
 Crear un requirements.txt (equivalente a package.json pero en python)
     pip freeze > requirements.txt
+(Si hiciera falta en el futuro usar el fichero para hacer lo mismo que npm install en node,
+OJO estando en entorno virtual poner:
+    pip install -r requirements.txt)
 
 (*)Luego
     docker build -t flask-app:latest .
