@@ -1,0 +1,1453 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 17.5 (Debian 17.5-1.pgdg120+1)
+-- Dumped by pg_dump version 17.4
+
+-- Started on 2025-05-24 18:44:29 UTC
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 9 (class 2615 OID 16737)
+-- Name: biblioteca; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA biblioteca;
+
+
+ALTER SCHEMA biblioteca OWNER TO postgres;
+
+--
+-- TOC entry 7 (class 2615 OID 16515)
+-- Name: blogs; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA blogs;
+
+
+ALTER SCHEMA blogs OWNER TO postgres;
+
+--
+-- TOC entry 4 (class 2615 OID 2200)
+-- Name: public; Type: SCHEMA; Schema: -; Owner: pg_database_owner
+--
+
+CREATE SCHEMA public;
+
+
+ALTER SCHEMA public OWNER TO pg_database_owner;
+
+--
+-- TOC entry 3536 (class 0 OID 0)
+-- Dependencies: 4
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: pg_database_owner
+--
+
+COMMENT ON SCHEMA public IS 'standard public schema';
+
+
+--
+-- TOC entry 6 (class 2615 OID 16479)
+-- Name: scott; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA scott;
+
+
+ALTER SCHEMA scott OWNER TO postgres;
+
+--
+-- TOC entry 8 (class 2615 OID 16532)
+-- Name: tienda; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA tienda;
+
+
+ALTER SCHEMA tienda OWNER TO postgres;
+
+--
+-- TOC entry 251 (class 1255 OID 16784)
+-- Name: get_autor_by_id(integer); Type: FUNCTION; Schema: biblioteca; Owner: postgres
+--
+
+CREATE FUNCTION biblioteca.get_autor_by_id(_idlibro integer) RETURNS character varying
+    LANGUAGE sql
+    AS $$SELECT l.autor FROM biblioteca.libros l
+WHERE id_libro = _idlibro;$$;
+
+
+ALTER FUNCTION biblioteca.get_autor_by_id(_idlibro integer) OWNER TO postgres;
+
+--
+-- TOC entry 252 (class 1255 OID 16786)
+-- Name: get_autor_titulo_by_id(integer); Type: FUNCTION; Schema: biblioteca; Owner: postgres
+--
+
+CREATE FUNCTION biblioteca.get_autor_titulo_by_id(_idlibro integer, OUT _autor character varying, OUT _titulo character varying) RETURNS record
+    LANGUAGE plpgsql
+    AS $$BEGIN
+        SELECT autor, titulo
+       	INTO _autor, _titulo
+        FROM biblioteca.libros
+        WHERE id_libro = _idlibro;
+END;$$;
+
+
+ALTER FUNCTION biblioteca.get_autor_titulo_by_id(_idlibro integer, OUT _autor character varying, OUT _titulo character varying) OWNER TO postgres;
+
+--
+-- TOC entry 259 (class 1255 OID 16812)
+-- Name: usp_insert_socio(integer, character varying, character varying); Type: PROCEDURE; Schema: biblioteca; Owner: postgres
+--
+
+CREATE PROCEDURE biblioteca.usp_insert_socio(IN _idsocio integer, IN _nombre character varying, IN _correo character varying)
+    LANGUAGE plpgsql
+    AS $$BEGIN
+	IF _correo ILIKE '%@nazaret.eus%' THEN
+		RAISE EXCEPTION 'Correo % no autorizado', _correo;
+	ELSE
+		IF EXISTS (SELECT 1 FROM biblioteca.socios WHERE id_socio = _idsocio) THEN
+			UPDATE biblioteca.socios 
+				SET nombre = _nombre, correo = _correo
+				WHERE id_socio = _idsocio;
+		ELSE
+			INSERT INTO biblioteca.socios (nombre, correo) VALUES (_nombre, _correo);
+		END IF;
+	END IF;
+
+END;$$;
+
+
+ALTER PROCEDURE biblioteca.usp_insert_socio(IN _idsocio integer, IN _nombre character varying, IN _correo character varying) OWNER TO postgres;
+
+--
+-- TOC entry 254 (class 1255 OID 16790)
+-- Name: get_empleado(integer); Type: FUNCTION; Schema: scott; Owner: postgres
+--
+
+CREATE FUNCTION scott.get_empleado(_idemp integer) RETURNS record
+    LANGUAGE sql
+    AS $$SELECT * FROM scott.emp
+WHERE empno = _idemp$$;
+
+
+ALTER FUNCTION scott.get_empleado(_idemp integer) OWNER TO postgres;
+
+--
+-- TOC entry 256 (class 1255 OID 16792)
+-- Name: get_empleado_nombredept(integer); Type: FUNCTION; Schema: scott; Owner: postgres
+--
+
+CREATE FUNCTION scott.get_empleado_nombredept(_empno integer) RETURNS character varying
+    LANGUAGE sql
+    AS $$SELECT d.dname FROM scott.dept AS d
+INNER JOIN scott.emp AS e ON e.deptno = d.deptno
+WHERE e.empno = _empno$$;
+
+
+ALTER FUNCTION scott.get_empleado_nombredept(_empno integer) OWNER TO postgres;
+
+--
+-- TOC entry 255 (class 1255 OID 16791)
+-- Name: get_empleados_cuenta(); Type: FUNCTION; Schema: scott; Owner: postgres
+--
+
+CREATE FUNCTION scott.get_empleados_cuenta() RETURNS integer
+    LANGUAGE sql
+    AS $$SELECT count(*) FROM scott.emp;$$;
+
+
+ALTER FUNCTION scott.get_empleados_cuenta() OWNER TO postgres;
+
+--
+-- TOC entry 257 (class 1255 OID 16798)
+-- Name: get_salario(integer); Type: FUNCTION; Schema: scott; Owner: postgres
+--
+
+CREATE FUNCTION scott.get_salario(_empno integer, OUT emp_ename character varying, OUT emp_sal numeric) RETURNS record
+    LANGUAGE plpgsql
+    AS $$BEGIN
+
+SELECT ename, sal  -- valores out
+INTO emp_ename, emp_sal
+FROM scott.emp
+WHERE empno = _empno;
+
+END;$$;
+
+
+ALTER FUNCTION scott.get_salario(_empno integer, OUT emp_ename character varying, OUT emp_sal numeric) OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 230 (class 1259 OID 16485)
+-- Name: emp; Type: TABLE; Schema: scott; Owner: postgres
+--
+
+CREATE TABLE scott.emp (
+    empno integer NOT NULL,
+    ename character varying(10),
+    job character varying(9),
+    mgr integer,
+    hiredate date,
+    sal numeric(7,2),
+    comm numeric(7,2),
+    deptno integer
+);
+
+
+ALTER TABLE scott.emp OWNER TO postgres;
+
+--
+-- TOC entry 253 (class 1255 OID 16789)
+-- Name: get_todos_empleados(); Type: FUNCTION; Schema: scott; Owner: postgres
+--
+
+CREATE FUNCTION scott.get_todos_empleados() RETURNS SETOF scott.emp
+    LANGUAGE sql
+    AS $$SELECT * FROM scott.emp$$;
+
+
+ALTER FUNCTION scott.get_todos_empleados() OWNER TO postgres;
+
+--
+-- TOC entry 258 (class 1255 OID 16800)
+-- Name: insert_departamentos(integer, character varying, character varying); Type: PROCEDURE; Schema: scott; Owner: postgres
+--
+
+CREATE PROCEDURE scott.insert_departamentos(IN _deptno integer, IN _dname character varying, IN _loc character varying)
+    LANGUAGE plpgsql
+    AS $$BEGIN
+	IF _loc = 'San Sebastian' THEN
+		RAISE EXCEPTION 'No se puede montar en SS';
+	ELSE
+		INSERT INTO scott.dept (deptno, dname, loc)
+		VALUES (_deptno, _dname, _loc);
+		RAISE NOTICE 'Hemos insertado % correctamente en %', _dname, _deptno;
+	END IF;
+END;
+$$;
+
+
+ALTER PROCEDURE scott.insert_departamentos(IN _deptno integer, IN _dname character varying, IN _loc character varying) OWNER TO postgres;
+
+--
+-- TOC entry 261 (class 1255 OID 16815)
+-- Name: trg_insert_emp_add_hiredate(); Type: FUNCTION; Schema: scott; Owner: postgres
+--
+
+CREATE FUNCTION scott.trg_insert_emp_add_hiredate() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$BEGIN
+	IF NEW.hiredate IS NULL THEN
+		NEW.hiredate = CURRENT_DATE;
+	END IF;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION scott.trg_insert_emp_add_hiredate() OWNER TO postgres;
+
+--
+-- TOC entry 273 (class 1255 OID 16817)
+-- Name: trg_insert_emp_budget_check(); Type: FUNCTION; Schema: scott; Owner: postgres
+--
+
+CREATE FUNCTION scott.trg_insert_emp_budget_check() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$DECLARE
+	-- ¿qué variables intermedios hace falta?
+	_budget integer;
+	_max_budget integer := 2000;
+	-- _deptno integer := 30 ;
+BEGIN
+    -- comprobamos que el departamento tenga presupuesto
+    -- guardando el resultado en _budget
+	SELECT budget INTO _budget FROM scott.dept
+	WHERE deptno = NEW.deptno;
+    -- mostramos prespuesto
+	RAISE NOTICE 'Presupuesto: %', _budget;
+	-- si el presupuesto recuperado arriba es menor que el _max_budget
+  	IF _budget < NEW.sal THEN
+	  RAISE EXCEPTION 'NO HAY SUFICIENTE PRESUPUESTO';
+	ELSE
+	  RAISE NOTICE 'CONTRATADO';
+	  RETURN NEW;
+	END IF;
+END;$$;
+
+
+ALTER FUNCTION scott.trg_insert_emp_budget_check() OWNER TO postgres;
+
+--
+-- TOC entry 260 (class 1255 OID 16813)
+-- Name: trg_insert_empleado_job_mayusculas(); Type: FUNCTION; Schema: scott; Owner: postgres
+--
+
+CREATE FUNCTION scott.trg_insert_empleado_job_mayusculas() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$BEGIN
+    -- tenemos acceso a NEW y OLD tables, por ejemplo,
+	-- NEW.job y OLD.job
+	-- este trigger al estar en un insert
+	-- usaremos NEW
+		NEW.job = UPPER(NEW.job);
+    RETURN NEW;
+END;$$;
+
+
+ALTER FUNCTION scott.trg_insert_empleado_job_mayusculas() OWNER TO postgres;
+
+--
+-- TOC entry 246 (class 1259 OID 16750)
+-- Name: libros; Type: TABLE; Schema: biblioteca; Owner: postgres
+--
+
+CREATE TABLE biblioteca.libros (
+    id_libro integer NOT NULL,
+    titulo text NOT NULL,
+    autor text NOT NULL
+);
+
+
+ALTER TABLE biblioteca.libros OWNER TO postgres;
+
+--
+-- TOC entry 245 (class 1259 OID 16749)
+-- Name: libros_id_libro_seq; Type: SEQUENCE; Schema: biblioteca; Owner: postgres
+--
+
+CREATE SEQUENCE biblioteca.libros_id_libro_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE biblioteca.libros_id_libro_seq OWNER TO postgres;
+
+--
+-- TOC entry 3538 (class 0 OID 0)
+-- Dependencies: 245
+-- Name: libros_id_libro_seq; Type: SEQUENCE OWNED BY; Schema: biblioteca; Owner: postgres
+--
+
+ALTER SEQUENCE biblioteca.libros_id_libro_seq OWNED BY biblioteca.libros.id_libro;
+
+
+--
+-- TOC entry 248 (class 1259 OID 16759)
+-- Name: prestamos; Type: TABLE; Schema: biblioteca; Owner: postgres
+--
+
+CREATE TABLE biblioteca.prestamos (
+    id_prestamo integer NOT NULL,
+    id_socio integer,
+    id_libro integer,
+    fecha_prestamo date NOT NULL,
+    fecha_devolucion date
+);
+
+
+ALTER TABLE biblioteca.prestamos OWNER TO postgres;
+
+--
+-- TOC entry 247 (class 1259 OID 16758)
+-- Name: prestamos_id_prestamo_seq; Type: SEQUENCE; Schema: biblioteca; Owner: postgres
+--
+
+CREATE SEQUENCE biblioteca.prestamos_id_prestamo_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE biblioteca.prestamos_id_prestamo_seq OWNER TO postgres;
+
+--
+-- TOC entry 3539 (class 0 OID 0)
+-- Dependencies: 247
+-- Name: prestamos_id_prestamo_seq; Type: SEQUENCE OWNED BY; Schema: biblioteca; Owner: postgres
+--
+
+ALTER SEQUENCE biblioteca.prestamos_id_prestamo_seq OWNED BY biblioteca.prestamos.id_prestamo;
+
+
+--
+-- TOC entry 244 (class 1259 OID 16739)
+-- Name: socios; Type: TABLE; Schema: biblioteca; Owner: postgres
+--
+
+CREATE TABLE biblioteca.socios (
+    id_socio integer NOT NULL,
+    nombre text NOT NULL,
+    correo text NOT NULL
+);
+
+
+ALTER TABLE biblioteca.socios OWNER TO postgres;
+
+--
+-- TOC entry 243 (class 1259 OID 16738)
+-- Name: socios_id_socio_seq; Type: SEQUENCE; Schema: biblioteca; Owner: postgres
+--
+
+CREATE SEQUENCE biblioteca.socios_id_socio_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE biblioteca.socios_id_socio_seq OWNER TO postgres;
+
+--
+-- TOC entry 3540 (class 0 OID 0)
+-- Dependencies: 243
+-- Name: socios_id_socio_seq; Type: SEQUENCE OWNED BY; Schema: biblioteca; Owner: postgres
+--
+
+ALTER SEQUENCE biblioteca.socios_id_socio_seq OWNED BY biblioteca.socios.id_socio;
+
+
+--
+-- TOC entry 249 (class 1259 OID 16775)
+-- Name: vw_libros_prestados; Type: VIEW; Schema: biblioteca; Owner: postgres
+--
+
+CREATE VIEW biblioteca.vw_libros_prestados AS
+ SELECT l.titulo,
+    s.nombre
+   FROM ((biblioteca.prestamos p
+     JOIN biblioteca.socios s ON ((s.id_socio = p.id_socio)))
+     JOIN biblioteca.libros l ON ((l.id_libro = p.id_libro)));
+
+
+ALTER VIEW biblioteca.vw_libros_prestados OWNER TO postgres;
+
+--
+-- TOC entry 250 (class 1259 OID 16779)
+-- Name: w_libros_prestados_importantes; Type: VIEW; Schema: biblioteca; Owner: postgres
+--
+
+CREATE VIEW biblioteca.w_libros_prestados_importantes AS
+ SELECT s.nombre,
+    count(l.titulo) AS count
+   FROM ((biblioteca.prestamos p
+     JOIN biblioteca.socios s ON ((s.id_socio = p.id_socio)))
+     JOIN biblioteca.libros l ON ((l.id_libro = p.id_libro)))
+  GROUP BY s.nombre
+ HAVING (count(l.titulo) >= 3)
+  ORDER BY s.nombre;
+
+
+ALTER VIEW biblioteca.w_libros_prestados_importantes OWNER TO postgres;
+
+--
+-- TOC entry 236 (class 1259 OID 16524)
+-- Name: comments; Type: TABLE; Schema: blogs; Owner: postgres
+--
+
+CREATE TABLE blogs.comments (
+    comment_id integer NOT NULL,
+    post_id integer,
+    author text NOT NULL,
+    comment text NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE blogs.comments OWNER TO postgres;
+
+--
+-- TOC entry 235 (class 1259 OID 16516)
+-- Name: posts; Type: TABLE; Schema: blogs; Owner: postgres
+--
+
+CREATE TABLE blogs.posts (
+    post_id integer NOT NULL,
+    title text NOT NULL,
+    content text NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE blogs.posts OWNER TO postgres;
+
+--
+-- TOC entry 234 (class 1259 OID 16506)
+-- Name: comments; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.comments (
+    comment_id integer NOT NULL,
+    post_id integer NOT NULL,
+    author text NOT NULL,
+    comment text NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.comments OWNER TO postgres;
+
+--
+-- TOC entry 233 (class 1259 OID 16505)
+-- Name: comments_comment_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.comments_comment_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.comments_comment_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3541 (class 0 OID 0)
+-- Dependencies: 233
+-- Name: comments_comment_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.comments_comment_id_seq OWNED BY public.comments.comment_id;
+
+
+--
+-- TOC entry 232 (class 1259 OID 16496)
+-- Name: posts; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.posts (
+    post_id integer NOT NULL,
+    title text NOT NULL,
+    content text NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.posts OWNER TO postgres;
+
+--
+-- TOC entry 231 (class 1259 OID 16495)
+-- Name: posts_post_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.posts_post_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.posts_post_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3542 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: posts_post_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.posts_post_id_seq OWNED BY public.posts.post_id;
+
+
+--
+-- TOC entry 221 (class 1259 OID 16390)
+-- Name: tabla1; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tabla1 (
+    id integer
+);
+
+
+ALTER TABLE public.tabla1 OWNER TO postgres;
+
+--
+-- TOC entry 222 (class 1259 OID 16395)
+-- Name: tabla1_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.tabla1_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.tabla1_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3543 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: tabla1_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.tabla1_id_seq OWNED BY public.tabla1.id;
+
+
+--
+-- TOC entry 224 (class 1259 OID 16397)
+-- Name: tabla2; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tabla2 (
+    id integer NOT NULL
+);
+
+
+ALTER TABLE public.tabla2 OWNER TO postgres;
+
+--
+-- TOC entry 223 (class 1259 OID 16396)
+-- Name: tabla2_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.tabla2 ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.tabla2_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 226 (class 1259 OID 16403)
+-- Name: tabla3; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tabla3 (
+    id integer NOT NULL,
+    valor character varying,
+    valores character varying[]
+);
+
+
+ALTER TABLE public.tabla3 OWNER TO postgres;
+
+--
+-- TOC entry 225 (class 1259 OID 16402)
+-- Name: tabla3_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.tabla3 ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.tabla3_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 228 (class 1259 OID 16470)
+-- Name: test1; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.test1 (
+    id integer NOT NULL,
+    name text NOT NULL,
+    joined timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.test1 OWNER TO postgres;
+
+--
+-- TOC entry 227 (class 1259 OID 16469)
+-- Name: test1_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.test1_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.test1_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3544 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: test1_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.test1_id_seq OWNED BY public.test1.id;
+
+
+--
+-- TOC entry 229 (class 1259 OID 16480)
+-- Name: dept; Type: TABLE; Schema: scott; Owner: postgres
+--
+
+CREATE TABLE scott.dept (
+    deptno integer NOT NULL,
+    dname character varying(14),
+    loc character varying(13),
+    budget numeric
+);
+
+
+ALTER TABLE scott.dept OWNER TO postgres;
+
+--
+-- TOC entry 238 (class 1259 OID 16534)
+-- Name: productos; Type: TABLE; Schema: tienda; Owner: postgres
+--
+
+CREATE TABLE tienda.productos (
+    id integer NOT NULL,
+    nombre character varying(100),
+    categoria character varying(50),
+    precio numeric(10,2)
+);
+
+
+ALTER TABLE tienda.productos OWNER TO postgres;
+
+--
+-- TOC entry 237 (class 1259 OID 16533)
+-- Name: productos_id_seq; Type: SEQUENCE; Schema: tienda; Owner: postgres
+--
+
+CREATE SEQUENCE tienda.productos_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE tienda.productos_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3545 (class 0 OID 0)
+-- Dependencies: 237
+-- Name: productos_id_seq; Type: SEQUENCE OWNED BY; Schema: tienda; Owner: postgres
+--
+
+ALTER SEQUENCE tienda.productos_id_seq OWNED BY tienda.productos.id;
+
+
+--
+-- TOC entry 240 (class 1259 OID 16541)
+-- Name: ventas; Type: TABLE; Schema: tienda; Owner: postgres
+--
+
+CREATE TABLE tienda.ventas (
+    id integer NOT NULL,
+    producto_id integer,
+    cantidad integer,
+    fecha_venta date
+);
+
+
+ALTER TABLE tienda.ventas OWNER TO postgres;
+
+--
+-- TOC entry 239 (class 1259 OID 16540)
+-- Name: ventas_id_seq; Type: SEQUENCE; Schema: tienda; Owner: postgres
+--
+
+CREATE SEQUENCE tienda.ventas_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE tienda.ventas_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3546 (class 0 OID 0)
+-- Dependencies: 239
+-- Name: ventas_id_seq; Type: SEQUENCE OWNED BY; Schema: tienda; Owner: postgres
+--
+
+ALTER SEQUENCE tienda.ventas_id_seq OWNED BY tienda.ventas.id;
+
+
+--
+-- TOC entry 241 (class 1259 OID 16552)
+-- Name: vw_productos_ropa_cara; Type: VIEW; Schema: tienda; Owner: postgres
+--
+
+CREATE VIEW tienda.vw_productos_ropa_cara AS
+ SELECT nombre,
+    precio
+   FROM tienda.productos
+  WHERE (((categoria)::text = 'Ropa'::text) AND (precio > (25)::numeric));
+
+
+ALTER VIEW tienda.vw_productos_ropa_cara OWNER TO postgres;
+
+--
+-- TOC entry 242 (class 1259 OID 16556)
+-- Name: vw_ventas_recientes; Type: VIEW; Schema: tienda; Owner: postgres
+--
+
+CREATE VIEW tienda.vw_ventas_recientes AS
+ SELECT p.nombre,
+    v.cantidad,
+    v.fecha_venta
+   FROM (tienda.ventas v
+     JOIN tienda.productos p ON ((v.producto_id = p.id)))
+  WHERE (v.fecha_venta >= (now() - '14 days'::interval));
+
+
+ALTER VIEW tienda.vw_ventas_recientes OWNER TO postgres;
+
+--
+-- TOC entry 3319 (class 2604 OID 16753)
+-- Name: libros id_libro; Type: DEFAULT; Schema: biblioteca; Owner: postgres
+--
+
+ALTER TABLE ONLY biblioteca.libros ALTER COLUMN id_libro SET DEFAULT nextval('biblioteca.libros_id_libro_seq'::regclass);
+
+
+--
+-- TOC entry 3320 (class 2604 OID 16762)
+-- Name: prestamos id_prestamo; Type: DEFAULT; Schema: biblioteca; Owner: postgres
+--
+
+ALTER TABLE ONLY biblioteca.prestamos ALTER COLUMN id_prestamo SET DEFAULT nextval('biblioteca.prestamos_id_prestamo_seq'::regclass);
+
+
+--
+-- TOC entry 3318 (class 2604 OID 16742)
+-- Name: socios id_socio; Type: DEFAULT; Schema: biblioteca; Owner: postgres
+--
+
+ALTER TABLE ONLY biblioteca.socios ALTER COLUMN id_socio SET DEFAULT nextval('biblioteca.socios_id_socio_seq'::regclass);
+
+
+--
+-- TOC entry 3312 (class 2604 OID 16509)
+-- Name: comments comment_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comments ALTER COLUMN comment_id SET DEFAULT nextval('public.comments_comment_id_seq'::regclass);
+
+
+--
+-- TOC entry 3310 (class 2604 OID 16499)
+-- Name: posts post_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.posts ALTER COLUMN post_id SET DEFAULT nextval('public.posts_post_id_seq'::regclass);
+
+
+--
+-- TOC entry 3308 (class 2604 OID 16473)
+-- Name: test1 id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.test1 ALTER COLUMN id SET DEFAULT nextval('public.test1_id_seq'::regclass);
+
+
+--
+-- TOC entry 3316 (class 2604 OID 16537)
+-- Name: productos id; Type: DEFAULT; Schema: tienda; Owner: postgres
+--
+
+ALTER TABLE ONLY tienda.productos ALTER COLUMN id SET DEFAULT nextval('tienda.productos_id_seq'::regclass);
+
+
+--
+-- TOC entry 3317 (class 2604 OID 16544)
+-- Name: ventas id; Type: DEFAULT; Schema: tienda; Owner: postgres
+--
+
+ALTER TABLE ONLY tienda.ventas ALTER COLUMN id SET DEFAULT nextval('tienda.ventas_id_seq'::regclass);
+
+
+--
+-- TOC entry 3528 (class 0 OID 16750)
+-- Dependencies: 246
+-- Data for Name: libros; Type: TABLE DATA; Schema: biblioteca; Owner: postgres
+--
+
+COPY biblioteca.libros (id_libro, titulo, autor) FROM stdin;
+1	Cien años de soledad	Gabriel García Márquez
+2	El túnel	Ernesto Sabato
+3	Don Quijote de la Mancha	Miguel de Cervantes
+4	Rayuela	Julio Cortázar
+5	La cosa	Eddy Murphy
+6	Como hacerse millonario	Ronaldo Trump
+\.
+
+
+--
+-- TOC entry 3530 (class 0 OID 16759)
+-- Dependencies: 248
+-- Data for Name: prestamos; Type: TABLE DATA; Schema: biblioteca; Owner: postgres
+--
+
+COPY biblioteca.prestamos (id_prestamo, id_socio, id_libro, fecha_prestamo, fecha_devolucion) FROM stdin;
+1	1	1	2024-05-01	2024-05-10
+3	2	1	2024-05-03	2024-05-12
+5	1	4	2025-05-22	\N
+4	3	3	2024-05-05	2025-05-22
+2	1	3	2024-05-11	\N
+6	2	3	2025-05-22	\N
+\.
+
+
+--
+-- TOC entry 3526 (class 0 OID 16739)
+-- Dependencies: 244
+-- Data for Name: socios; Type: TABLE DATA; Schema: biblioteca; Owner: postgres
+--
+
+COPY biblioteca.socios (id_socio, nombre, correo) FROM stdin;
+1	Ana López	ana@correo.com
+2	Carlos Pérez	carlos@correo.com
+3	Lucía Gómez	lucia@correo.com
+4	Mario Díaz	mario@correo.com
+9	PEPE4	pepe4@pepe4.eus
+10	PEPE10	pepe10@pepe10.eus
+11	Pepe11	pepe11@pepe11.com
+\.
+
+
+--
+-- TOC entry 3520 (class 0 OID 16524)
+-- Dependencies: 236
+-- Data for Name: comments; Type: TABLE DATA; Schema: blogs; Owner: postgres
+--
+
+COPY blogs.comments (comment_id, post_id, author, comment, created_at) FROM stdin;
+1	1	Alice	Great first post!	2025-05-20 08:30:10.308252
+2	1	Bob	Thanks for the intro.	2025-05-20 08:30:10.308252
+3	2	Charlie	Foreign keys are tricky but useful.	2025-05-20 08:30:10.308252
+4	2	Dana	This helped me a lot.	2025-05-20 08:30:10.308252
+5	2	Eli	Any tips for joins?	2025-05-20 08:30:10.308252
+6	3	Fiona	I love cascade deletes!	2025-05-20 08:30:10.308252
+7	3	George	Cascades saved me so much time.	2025-05-20 08:30:10.308252
+8	3	Hana	Should I always use them?	2025-05-20 08:30:10.308252
+9	3	Ivan	What are the risks?	2025-05-20 08:30:10.308252
+10	3	Jill	Great explanation, thanks!	2025-05-20 08:30:10.308252
+11	99	Kevin	Is this post missing?	2025-05-20 08:30:10.308252
+12	\N	Liam	No post id here either	2025-05-20 08:30:10.308252
+\.
+
+
+--
+-- TOC entry 3519 (class 0 OID 16516)
+-- Dependencies: 235
+-- Data for Name: posts; Type: TABLE DATA; Schema: blogs; Owner: postgres
+--
+
+COPY blogs.posts (post_id, title, content, created_at) FROM stdin;
+1	Welcome to our blog	This is the first post.	2025-05-20 08:30:10.308252
+2	Learning SQL	Today we discuss foreign keys.	2025-05-20 08:30:10.308252
+3	Cascade deletes	Why they matter.	2025-05-20 08:30:10.308252
+4	No comments here	This post has no comments.	2025-05-20 08:30:10.308252
+\.
+
+
+--
+-- TOC entry 3518 (class 0 OID 16506)
+-- Dependencies: 234
+-- Data for Name: comments; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.comments (comment_id, post_id, author, comment, created_at) FROM stdin;
+1	1	Alice	Great first post!	2025-05-20 08:28:08.229341
+2	1	Bob	Thanks for the intro.	2025-05-20 08:28:08.229341
+3	2	Charlie	Foreign keys are tricky but useful.	2025-05-20 08:28:08.229341
+4	2	Dana	This helped me a lot.	2025-05-20 08:28:08.229341
+5	2	Eli	Any tips for joins?	2025-05-20 08:28:08.229341
+6	3	Fiona	I love cascade deletes!	2025-05-20 08:28:08.229341
+7	3	George	Cascades saved me so much time.	2025-05-20 08:28:08.229341
+8	3	Hana	Should I always use them?	2025-05-20 08:28:08.229341
+9	3	Ivan	What are the risks?	2025-05-20 08:28:08.229341
+10	3	Jill	Great explanation, thanks!	2025-05-20 08:28:08.229341
+\.
+
+
+--
+-- TOC entry 3516 (class 0 OID 16496)
+-- Dependencies: 232
+-- Data for Name: posts; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.posts (post_id, title, content, created_at) FROM stdin;
+1	Welcome to our blog	This is the first post.	2025-05-20 08:28:08.229341
+2	Learning SQL	Today we discuss foreign keys.	2025-05-20 08:28:08.229341
+3	Cascade deletes	Why they matter.	2025-05-20 08:28:08.229341
+\.
+
+
+--
+-- TOC entry 3505 (class 0 OID 16390)
+-- Dependencies: 221
+-- Data for Name: tabla1; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.tabla1 (id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 3508 (class 0 OID 16397)
+-- Dependencies: 224
+-- Data for Name: tabla2; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.tabla2 (id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 3510 (class 0 OID 16403)
+-- Dependencies: 226
+-- Data for Name: tabla3; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.tabla3 (id, valor, valores) FROM stdin;
+1	hola	{hola,adios,"ta luego"}
+2	hola2	{hola2,adios2,"ta luego2"}
+\.
+
+
+--
+-- TOC entry 3512 (class 0 OID 16470)
+-- Dependencies: 228
+-- Data for Name: test1; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.test1 (id, name, joined) FROM stdin;
+1	Alice	2025-05-20 07:25:22.636761
+2	Bob	2025-05-20 07:25:22.636761
+\.
+
+
+--
+-- TOC entry 3513 (class 0 OID 16480)
+-- Dependencies: 229
+-- Data for Name: dept; Type: TABLE DATA; Schema: scott; Owner: postgres
+--
+
+COPY scott.dept (deptno, dname, loc, budget) FROM stdin;
+10	ACCOUNTING	NEW YORK	1500
+20	RESEARCH	DALLAS	2500
+40	OPERATIONS	BOSTON	2100
+50	VENTAS	Matalascañas	2500
+60	MARKETING	Estepona	1500
+100	TESTING	Bilbao	1000
+30	SALES	CHICAGO	2222
+\.
+
+
+--
+-- TOC entry 3514 (class 0 OID 16485)
+-- Dependencies: 230
+-- Data for Name: emp; Type: TABLE DATA; Schema: scott; Owner: postgres
+--
+
+COPY scott.emp (empno, ename, job, mgr, hiredate, sal, comm, deptno) FROM stdin;
+7839	KING	PRESIDENT	\N	1981-11-17	5000.00	\N	10
+7566	JONES	MANAGER	7839	1981-04-02	2975.00	\N	20
+7698	BLAKE	MANAGER	7839	1981-05-01	2850.00	\N	30
+7782	CLARK	MANAGER	7839	1981-06-09	2450.00	\N	10
+7788	SCOTT	ANALYST	7566	1982-12-09	3000.00	\N	20
+7902	FORD	ANALYST	7566	1981-12-03	3000.00	\N	20
+7844	TURNER	SALESMAN	7698	1981-09-08	1500.00	0.00	30
+7900	JAMES	CLERK	7698	1981-12-03	950.00	\N	30
+7654	MARTIN	SALESMAN	7698	1981-09-28	1250.00	1400.00	30
+7499	ALLEN	SALESMAN	7698	1981-02-20	1600.00	300.00	30
+7521	WARD	SALESMAN	7698	1981-02-22	1250.00	500.00	30
+7934	MILLER	CLERK	7782	1982-01-23	1300.00	\N	10
+7876	ADAMS	CLERK	7788	1983-01-12	1100.00	\N	20
+7369	SMITH	CLERK	7902	1980-12-17	800.00	\N	20
+1234	Alice	DEVELOPER	\N	2025-05-23	3000.00	\N	10
+8888	Bob	CLERK	\N	2025-05-23	2000.00	\N	30
+8008	Bob	clerk	\N	\N	1400.00	\N	10
+\.
+
+
+--
+-- TOC entry 3522 (class 0 OID 16534)
+-- Dependencies: 238
+-- Data for Name: productos; Type: TABLE DATA; Schema: tienda; Owner: postgres
+--
+
+COPY tienda.productos (id, nombre, categoria, precio) FROM stdin;
+1	Camiseta	Ropa	20.00
+2	Pantalón	Ropa	35.50
+3	Zapatos	Calzado	50.00
+4	Sandalias	Calzado	25.00
+5	Gorra	Accesorios	15.00
+\.
+
+
+--
+-- TOC entry 3524 (class 0 OID 16541)
+-- Dependencies: 240
+-- Data for Name: ventas; Type: TABLE DATA; Schema: tienda; Owner: postgres
+--
+
+COPY tienda.ventas (id, producto_id, cantidad, fecha_venta) FROM stdin;
+1	1	3	2025-05-01
+2	2	1	2025-05-03
+3	3	2	2025-05-05
+4	1	1	2025-05-07
+5	5	4	2025-05-10
+6	4	2	2025-05-11
+\.
+
+
+--
+-- TOC entry 3548 (class 0 OID 0)
+-- Dependencies: 245
+-- Name: libros_id_libro_seq; Type: SEQUENCE SET; Schema: biblioteca; Owner: postgres
+--
+
+SELECT pg_catalog.setval('biblioteca.libros_id_libro_seq', 6, true);
+
+
+--
+-- TOC entry 3549 (class 0 OID 0)
+-- Dependencies: 247
+-- Name: prestamos_id_prestamo_seq; Type: SEQUENCE SET; Schema: biblioteca; Owner: postgres
+--
+
+SELECT pg_catalog.setval('biblioteca.prestamos_id_prestamo_seq', 6, true);
+
+
+--
+-- TOC entry 3550 (class 0 OID 0)
+-- Dependencies: 243
+-- Name: socios_id_socio_seq; Type: SEQUENCE SET; Schema: biblioteca; Owner: postgres
+--
+
+SELECT pg_catalog.setval('biblioteca.socios_id_socio_seq', 11, true);
+
+
+--
+-- TOC entry 3551 (class 0 OID 0)
+-- Dependencies: 233
+-- Name: comments_comment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.comments_comment_id_seq', 10, true);
+
+
+--
+-- TOC entry 3552 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: posts_post_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.posts_post_id_seq', 3, true);
+
+
+--
+-- TOC entry 3553 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: tabla1_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.tabla1_id_seq', 1, false);
+
+
+--
+-- TOC entry 3554 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: tabla2_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.tabla2_id_seq', 1, false);
+
+
+--
+-- TOC entry 3555 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: tabla3_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.tabla3_id_seq', 2, true);
+
+
+--
+-- TOC entry 3556 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: test1_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.test1_id_seq', 2, true);
+
+
+--
+-- TOC entry 3557 (class 0 OID 0)
+-- Dependencies: 237
+-- Name: productos_id_seq; Type: SEQUENCE SET; Schema: tienda; Owner: postgres
+--
+
+SELECT pg_catalog.setval('tienda.productos_id_seq', 5, true);
+
+
+--
+-- TOC entry 3558 (class 0 OID 0)
+-- Dependencies: 239
+-- Name: ventas_id_seq; Type: SEQUENCE SET; Schema: tienda; Owner: postgres
+--
+
+SELECT pg_catalog.setval('tienda.ventas_id_seq', 6, true);
+
+
+--
+-- TOC entry 3346 (class 2606 OID 16757)
+-- Name: libros libros_pkey; Type: CONSTRAINT; Schema: biblioteca; Owner: postgres
+--
+
+ALTER TABLE ONLY biblioteca.libros
+    ADD CONSTRAINT libros_pkey PRIMARY KEY (id_libro);
+
+
+--
+-- TOC entry 3348 (class 2606 OID 16764)
+-- Name: prestamos prestamos_pkey; Type: CONSTRAINT; Schema: biblioteca; Owner: postgres
+--
+
+ALTER TABLE ONLY biblioteca.prestamos
+    ADD CONSTRAINT prestamos_pkey PRIMARY KEY (id_prestamo);
+
+
+--
+-- TOC entry 3342 (class 2606 OID 16748)
+-- Name: socios socios_correo_key; Type: CONSTRAINT; Schema: biblioteca; Owner: postgres
+--
+
+ALTER TABLE ONLY biblioteca.socios
+    ADD CONSTRAINT socios_correo_key UNIQUE (correo);
+
+
+--
+-- TOC entry 3344 (class 2606 OID 16746)
+-- Name: socios socios_pkey; Type: CONSTRAINT; Schema: biblioteca; Owner: postgres
+--
+
+ALTER TABLE ONLY biblioteca.socios
+    ADD CONSTRAINT socios_pkey PRIMARY KEY (id_socio);
+
+
+--
+-- TOC entry 3336 (class 2606 OID 16531)
+-- Name: comments comments_pkey; Type: CONSTRAINT; Schema: blogs; Owner: postgres
+--
+
+ALTER TABLE ONLY blogs.comments
+    ADD CONSTRAINT comments_pkey PRIMARY KEY (comment_id);
+
+
+--
+-- TOC entry 3334 (class 2606 OID 16523)
+-- Name: posts posts_pkey; Type: CONSTRAINT; Schema: blogs; Owner: postgres
+--
+
+ALTER TABLE ONLY blogs.posts
+    ADD CONSTRAINT posts_pkey PRIMARY KEY (post_id);
+
+
+--
+-- TOC entry 3332 (class 2606 OID 16514)
+-- Name: comments comments_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.comments
+    ADD CONSTRAINT comments_pkey PRIMARY KEY (comment_id);
+
+
+--
+-- TOC entry 3330 (class 2606 OID 16504)
+-- Name: posts posts_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT posts_pkey PRIMARY KEY (post_id);
+
+
+--
+-- TOC entry 3322 (class 2606 OID 16401)
+-- Name: tabla2 tabla2_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tabla2
+    ADD CONSTRAINT tabla2_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3324 (class 2606 OID 16478)
+-- Name: test1 test1_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.test1
+    ADD CONSTRAINT test1_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3326 (class 2606 OID 16484)
+-- Name: dept dept_pkey; Type: CONSTRAINT; Schema: scott; Owner: postgres
+--
+
+ALTER TABLE ONLY scott.dept
+    ADD CONSTRAINT dept_pkey PRIMARY KEY (deptno);
+
+
+--
+-- TOC entry 3328 (class 2606 OID 16489)
+-- Name: emp emp_pkey; Type: CONSTRAINT; Schema: scott; Owner: postgres
+--
+
+ALTER TABLE ONLY scott.emp
+    ADD CONSTRAINT emp_pkey PRIMARY KEY (empno);
+
+
+--
+-- TOC entry 3338 (class 2606 OID 16539)
+-- Name: productos productos_pkey; Type: CONSTRAINT; Schema: tienda; Owner: postgres
+--
+
+ALTER TABLE ONLY tienda.productos
+    ADD CONSTRAINT productos_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3340 (class 2606 OID 16546)
+-- Name: ventas ventas_pkey; Type: CONSTRAINT; Schema: tienda; Owner: postgres
+--
+
+ALTER TABLE ONLY tienda.ventas
+    ADD CONSTRAINT ventas_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3353 (class 2620 OID 16816)
+-- Name: emp trg_insert_emp_add_hiredate; Type: TRIGGER; Schema: scott; Owner: postgres
+--
+
+CREATE TRIGGER trg_insert_emp_add_hiredate BEFORE INSERT ON scott.emp FOR EACH ROW EXECUTE FUNCTION scott.trg_insert_emp_add_hiredate();
+
+ALTER TABLE scott.emp DISABLE TRIGGER trg_insert_emp_add_hiredate;
+
+
+--
+-- TOC entry 3354 (class 2620 OID 16818)
+-- Name: emp trg_insert_emp_budget_check; Type: TRIGGER; Schema: scott; Owner: postgres
+--
+
+CREATE TRIGGER trg_insert_emp_budget_check BEFORE INSERT ON scott.emp FOR EACH ROW EXECUTE FUNCTION scott.trg_insert_emp_budget_check();
+
+ALTER TABLE scott.emp DISABLE TRIGGER trg_insert_emp_budget_check;
+
+
+--
+-- TOC entry 3355 (class 2620 OID 16814)
+-- Name: emp trg_insert_empleado_job_mayusculas; Type: TRIGGER; Schema: scott; Owner: postgres
+--
+
+CREATE TRIGGER trg_insert_empleado_job_mayusculas BEFORE INSERT ON scott.emp FOR EACH ROW EXECUTE FUNCTION scott.trg_insert_empleado_job_mayusculas();
+
+ALTER TABLE scott.emp DISABLE TRIGGER trg_insert_empleado_job_mayusculas;
+
+
+--
+-- TOC entry 3351 (class 2606 OID 16770)
+-- Name: prestamos prestamos_id_libro_fkey; Type: FK CONSTRAINT; Schema: biblioteca; Owner: postgres
+--
+
+ALTER TABLE ONLY biblioteca.prestamos
+    ADD CONSTRAINT prestamos_id_libro_fkey FOREIGN KEY (id_libro) REFERENCES biblioteca.libros(id_libro);
+
+
+--
+-- TOC entry 3352 (class 2606 OID 16765)
+-- Name: prestamos prestamos_id_socio_fkey; Type: FK CONSTRAINT; Schema: biblioteca; Owner: postgres
+--
+
+ALTER TABLE ONLY biblioteca.prestamos
+    ADD CONSTRAINT prestamos_id_socio_fkey FOREIGN KEY (id_socio) REFERENCES biblioteca.socios(id_socio);
+
+
+--
+-- TOC entry 3349 (class 2606 OID 16490)
+-- Name: emp emp_deptno_fkey; Type: FK CONSTRAINT; Schema: scott; Owner: postgres
+--
+
+ALTER TABLE ONLY scott.emp
+    ADD CONSTRAINT emp_deptno_fkey FOREIGN KEY (deptno) REFERENCES scott.dept(deptno);
+
+
+--
+-- TOC entry 3350 (class 2606 OID 16547)
+-- Name: ventas ventas_producto_id_fkey; Type: FK CONSTRAINT; Schema: tienda; Owner: postgres
+--
+
+ALTER TABLE ONLY tienda.ventas
+    ADD CONSTRAINT ventas_producto_id_fkey FOREIGN KEY (producto_id) REFERENCES tienda.productos(id);
+
+
+--
+-- TOC entry 3537 (class 0 OID 0)
+-- Dependencies: 8
+-- Name: SCHEMA tienda; Type: ACL; Schema: -; Owner: postgres
+--
+
+GRANT USAGE ON SCHEMA tienda TO grupo_test1;
+
+
+--
+-- TOC entry 3547 (class 0 OID 0)
+-- Dependencies: 241
+-- Name: TABLE vw_productos_ropa_cara; Type: ACL; Schema: tienda; Owner: postgres
+--
+
+GRANT SELECT ON TABLE tienda.vw_productos_ropa_cara TO grupo_test1;
+
+
+-- Completed on 2025-05-24 18:44:29 UTC
+
+--
+-- PostgreSQL database dump complete
+--
+
