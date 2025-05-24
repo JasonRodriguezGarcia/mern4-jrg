@@ -1,0 +1,67 @@
+Montar docker y pgadmin con el docker-compose
+Hacer por si acaso copia de las bbdd demo y postgres en Formato Plain
+Respaldando Demo
+resultado (ojo insertado en varias líneas, habría que quitar el salto de linea para que sea una sola)
+Backing up an object on the server 'postgres (postgres:5432)' from database 'demo'
+Running command:
+    /usr/local/pgsql-17/pg_dump --file "/var/lib/pgadmin/storage/jasonrodriguezempleo_gmail.com/demo_24Mayo2025" --host 
+        "postgres" --port "5432" --username "postgres" --no-password --format=p --verbose --schema "biblioteca" --schema 
+        "blogs" --schema "public" --schema "scott" --schema "tienda" "demo"
+En consola VSC (el pendrive donde lo voy a copiar esta en G:)
+    docker cp pgadmin:/var/lib/pgadmin/storage/jasonrodriguezempleo_gmail.com/demo_24Mayo2025 G:\demo_24Mayo2025
+    docker cp pgadmin:/var/lib/pgadmin/storage/jasonrodriguezempleo_gmail.com/postgres_24Mayo2025 G:\postgres_24Mayo2025
+
+Perfecto, si vas a migrar datos de volúmenes Docker nombrados de un equipo a otro, aquí tienes una guía paso a paso con los 
+comandos exactos para hacerlo bien.
+EL RESTO NO FUNCIONAAAAAAAAAA........... opto por restaurar en el ordenador nuevo las copias de seguridad
+🛠 Migración de volúmenes Docker (ejemplo con postgres_data)
+1. Crear un backup del volumen en el equipo origen
+Ejecuta este comando en el equipo donde están los datos originales para crear un archivo comprimido con todo el contenido del 
+volumen:
+bash
+
+docker run --rm -v postgres_data:/data -v $(pwd):/backup alpine tar czf /backup/postgres_data_backup.tar.gz -C /data .
+
+Esto crea un archivo llamado postgres_data_backup.tar.gz en el directorio actual ($(pwd)).
+IMPORTANTE: En Windows PowerShell, reemplaza $(pwd) por ${PWD} o la ruta absoluta, por ejemplo:
+powershell 
+
+docker run --rm -v postgres_data:/data -v ${PWD}:/backup alpine tar czf /backup/postgres_data_backup.tar.gz -C /data .
+
+2. Copiar el archivo backup al nuevo equipo
+Usa cualquier método (USB, red, scp, etc.) para copiar postgres_data_backup.tar.gz y el fichero docker-compose.yml al nuevo equipo.
+
+3. Crear el volumen en el nuevo equipo
+Abre terminal en el nuevo equipo y crea el volumen (usa el mismo nombre para mantener la compatibilidad):
+
+bash Copiar Editar
+
+docker volume create postgres_data
+
+4. Restaurar el backup en el volumen nuevo
+Ejecuta este comando para extraer el backup en el volumen recién creado:
+
+bash Copiar Editar
+
+docker run --rm -v postgres_data:/data -v $(pwd):/backup alpine \
+    tar xzf /backup/postgres_data_backup.tar.gz -C /data
+
+Recuerda, en Windows PowerShell reemplaza $(pwd) por ${PWD} o una ruta absoluta.
+
+5. Levantar el entorno con Docker Compose
+Finalmente, ejecuta en el nuevo equipo:
+
+bash Copiar Editar
+
+docker-compose up -d
+
+Esto levantará los servicios usando el volumen restaurado con tus datos.
+
+🎯 Resumen rápido
+Paso	Comando ejemplo
+
+Backup volumen	docker run --rm -v postgres_data:/data -v $(pwd):/backup alpine tar czf /backup/postgres_data_backup.tar.gz -C /data .
+Copiar backup	Copiar el archivo postgres_data_backup.tar.gz al nuevo equipo
+Crear volumen	docker volume create postgres_data
+Restaurar	docker run --rm -v postgres_data:/data -v $(pwd):/backup alpine tar xzf /backup/postgres_data_backup.tar.gz -C /data
+Levantar	docker-compose up -d
