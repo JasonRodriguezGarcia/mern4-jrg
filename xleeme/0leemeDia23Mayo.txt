@@ -1,7 +1,8 @@
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/10-transactions.md
 
 Actividad
-Vamos a ejecutar código para crear un nuevo departamento, y a la vez, un nuevo empleado que pertenece a este departamento. Llevarlo a cabo usando transacciones. Por ejemplo:
+Vamos a ejecutar código para crear un nuevo departamento, y a la vez, un nuevo empleado que pertenece a este departamento.
+ Llevarlo a cabo usando transacciones. Por ejemplo:
 
 INSERT INTO scott.dept (deptno, dname, loc)
 VALUES (60, 'I+D', 'BARCELONA');
@@ -11,7 +12,7 @@ VALUES (8888, 'ANALISTA2', 'ANALISTA', 7839, CURRENT_DATE, 3500, NULL, 60);
 
 **************************
 
-EJejmplo de niveles de aislamiento
+Ejemplo de niveles de aislamiento
 
 CREATE SCHEMA IF NOT EXISTS banco;
 
@@ -45,7 +46,7 @@ ROLLBACK; -- SI HAY ALGUN PROBLEMA
 
 podemos ejecutar por trozos para ver movimientos
 
-prodecimientos almacenados hace falta transariones¿? en postgres y en otros¿?
+prodecimientos almacenados hace falta transacciones¿? en postgres y en otros¿?
 
 en una ejecucion hasta 
 BEGIN; -- añadir TRANSACTION en otros no postgres
@@ -257,10 +258,65 @@ EVENTOS
 	Dispara AFTER
 	UPDATE activado
 
+MEJORAS HECHAS PARA QUE VALGA PARA INSERT, UPDATE, DELETE CON CODIGO OPTIMIZADO
+EN LA FUNCION TRIGGER
+CODIGO
+DECLARE
+-- funcion trigger tras
+	-- insertar cuenta (after en la tabla)
+	-- actualizar cuenta (after en la tabla)
+	-- borrar cuenta (after en la tabla)
+-- guarde datos en audit
+-- action
+-- action_time
+-- usuario
+-- values_before
+-- values_after
+-- tabla
+	_values_before jsonb; -- := TO_JSONB(OLD);  -- OJO SOLO PARA TESTING
+	_values_after jsonb; -- := TO_JSONB(NEW);  -- OJO SOLO PARA TESTING
+
+BEGIN
+	IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
+		_values_before = to_json(OLD);
+	ELSE
+		_values_before = '{}'::jsonb;
+	END IF;
+	IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
+		_values_after = to_json(NEW);
+	ELSE
+		_values_after = '{}'::jsonb;	
+	END IF;
+	INSERT INTO banco.audit 
+		(action, action_time, usuario, values_before, values_after, tabla)
+		VALUES
+		(TG_OP, NOW(), CURRENT_USER, _values_before, _values_after, TG_TABLE_NAME);
+	RETURN NULL;
+END;
+Y en la tabla cuentas la funcion trigger
+EVENTOS	
+	Dispara AFTER
+	INSERT activado
+	UPDATE activado
+	DELETE activado
 
 
+TESTING
+INSERT INTO banco.cuentas(
+	id_cliente, numero, tipo, estado, saldo)
+	VALUES (4, 'ES33776633', 'T', true, 3333);
 
-Usuarios Crear un usuario para acceder a la base de datos desde Python. Darle acceso a la vista y algunos objectos
+CALL banco.transferir_fondos('ES11776633', 'ES66557776', 333);
+
+INSERT INTO banco.cuentas(
+	id_cliente, numero, tipo, estado, saldo)
+	VALUES (4, 'ES11776611', 'T', true, 2000);
+
+DELETE FROM banco.cuentas
+WHERE id_cuenta = 10;
+
+
+Usuarios Crear un usuario para acceder a la base de datos desde Python. Darle acceso a la vista y algunos objetos
  necesarios
 Crear una interfaz de Python, con opciones para:
 Mostrar informes: usuarios VIP, clientes sin saldo, ...

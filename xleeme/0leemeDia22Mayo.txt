@@ -127,17 +127,24 @@ END;
 
 TRIGGERS (DISPARADORES o funciones disparadores) OJO RENDIMIENTO SE REDUCE
 ASIGNAR TRIGGER A TABLA
-SE DISPARA CON ISERT O UPDATE O DELETE
-ANTES O DESPUEST DE LA ACCIONES
-SI TRIGGER ES DE ANTES - ES UN TIPO DE VALIDACION , PODEMOS COMPROBAR A OTRA SI ESTA AUTORIZADO
-SI TRIGGES ES DE DESPUES - PODEMOS MANDAR DATOS A UNA TABLA DE AUDITORIA (EJEMPLO)
+SE DISPARA CON INSERT O UPDATE O DELETE
+ANTES O DESPUES DE LA ACCIONES
+SI TRIGGER ES DE ANTES (BEFORE) - ES UN TIPO DE VALIDACION , PODEMOS COMPROBAR A OTRA SI ESTA AUTORIZADO
+SI TRIGGES ES DE DESPUES (AFTER) - PODEMOS MANDAR DATOS A UNA TABLA DE AUDITORIA (EJEMPLO)
 TENEMOS ACCESO A UNA TABLA NEW (OLD) Y OTRA OLD (BEFORE)
+	INSERT acceso a NEW
+	DELETE acceso OLD
+	UPDATE a NEW y OLD
+En PostgreSQL, los triggers son funciones que se ejecutan automáticamente en respuesta a ciertos eventos (INSERT, UPDATE,
+ DELETE, TRUNCATE). Dependiendo del tipo de evento, se tiene acceso a los registros especiales NEW y OLD, que representan
+ los datos involucrados en la operación.
+📌 Disponibilidad de NEW y OLD según el tipo de trigger:
+Evento	OLD disponible	NEW disponible	Explicación
+INSERT	❌ No	✅ Sí	NEW contiene la fila que se va a insertar.
+UPDATE	✅ Sí	✅ Sí	OLD es la fila antes del cambio; NEW es la fila nueva.
+DELETE	✅ Sí	❌ No	OLD contiene la fila que se va a eliminar.
 
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/09-db.triggers.md
-
-insert acc NEW
-Delete acc OLD
-UPdate a los 2
 
 
 crear funcion que devuelve trigger y asignar a la tabla
