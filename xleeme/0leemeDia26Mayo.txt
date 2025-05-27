@@ -1,0 +1,119 @@
+EMPRESA DONOSTI FRAME
+
+
+mongodb buscar
+
+mongodb atlas
+
+filter (movies)
+    {"year": 1983}
+
+en collections
+    crear Database
+        clase
+    collection name
+        productos
+    addicional preferentes
+        no tocar
+    create
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/mongodb/01-configuracion.md
+[
+  { "prodId": 100, "nombreProducto": "Camiseta", "precio": 20.99, "cantidad": 125 },
+  { "prodId": 101, "nombreProducto": "Pantalón", "precio": 10.50, "cantidad": 234 },
+  { "prodId": 102, "nombreProducto": "Chaqueta", "precio": 15.75, "cantidad": 432 },
+  { "prodId": 103, "nombreProducto": "Zapatos", "precio": 17.30, "cantidad": 320 }
+]
+
+en {} insertamos nuestros datos
+insert
+
+base datos squema
+tabla colleccion
+registro documento
+
+filter 
+{"precio": {$gt:10}}
+
+filter
+{"deptno": 2}
+project
+{"loc": 1, "dname": 1}  --1 activa visualizar el campo nombre y dname, 0 -desactiva
+
+filter
+{"emps.empNo": 2}
+{"emps.name": "Luis"}
+
+indexes
+create index
+{
+  "loc": 1
+}
+
+cluster
+connect
+mongo db
+
+copiar codigo to connect to your mongodb
+mongodb+srv://mongodb:<db_password>@nzcluster-01.ox3d0eu.mongodb.net/
+
+is a VSC
+extensiones buscar mongodb for vs code
+connect se habre la barra comandos VSC
+pegamos (mongodb es password)
+mongodb+srv://mongodb:mongodb@nzcluster-01.ox3d0eu.mongodb.net/
+
+se abre un playground
+darle al PLAY DE ARRIBA A LA DERECHA
+
+crea un entorno en plan herramientas en postgress
+use('scott');
+db.dept.find({'deptNo': 1});
+
+marcar solo 2 lineas y PLAY
+use('scott');
+// db.dept.find({'deptNo': 2});
+db.dept.find({'emps.name': "Luis"})
+
+
+use('scott');
+// db.dept.find({'deptNo': 2});
+db.dept.find({'emps.name': "Luis"})
+
+db.dept.findOne({"_id": objectId('68263948689')})
+
+use('clase');
+db.getCollection("productos").find(
+    {"cantidad": {$gt: 9}},
+    {"_id": 0, "nombreProducto": 1, "cantidad": 1}
+);
+
+use('clase');
+db.getCollection("productos").findOne(
+    {"cantidad": {$gt: 1}}
+);
+
+
+use('clase');
+db.productos.insertOne({
+    prodId: 656,
+    nombreProducto: 'VSCode',
+    precio: 110,
+    cantidad: 50
+});
+
+use('clase');
+db.getCollection("productos").findOne(
+    {"nombreProducto": "VSCode"}
+);
+
+IR A playground-1.mongodb.js
+
+VAMOS A NODEJS
+connect en ATLAS clould.mongodb.com
+drivers
+driver node.js
+npm install mongodb
+crear index-mongodb.js
+pegar conexion de mongodb
+ejecutar 
+node index-mongodb.js
