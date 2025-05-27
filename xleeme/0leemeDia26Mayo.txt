@@ -76,7 +76,16 @@ En Filter podremos poner
 
 filter
 {"deptno": 2}
-project
+otro
+{cantidad: {$gte: 400}}
+otro
+{$and: [{cantidad: {$gte: 300}}, {precio: {$gte: 17}}]}
+A la derecha de FILTER aparece OPTIONS
+En la línea de FILTER pondremos nuestro filtro pero además seleccionaremos los campos a ver con Project
+Project
+{nombreProducto: 1, _id: 0} --1 activa visualizar el campo nombre y dname, 0 -desactiva
+
+ejemplos de filtro para dept y empleados
 {"loc": 1, "dname": 1}  --1 activa visualizar el campo nombre y dname, 0 -desactiva
 
 filter
@@ -89,23 +98,30 @@ create index
   "loc": 1
 }
 
-cluster
-connect
-mongo db
+Podemos enlazar nuestro Cluster y sus bases de datos con VSC (Visual Studio Code)
+A la izquierda - Cluster
+    Connect
+        poner username y password (mongodb en los 2)
+        PINCHAR en Create Database User
+    Chose a connection method (abajo a la derecha)
+        MongoDB for VSC
+        Aparece una ventana indicando que tendremos que instalar una extension en VSC y copia una cadena en el apartado 3.
 
 copiar codigo to connect to your mongodb
-mongodb+srv://mongodb:<db_password>@nzcluster-01.ox3d0eu.mongodb.net/
+mongodb+srv://mongodb:<db_password>@cluster0jrg.kovfslk.mongodb.net/  -- casa
+mongodb+srv://mongodb:<db_password>@nzcluster-01.ox3d0eu.mongodb.net/ -- clase
 
-is a VSC
-extensiones buscar mongodb for vs code
+Ir a VSC
+extensiones buscar mongodb for vs code e instalar
 connect se habre la barra comandos VSC
 pegamos (mongodb es password)
-mongodb+srv://mongodb:mongodb@nzcluster-01.ox3d0eu.mongodb.net/
+mongodb+srv://mongodb:mongodb@nzcluster-01.ox3d0eu.mongodb.net/ --clase
+mongodb+srv://mongodb:<db_password>@cluster0jrg.kovfslk.mongodb.net/  -- casa
 
-se abre un playground
-darle al PLAY DE ARRIBA A LA DERECHA
+Se abre una pestaña adicional playground-1.mongodb.js en la que podremos ejecutar comandos de Mongodb
+Crea un entorno en plan herramientas de consulta en postgress
+Darle al PLAY DE ARRIBA A LA DERECHA para ejecutar el playground-1
 
-crea un entorno en plan herramientas en postgress
 use('scott');
 db.dept.find({'deptNo': 1});
 
@@ -149,11 +165,14 @@ db.getCollection("productos").findOne(
 IR A playground-1.mongodb.js hay ejercicios
 
 VAMOS A NODEJS
-connect en ATLAS clould.mongodb.com
-drivers
-driver node.js
-npm install mongodb
-crear index-mongodb.js
-pegar conexion de mongodb
+Connect en ATLAS clould.mongodb.com
+Esta vez en lugar de MongoDB for VSC elegimos
+    Drivers
+Driver node.js
+    npm install mongodb (indica instalar mongodb en nodejs)
+Copiar cadena del punto 3. Nos servirá para llamar a MongoDB desde node.
+    mongodb+srv://mongodb:<db_password>@cluster0jrg.kovfslk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0jrg
+En VSC crear index-mongodb.js
+    pegar conexion de mongodb
 ejecutar 
-node index-mongodb.js
+    node index-mongodb.js
