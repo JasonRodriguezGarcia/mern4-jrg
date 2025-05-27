@@ -141,7 +141,277 @@ db.productos.deleteOne(
   {_id: ObjectId('68347b7f3b6df6545cb51811')}
 );
 
+
+****************************
+****************************
 https://www.mongodb.com/docs/manual/reference/method/js-collection/
 
-
+27Mayo2025
 ir a nodejs
+{genres: "Comedy", cast: "Gregor Clegane"}
+
+use('sample_mflix');
+db.embedded_movies.find({genres: "Comedy"}).limit(3);
+
+Andre Moreau
+use('sample_mflix');
+db.embedded_movies.find({plot: {$regex: "Andre Moreau"}}).limit(3);
+use('sample_mflix');
+db.embedded_movies.find({plot: /Andre Moreau/i}).limit(3);
+
+votos > 1000 mostrando directores
+use('sample_mflix');
+db.embedded_movies.find({"imdb.votes": {$gt: 1000}}).limit(3);
+
+use('sample_mflix');
+db.embedded_movies.find(
+  {"imdb.votes": {$gt: 1000}},
+  {_id: 0, directors: 1}
+).limit(3);
+
+use('sample_mflix');
+db.embedded_movies.find(
+  {year: {$gte: 1914, $lte: 1915}},
+  {year: 1, title: 1, directors: 1}
+).limit(3);
+
+use('sample_mflix');
+db.embedded_movies.find({
+  {{$year: "$date"}: {$gte: 1914, $lte: 1915}}
+});
+
+use('sample_mflix');
+db.embedded_movies.find(
+  {released: {$gte: ISODate('1914-03-23T00:00:00.000+00:00'),
+    $gte: ISODate('1915-12-31T00:00:00.000+00:00')
+  }}
+);
+
+añadimos a clase coleccion (tabla) songs
+use("clase");
+db.songs.insertMany( [
+   { _id: 0, "artist" : "Blue Öyster Cult", "title": "The Reaper" },
+   { _id: 1, "artist": "Blue Öyster Cult", "title": "Godzilla" },
+   { _id: 2, "artist" : "Blue Oyster Cult", "title": "Take Me Away" }
+]);
+
+artista: que empieze en blue y acabe en cult, lo de enmedio no importa
+use("clase");
+db.songs.find({
+  artist: { $regex: /blue.*oyster.*cult/i }
+});
+
+que title contenga en cualquier parte del title god
+use("clase");
+db.songs.find({
+  title: { $regex: /god/i }
+});
+
+use("clase");
+db.songs.find({
+  artist: { $regex: /^Blue/, $options: 'i' }
+});
+
+use("clase");
+db.songs.find({
+  title: { $regex: /Away$/, $options: 'i' }
+});
+
+use("clase");
+db.songs.find({
+  artist: { $regex: /[üö]/i }
+});
+
+
+// con exactamente 2 palabras w=word, s=space
+use("clase");
+db.songs.find({
+  title: { $regex: /^\w+\s\w+$/ }
+});
+
+// si contiene un número d=dígito
+use("clase");
+db.songs.find({
+  title: { $regex: /\d/ }
+});
+
+********************
+
+// ojo antes ponía scott segun la web
+use("clase");
+db.createCollection("usuarios", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["usuario", "nombre", "apellido", "correo", "tipo_usuario", "activo"],
+      additionalProperties: false, // OJO IMPORTANTE
+      properties: {
+        _id: {
+          bsonType: "objectId",
+          description: "Debe ser un ObjectId generado automáticamente"
+        },
+        usuario: {
+          bsonType: "string",
+          description: "Debe ser una cadena de texto y es obligatorio"
+        },
+        nombre: {
+          bsonType: "string",
+          description: "Debe ser una cadena de texto y es obligatorio"
+        },
+        apellido: {
+          bsonType: "string",
+          description: "Debe ser una cadena de texto y es obligatorio"
+        },
+        correo: {
+          bsonType: "string",
+          pattern: "^.+@.+\\..+$",
+          description: "Debe ser una cadena con formato de correo electrónico válido y es obligatorio"
+        },
+        pais: {
+          bsonType: ["string", "null"],
+          description: "Puede ser una cadena de texto o null, y es opcional"
+        },
+        tipo_usuario: {
+          bsonType: "string",
+          enum: ["Admin", "Cliente", "Proveedor"],
+          description: "Solo puede ser 'Admin', 'Cliente', 'Proveedor'"
+        },
+        fecha_nacimiento: {
+          bsonType: ["date", "null"],
+          description: "Puede ser una fecha o null, y es opcional"
+        },
+        activo: {
+          bsonType: "bool",
+          description: "Debe ser un valor booleano y es obligatorio"
+        }
+      }
+    }
+  }
+});
+db.usuarios.createIndex({ usuario: 1 }, { unique: true });
+db.usuarios.createIndex({ correo: 1 }, { unique: true });
+
+******************
+// Documento 1: Correcto (debería insertarse sin problemas)
+
+use("clase");
+db.usuarios.insertOne({
+  "usuario": "juanperez",
+  "nombre": "Juan",
+  "apellido": "Pérez",
+  "correo": "juan.perez@example.com",
+  "pais": "España",
+  "tipo_usuario": "Cliente",
+  "fecha_nacimiento": ISODate("1990-05-20T00:00:00Z"),
+  "activo": true
+});
+
+use("clase");
+db.usuarios.insertOne({
+  "usuario": "juanperez2",
+  "nombre": "Juan2",
+  "apellido": "Pérez2",
+  "correo": "juan.perez2@example.com",
+  "pais": "España",
+  "tipo_usuario": "Cliente",
+  "fecha_nacimiento": ISODate("1990-05-20T00:00:00Z"),
+  "activo": true
+});
+
+*******************
+*******************
+
+use("clase");
+db.createCollection("libros", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["titulo", "autor", "genero", "fecha_publicacion", "paginas", "disponible", "precio"],
+      additionalProperties: false, // NO PERMITE AÑADIR MAS CAMPOS
+      properties: {
+        _id: {
+          bsonType: "objectId",
+          description: "Debe ser un ObjectId generado automáticamente"
+        },
+        titulo: {
+          bsonType: "string",
+          description: "Debe ser una cadena de texto y es obligatorio"
+        },
+        autor: {
+          bsonType: "string",
+          description: "Debe ser una cadena de texto y es obligatorio"
+        },
+        genero: {
+          bsonType: "string",
+          enum: [
+            "Ficción", "No Ficción", "Misterio", "Romance", "Terror", "Drama",
+            "Acción", "Aventura", "Comedia"
+          ],
+          description: "Solo puede ser 'Ficción', 'No Ficción', 'Misterio', 'Romance', 'Terror', 'Drama', 'Acción', 'Aventura', 'Comedia'"
+        },
+        fecha_publicacion: {
+          bsonType: "date",
+          description: "Debe ser una fecha y es obligatorio"
+        },
+        paginas: {
+          bsonType: "int",
+          minimum: 1, 
+          description: "Debe ser un número y es obligatorio"
+        },
+        disponible: {
+          bsonType: "bool",
+          description: "Debe ser un valor booleano y es obligatorio"
+        },
+        precio: {
+          bsonType: "double",
+          minimum: 0.01, 
+          maximum: 10000,
+          description: "Debe ser un número y es obligatorio"
+        }
+      }
+    }
+  }
+});
+db.libros.createIndex({ genero: 1 });
+
+*****************************
+
+use('clase');
+db.libros.insertOne({
+  "titulo": "Como hacerser rico en 2 semanas",
+  "autor": "Ronaldo Trumps",
+  "genero": "Comedia",
+  "fecha_publicacion": ISODate("1990-05-20T00:00:00Z"),
+  "paginas": 50,
+  "disponible": true,
+  "precio": NumberDecimal("15.00")
+});
+
+
+use('clase');
+db.libros.insertOne({
+  "titulo": "Como hacerse rico en 2 semanas",
+  "autor": "Ronaldo Trumps",
+  "genero": "Comedia",
+  "fecha_publicacion": ISODate("1990-05-20T00:00:00Z"),
+  "paginas": 50,
+  "disponible": true,
+  "precio": 15.00  // Cambié NumberDecimal("15.00") por 15.00 que es un número de tipo double
+});
+
+
+************
+*************
+añadiendo campo activo en una coleccion productos
+
+use('clase');
+db.productos.updateMany(
+  {},
+  {$set: {active: true}}
+);
+
+use('clase');
+db.productos.update(
+  {prodId: 102},
+  {$set: {active: false}}
+);
