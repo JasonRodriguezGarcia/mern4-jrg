@@ -1,10 +1,46 @@
 EMPRESA DONOSTI FRAME
 
+MongoDB basado en colecciones
 
-mongodb buscar
+SQL         MongoDB (no hay esquema ->schemaless)
+----------  -------------------------------------
+base datos  base de datos
+tabla       coleccion
+registro    documento
 
-mongodb atlas
+buscar en google mongodb 
+seleccionar mongodb atlas
 
+ENTRO CON CUENTA GOOGLE MÍA DE EMPLEO
+ACTIVAR aceptar
+Submit
+Rellenar motivos y preferencias
+GETTING TO KNOW YOU
+GETTING TO KNOW YOUR PROYECT
+Finish
+
+Deploy your cluster
+    Free (512MB Storage, Ram Shared, vCPU shared)
+Configurations
+    name Cluster0jrg
+Provider 
+    AWS
+Region
+    Paris
+Quick Setup
+    Dejar solo Activado Preload sample dataset (para tener bases de datos de prueba)
+
+Create Deployment
+Pasaremos a la ventana Connect to Cluster0jrg
+current ip address 0.0.0.0
+    Username    mongodb
+    Password    mongodb
+Close
+
+A la izquierda Database 
+    Cluster 
+    Aparecerá nuestro Cluster0jrg, si pinchamos en el entramos vemos varios detalles
+        Collections - muestra nuestras bases de datos, tablas (colecciones) que contendran registros(documentos)
 filter (movies)
     {"year": 1983}
 
@@ -16,7 +52,9 @@ en collections
     addicional preferentes
         no tocar
     create
+    
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/mongodb/01-configuracion.md
+
 [
   { "prodId": 100, "nombreProducto": "Camiseta", "precio": 20.99, "cantidad": 125 },
   { "prodId": 101, "nombreProducto": "Pantalón", "precio": 10.50, "cantidad": 234 },
@@ -24,14 +62,16 @@ https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/mong
   { "prodId": 103, "nombreProducto": "Zapatos", "precio": 17.30, "cantidad": 320 }
 ]
 
-en {} insertamos nuestros datos
-insert
+Insertamos en nuestra coleccion productos los datos de arriba
+A la derecha INSERT DOCUMENT
+    Podremos insertar nuestros datos en 2 formatos que aparecen en VIEW
+    Pinchar en {}
+    Entre {} podríamos insertar nuestros datos, PERO ESTE CASO borramos los {}
+Insert (abajo derecha)
+Volveremos otra vez a la pantalla de bases de datos y colecciones, pero ahora en productos ya tenemos insertados nuestros datos
 
-base datos squema
-tabla colleccion
-registro documento
-
-filter 
+Podemos usar la línea Filter para manejar datos
+En Filter podremos poner
 {"precio": {$gt:10}}
 
 filter
@@ -106,7 +146,7 @@ db.getCollection("productos").findOne(
     {"nombreProducto": "VSCode"}
 );
 
-IR A playground-1.mongodb.js
+IR A playground-1.mongodb.js hay ejercicios
 
 VAMOS A NODEJS
 connect en ATLAS clould.mongodb.com
