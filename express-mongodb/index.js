@@ -20,7 +20,7 @@ async function startServer() {
   try {
     // Connect to MongoDB and store the DB instance in app.locals
     const db = await connectDB();
-    app.locals.db = db;
+    app.locals.db = db; // saving database globally
 
     // Mount routes
     app.use('/api/v1/productos', productosRouter);

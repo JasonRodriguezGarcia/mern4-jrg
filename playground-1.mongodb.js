@@ -415,3 +415,77 @@ db.productos.update(
   {prodId: 102},
   {$set: {active: false}}
 );
+
+
+**********************
+**********************
+**********************
+dia 28 Mayo
+
+creamos coleccion (tabla) en bbdd clase
+ya que no existe peliculas SE CREA !!!
+use('clase');
+db.peliculas.insertMany([
+  { titulo: "Volver al Futuro", director: "Robert Zemeckis", año: 1985 },
+  { titulo: "The Matrix", director: "Lana Wachowski", año: 1999 },
+  { titulo: "Matrix Reloaded", director: "Lana Wachowski", año: 2003 },
+  { titulo: "Amores Perros", director: "Alejandro González Iñárritu", año: 2000 },
+  { titulo: "Misión Imposible", director: "Brian De Palma", año: 1996 },
+  { titulo: "Misión Imposible 2", director: "John Woo", año: 2000 },
+  { titulo: "Mi Villano Favorito", director: "Pierre Coffin", año: 2010 },
+  { titulo: "Mi Pobre Angelito", director: "Chris Columbus", año: 1990 },
+  { titulo: "Interestelar", director: "Christopher Nolan", año: 2014 },
+  { titulo: "Interstellar", director: "Christopher Nolan", año: 2014 }
+]);
+
+use('clase');
+db.peliculas.find(
+  {titulo: {$regex: /Misión Imposible/i} },
+  {titulo: 1, año: 1}
+);
+
+use('clase');
+db.peliculas.find(
+  {titulo: {$regex: /^Mi/} },
+  {titulo: 1, año: 1}
+);
+
+
+use('clase');
+db.peliculas.find(
+  {titulo: {$regex: /\d$/} },
+  {titulo: 1, año: 1}
+);
+
+use('clase'); // ojo regex con i es case insensitive
+db.peliculas.find(
+  // {director: {$regex: /christopher.*nolan/i} },
+  {director: {$regex: /christopher.*nolan/, $options: 'i'} },
+  {titulo: 1, director: 1, año: 1}
+);
+
+Encuentra las películas cuyo título contiene la palabra "Inter" (como parte del nombre).
+use('clase'); // ojo regex con i es case insensitive
+db.peliculas.find(
+  {nombre: {$regex: /.*Inter.*/i} },
+  {titulo: 1, director: 1, año: 1}
+);
+
+use('clase'); // ojo regex con i es case insensitive
+db.peliculas.find(
+  {titulo:  {$or: [{$regex: /Mision Imposible/i},
+                  {$regex: /Matrix/i}]
+            }
+  },
+  {titulo: 1, director: 1, año: 1}
+);
+
+use('clase'); // ojo regex con i es case insensitive
+db.peliculas.find(
+  {$or:  [{titulo: /Misión Imposible/i},
+          {titulo: /Matrix/i}]
+        
+  },
+  {titulo: 1, director: 1, año: 1}
+);
+

@@ -1,0 +1,285 @@
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/mongodb/03-consultas.md
+
+db.peliculas.insertMany([
+  { titulo: "Volver al Futuro", director: "Robert Zemeckis", año: 1985 },
+  { titulo: "The Matrix", director: "Lana Wachowski", año: 1999 },
+  { titulo: "Matrix Reloaded", director: "Lana Wachowski", año: 2003 },
+  { titulo: "Amores Perros", director: "Alejandro González Iñárritu", año: 2000 },
+  { titulo: "Misión Imposible", director: "Brian De Palma", año: 1996 },
+  { titulo: "Misión Imposible 2", director: "John Woo", año: 2000 },
+  { titulo: "Mi Villano Favorito", director: "Pierre Coffin", año: 2010 },
+  { titulo: "Mi Pobre Angelito", director: "Chris Columbus", año: 1990 },
+  { titulo: "Interestelar", director: "Christopher Nolan", año: 2014 },
+  { titulo: "Interstellar", director: "Christopher Nolan", año: 2014 }
+]);
+
+OJO  !! en basedatos peliculas (se creara solo ya que no existe)
+use('clase');
+db.peliculas.insertMany([
+  { titulo: "Volver al Futuro", director: "Robert Zemeckis", año: 1985 },
+  { titulo: "The Matrix", director: "Lana Wachowski", año: 1999 },
+  { titulo: "Matrix Reloaded", director: "Lana Wachowski", año: 2003 },
+  { titulo: "Amores Perros", director: "Alejandro González Iñárritu", año: 2000 },
+  { titulo: "Misión Imposible", director: "Brian De Palma", año: 1996 },
+  { titulo: "Misión Imposible 2", director: "John Woo", año: 2000 },
+  { titulo: "Mi Villano Favorito", director: "Pierre Coffin", año: 2010 },
+  { titulo: "Mi Pobre Angelito", director: "Chris Columbus", año: 1990 },
+  { titulo: "Interestelar", director: "Christopher Nolan", año: 2014 },
+  { titulo: "Interstellar", director: "Christopher Nolan", año: 2014 }
+]);
+
+Todas las peliculas de Mision Imposible.
+use('clase');
+db.peliculas.find(
+//  {titulo: {$regex: "Misión Imposible"} },
+  {titulo: {$regex: /Misión Imposible/i} },
+//  {titulo: {$regex: /Misión Imposible/, $options: i} },
+
+  {titulo: 1, año: 1}
+);
+
+Encuentra todas las películas cuyo título comienza con "Mi".
+use('clase');
+db.peliculas.find(
+  {titulo: {$regex: /^Mi/} },
+  {titulo: 1, año: 1}
+);
+
+Encuentra todas las películas cuyo título termina con un número.
+use('clase');
+db.peliculas.find(
+  {titulo: {$regex: /\d$/} },
+  {titulo: 1, año: 1}
+);
+
+Encuentra películas del director "Christopher Nolan", sin importar cómo esté escrito (por ejemplo: con o sin minúsculas).
+use('clase'); // ojo regex con i es case insensitive
+db.peliculas.find(
+  {director: {$regex: /christopher.*nolan/i} },
+  // OJO TAMBIEN VALE
+  //{director: {$regex: /christopher.*nolan/, $options: 'i'} },
+  {titulo: 1, director: 1, año: 1}
+);
+
+Encuentra las películas cuyo título contiene la palabra "Inter" (como parte del nombre).
+use('clase'); // ojo regex con i es case insensitive
+db.peliculas.find(
+  {titulo: {$regex: /.*Inter.*/i} },
+  {titulo: 1, director: 1, año: 1}
+);
+
+Encontrar las peliculas de Mision Imposible o (OR) Matrix.
+use('clase'); // ojo regex con i es case insensitive
+db.peliculas.find(
+  {$or:  [{titulo: /Misión Imposible/i},
+          {titulo: /Matrix/i}]
+        
+  },
+  {titulo: 1, director: 1, año: 1}
+);
+TAMBIEN VALE
+use('clase'); // ojo regex con i es case insensitive
+db.peliculas.find(
+  {titulo:  {$or: [{$regex: /Mision Imposible/i},
+                  {$regex: /Matrix/i}]
+            }
+  },
+  {titulo: 1, director: 1, año: 1}
+);
+
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/mongodb/07-aggregations.md
+se van haciendo paso a paso
+SELECT EN mongodb se llaman aggregation, son más rápidos los resultado que en frontend
+    STAGES (PULSAR ESTA A LA DERECHA)
+    add stage (abajo) $group
+        seleccionar $count (desplegable)
+        aparecerá un resultado a la DERECHA
+        si pulsamos en TEXT aparece el codigo
+{
+  _id: "$nombreProducto",
+  resultado: {
+    $sum: "$cantidad"
+  }
+}
+
+
++ stage2 (otro)
+$project
+{
+  categoria: "$_id", -- _id es del stage1
+  resultado: 1,
+  _id: 0
+}
+
+otro stage2
+{
+  _id: 0,
+  categoria: "$_id",
+  resultado: 1,
+  mi_atributo: "hola ",
+  resultado: {$add: ["$resultado", 1000]}
+}
+
+TENDREMOS TODO EN </>TEXT O EXPORT LENGUAJE
+
+crear nuevo
+{}STAGES
+stage 1
+$group
+{
+  _id: "$nombreProducto",
+  total: {
+    $sum: 1
+  }
+}
+equivale a sql
+SELECT nombreProducto, COUNT(*) AS total
+FROM products
+GROUP BY nombreProducto
+otro add stage 2
+$group
+{
+  total: 1
+}
+equivale A
+SELECT nombreProducto, COUNT(*) AS total
+FROM products
+GROUP BY nombreProducto
+ORDER BY total DESC
+
+add stage 3
+$project
+{
+  categoria: "$_id",
+  total: 1,
+  _id: 0
+}
+
+EXPORT TO LANGUAGE
+EXPORTED - NODE
+[
+  {
+    '$group': {
+      '_id': '$nombreProducto', 
+      'total': {
+        '$sum': 1
+      }
+    }
+  }, {
+    '$sort': {
+      'total': 1
+    }
+  }, {
+    '$project': {
+      'categoria': '$_id', 
+      'total': 1, 
+      '_id': 0
+    }
+  }
+]
+
+CREATE NEW
+STAGES
+ADD STAGE
+$match (es como el .find osea un WHERE de SQL)
+{
+  precio: {$gt: 80}
+}
+
+UTILIZAR TODO ESTO EN express_mongodb
+client-test-conn.js
+desabilitamos
+
+   // Run admin commands
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    const buildInfo = await client.db("admin").command({ buildInfo: 1 });
+    console.log("Build Info:", buildInfo);
+
+AÑADIMOS
+
+const database = client.db("clase");
+const productos = database.collection("productos");
+
+
+const pipeline = [
+    {
+    '$count': 'total'
+    }
+];
+
+const result = await productos.aggregate(pipeline).toArray();
+
+console.log(result[0]?.total ?? 0);
+
+*********************
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/mongodb/07-aggregations.md
+Buscar ($match) los documentos con el precio menos o igual a 15 euros. Ahora, contar ($count) 
+el número de productos en total con el precio igual o menos a 15 euros.
+[
+  {
+    '$match': {
+      'precio': {
+        '$lte': 150
+      }
+    }
+  }, {
+    '$count': 'total_cantidad'
+  }
+]
+
+Convertir esta búsqueda en un $match con agregación:
+
+db.collection.find({ nombreProducto: { $in: ["Camiseta", "Pantalón"] } })
+CREAMOS UN aggregate en mongodb
+$match
+
+{
+  nombreProducto: { $in: ["Camisetas", "Pantalón"] }
+}
+
+y exportamos a node
+[
+  {
+    '$match': {
+      'nombreProducto': {
+        '$in': [
+          'Camisetas', 'Pantalón'
+        ]
+      }
+    }
+  }
+]
+
+MODIFICAREMOS client-test-conn asignando a pipeline con la cadena de lo que exportamos
+de mongodb cuando andamos con AGGREGATE
+Queremos conseguir los siguientes resultados en una aplicacion de consola de Node:
+[
+  { _id: 'Camiseta', total_cantidad: 375 },
+  { _id: 'Pantalón', total_cantidad: 234 },
+  { _id: 'Chaqueta', total_cantidad: 432 },
+  { _id: 'Zapatos', total_cantidad: 320 },
+  { _id: 'Calcetines', total_cantidad: 200 },
+  { _id: 'Clone', total_cantidad: 111 }
+]
+CREAR AGGREGATE
+[
+  {
+    '$group': {
+      '_id': '$nombreProducto', 
+      'total_cantidad': {
+        '$sum': '$cantidad'
+      }
+    }
+  }
+]
+
+****************************
+****************************
+abrimos el servidor en express_mongodb en una terminal
+npm run dev
+
+en otra ejecutamos
+node client-console-app.js
+

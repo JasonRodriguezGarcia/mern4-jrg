@@ -14,11 +14,66 @@ async function run() {
     // Connect the client to the server
     await client.connect();
 
-    // Run admin commands
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    const buildInfo = await client.db("admin").command({ buildInfo: 1 });
-    console.log("Build Info:", buildInfo);
+    // // Run admin commands
+    // await client.db("admin").command({ ping: 1 });
+    // console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    // const buildInfo = await client.db("admin").command({ buildInfo: 1 });
+    // console.log("Build Info:", buildInfo);
+
+    const database = client.db("clase")
+    const productos = database.collection("productos");
+
+    // const pipeline = [
+    //   {
+    //     '$group': {
+    //       '_id': '$nombreProducto', 
+    //       'total': {
+    //         '$sum': 1
+    //       }
+    //     }
+    //   }, {
+    //     '$sort': {
+    //       'total': 1
+    //     }
+    //   }, {
+    //     '$project': {
+    //       'categoria': '$_id', 
+    //       'total': 1, 
+    //       '_id': 0
+    //     }
+    //   }
+    // ];
+
+    // const pipeline = [
+    //     {
+    //     '$count': 'total'
+    //     }
+    // ];
+
+    // const pipeline = [
+    //   {
+    //     '$match': {
+    //       'nombreProducto': {
+    //         '$in': [
+    //           'Camisetas', 'Pantalón'
+    //         ]
+    //       }
+    //     }
+    //   }
+    // ]
+
+    const pipeline = [
+      {
+        '$group': {
+          '_id': '$nombreProducto', 
+          'total_cantidad': {
+            '$sum': '$cantidad'
+          }
+        }
+      }
+    ]
+    const resultado = await productos.aggregate(pipeline).toArray();
+    console.log(resultado)
 
   } catch (error) {
     console.error("Error connecting to MongoDB or running commands:", error);
