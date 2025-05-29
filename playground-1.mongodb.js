@@ -9,6 +9,8 @@
 // For more documentation on playgrounds please refer to
 // https://www.mongodb.com/docs/mongodb-vscode/playgrounds/
 
+import { join } from "path";
+
 // Select the database to use.
 use('mongodbVSCodePlaygroundDB');
 
@@ -489,3 +491,174 @@ db.peliculas.find(
   {titulo: 1, director: 1, año: 1}
 );
 
+************************
+************************
+************************
+29Mayo
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/mongodb/07-aggregations.md
+Actividades de repaso
+Usando la base de datos movies:
+Contar el número de peliculas con el año 1903 o 1914 (year).
+use("sample_mflix");
+db.movies.
+
+
+Para cada año (year), queremos mostrar el número de películas que han sacado, ordenado por mayor a menor.
+
+Encontrar los top 5 peliculas (limit: 5) por genero (genres). Seguir los pasos:
+
+Empezar con $unwind para producir un documento por cada genre. Fijate en el indice 'genreIndex' añadido
+ al final de cada documento. 
+ { path: '$genres', includeArrayIndex: 'genreIndex', preserveNullAndEmptyArrays: true }
+
+Llevar a cabo un $group by en genre, para conseguir la suma de todos los documentos por genero.
+
+Ordenar por mayor
+
+Sacar los primero 5 ($limit)
+
+¿Podrias llevar a cabo lo mismo en countries para sacar una lista única de valores? Probarlo también 
+con db.movies.distinct("countries");
+
+
+***************
+***************
+// // Pasar {sesion} como tercer argumento en las operaciones de actualización
+// const res2 = accounts.updateOne({ name: "NonExistent" }, { $inc: { balance: 50 } },  { session });
+
+
+
+use("clase");
+// db.accounts.insertMany([
+//   { name: "Jon", balance: 100 },
+//   { name: "Maria", balance: 100 }
+// ]);
+db.accounts.find({});
+
+use("clase");
+// se tiene que crear una sesion para una transaccion
+const session = db.getMongo().startSession();
+
+try {
+  session.startTransaction();
+
+  const accounts = session.getDatabase(db.getName()).accounts;
+
+  // Decrease Jon's balance by 50
+  const res1 = accounts.updateOne(
+    { name: "Jon", balance: { $gte: 25 } },
+    { $inc: { balance: -25 } }
+    
+  );
+
+  console.log(res1);
+
+  if (res1.matchedCount === 0) {
+    throw new Error("Saldo insuficiente o usuario no encontrado, abortando transacción");
+  }
+
+  // Increase Maria's balance by 50
+  const res2 = accounts.updateOne({ name: "Maria" }, { $inc: { balance: 50 } });
+  
+  // This will fail because user "NonExistent" does not exist
+  // const res2 = accounts.updateOne({ name: "NonExistent" }, { $inc: { balance: 50 } });
+  console.log(res2);
+
+  if (res2.matchedCount === 0) {
+    throw new Error("User to credit not found, aborting transaction");
+  }
+
+  // Commit the transaction if both updates succeeded
+  session.commitTransaction();
+  print("Transaction committed successfully.");
+
+} catch (error) {
+  // If an error occurred, abort the transaction
+    session.abortTransaction();
+    print("Transaction aborted due to an error:", error);
+} finally {
+  session.endSession();
+}
+
+***********
+modificamos el ejercicio para que quite 25
+incremento a maria comentamos
+descomentamos "NoNExist"
+***********
+hacer que pase de maria a join
+
+use("clase");
+// se tiene que crear una sesion para una transaccion
+const session = db.getMongo().startSession();
+
+try {
+  session.startTransaction();
+
+  const accounts = session.getDatabase(db.getName()).accounts;
+
+  // Decrease Jon's balance by 50
+  const res1 = accounts.updateOne(
+    { name: "Maria", balance: { $gte: 50 } },
+    { $inc: { balance: -100 } }
+    
+  );
+
+  console.log(res1);
+
+  if (res1.matchedCount === 0) {
+    throw new Error("Saldo insuficiente o usuario no encontrado, abortando transacción");
+  }
+
+  // Increase Maria's balance by 50
+  const res2 = accounts.updateOne({ name: "Jon" }, { $inc: { balance: 100 } });
+  
+  // This will fail because user "NonExistent" does not exist
+  // const res2 = accounts.updateOne({ name: "NonExistent" }, { $inc: { balance: 50 } });
+
+  console.log(res2);
+
+  if (res2.matchedCount === 0) {
+    throw new Error("User to credit not found, aborting transaction");
+  }
+
+  // Commit the transaction if both updates succeeded
+  session.commitTransaction();
+  print("Transaction committed successfully.");
+
+} catch (error) {
+  // If an error occurred, abort the transaction
+    session.abortTransaction();
+    print("Transaction aborted due to an error:", error);
+} finally {
+  session.endSession();
+}
+
+
+*******************
+use('taxis');
+db.users.insertOne(
+{
+  _id: ObjectId(),
+  nombre: "Alice Smith",
+  correo_electronico: "alice@email.com",
+  saldo: 80,
+
+  viajes: [
+    {
+      id_viaje: ObjectId(),
+      lugar_recogida: "Calle Principal",
+      lugar_destino: "Avenida del Parque",
+      estado: "completado", // "reservado", "en curso", "completado", "cancelado"
+      costo: 15,
+      fecha_hora: ISODate("2025-05-27T14:00:00Z")
+    },
+    {
+      id_viaje: ObjectId(),
+      lugar_recogida: "Biblioteca",
+      lugar_destino: "Museo",
+      estado: "en curso",
+      costo: 9,
+      fecha_hora: ISODate("2025-05-27T15:00:00Z")
+    }
+  ]
+});

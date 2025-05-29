@@ -55,6 +55,7 @@ router.delete('/:id', async (req, res) => {
   
 router.put('/:id', async (req, res) => {
     console.log("entro en put")
+
 //   try {
 //     // You can implement your delete logic here, example:
 //     const db = req.app.locals.db;
@@ -67,7 +68,7 @@ router.put('/:id', async (req, res) => {
 //       // { _id: Objetid(id)}
 //     );
 //     console.log(productos)
-//     res.json({ message: `DELETED producto with id: ${id}` });
+    res.json({ message: `DELETED producto with id: ${id}` });
 
 //   } catch (error) {
 //     console.error("Error deleting producto:", error);
