@@ -21,7 +21,8 @@ router.get('/:id', async (req, res) => {
     const db = req.app.locals.db; // get db instance from app.locals
     const id = req.params.id
     console.log("imprimo req.params: ", req.params, "imprimo id: ", id, typeof(id))
-    const user = await db.collection(collectionTable).findOne({_id: new ObjectId(id.toString())});
+    const user = await db.collection(collectionTable).findOne({_id: new ObjectId(id)});
+    console.log("Imprimo user: ", user)
     res.json(user);
   } catch (error) {
     console.error("Error fetching user:", error);
