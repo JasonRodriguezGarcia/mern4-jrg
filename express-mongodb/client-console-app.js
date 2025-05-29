@@ -1,5 +1,41 @@
 import promptSync from 'prompt-sync';
 
+function inputProducto() {
+    const prompt = promptSync();
+
+    const prodId = prompt('Introducir Id producto: ').trim();
+    const nombreProducto = prompt('Introducir Nombre producto: ').trim();
+    const precio = prompt('Introducir Precio producto: ').trim();
+    const cantidad = prompt('Introducir Cantidad producto: ').trim();
+
+    const producto = {
+        prodId: parseInt(prodId),
+        nombreProducto: nombreProducto,
+        precio: parseFloat(precio),
+        cantidad: parseInt(cantidad),
+        active: true
+    }
+    return producto
+}
+async function updateProductos(producto) {
+
+  try {
+// El REST endpoint no existe - habrá que implementarlo en el servidor
+    const response = await fetch(`http://localhost:5000/api/v1/productos/${producto.prodId}`,
+      {
+        method: 'PUT',
+        headers: {'Content-type': 'application/json; charset=UTF-8'},
+        body: JSON.stringify(producto)
+      }
+    );
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const mensaje = await response.json();
+    return mensaje;
+  } catch (error) {
+        console.error('Error Updating products:', error);
+  }
+  
+}
 
 async function deleteProductos(prodId) {
 
@@ -12,8 +48,8 @@ async function deleteProductos(prodId) {
       }
     );
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const productos = await response.json();
-    return productos;
+    const mensaje = await response.json();
+    return mensaje;
   } catch (error) {
         console.error('Error Deleting products:', error);
   }
@@ -31,21 +67,36 @@ async function insertProductos(producto) {
         body: JSON.stringify(producto)
       }
     );
+    console.log("imprimo response: ", response)
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const productos = await response.json();
-    return productos;
+    const mensaje = await response.json();
+    console.log("imprimo mensaje: ", mensaje)
+    return mensaje;
   } catch (error) {
         console.error('Error Inserting products:', error);
   }
   
 }
 
+async function fetchProducto(prodId) {
+  try {
+    const response = await fetch(`http://localhost:5000/api/v1/productos/${prodId}`);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const mensaje = await response.json();
+    return mensaje;
+
+  } catch (error) {
+        console.error('Error fetching one product:', error);
+  }
+}
+
 async function fetchProductos() {
   try {
     const response = await fetch('http://localhost:5000/api/v1/productos');
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    const productos = await response.json();
-    return productos;
+    const mensaje = await response.json();
+    return mensaje;
+
   } catch (error) {
         console.error('Error fetching products:', error);
   }
@@ -56,8 +107,9 @@ async function fetchMinProductos(minPrecio) {
     // El REST endpoint no existe - habrá que implementarlo en el servidor
     const response = await fetch(`http://localhost:5000/api/v1/productos/search?precio=${minPrecio}`);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const productos = await response.json();
-    return productos;
+    const mensaje = await response.json();
+    return mensaje;
+
   } catch (error) {
         console.error('Error fetching products:', error);
   }
@@ -136,21 +188,16 @@ async function main() {
       const choiceMantenimiento = prompt('Elegir una acción: ').trim();
       if (parseInt(choiceMantenimiento) == 1)
       {
-        const prodId = prompt('Introducir Id producto: ').trim();
-        const nombreProducto = prompt('Introducir Nombre producto: ').trim();
-        const precio = prompt('Introducir Precio producto: ').trim();
-        const cantidad = prompt('Introducir Cantidad producto: ').trim();
-
-        const producto = {
-          prodId: parseInt(prodId),
-          nombreProducto: nombreProducto,
-          precio: parseFloat(precio),
-          cantidad: parseInt(cantidad),
-          active: true
-        }
+        const producto = inputProducto()
         const result = await insertProductos(producto)
-        console.log(result)
       }
+      else if (parseInt(choiceMantenimiento) == 2){
+        const producto = inputProducto()
+        const result = await updateProductos(parseInt(producto))
+        console.log(result)
+
+      }
+
       else if (parseInt(choiceMantenimiento) == 3){
         const prodId = prompt('Introducir Id producto a borrar: ').trim();
         const result = await deleteProductos(parseInt(prodId))

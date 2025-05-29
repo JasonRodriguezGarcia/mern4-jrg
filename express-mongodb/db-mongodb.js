@@ -1,7 +1,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { MongoClient } from 'mongodb';
-import dotenv from 'dotenv';
+import dotenv from 'dotenv';  // to allow access to environment variables (.env file)
 
 dotenv.config();
 

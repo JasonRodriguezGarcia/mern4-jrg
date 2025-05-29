@@ -53,6 +53,28 @@ router.delete('/:id', async (req, res) => {
   }
 });
   
+router.put('/:id', async (req, res) => {
+    console.log("entro en put")
+//   try {
+//     // You can implement your delete logic here, example:
+//     const db = req.app.locals.db;
+//     const id = req.params.id;
+//     console.log("imprimo id: ", id)
+//     console.log("imprimo type id: ", typeof(id))
+
+//     const productos = await db.collection("productos").deleteOne(
+//       { prodId: parseInt(id)}
+//       // { _id: Objetid(id)}
+//     );
+//     console.log(productos)
+//     res.json({ message: `DELETED producto with id: ${id}` });
+
+//   } catch (error) {
+//     console.error("Error deleting producto:", error);
+//     res.status(500).json({ error: 'Failed to delete producto' });
+//   }
+});
+  
 router.get('/search', async (req, res) => {
     try {
       // You can implement your delete logic here, example:
