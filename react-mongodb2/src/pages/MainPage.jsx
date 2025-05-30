@@ -32,6 +32,29 @@ const MainPage = () => {
     const [lugarDestino, setLugarDestino] = useState('')
     const [estado, setEstado] = useState('Reservado')
     const [costo, setCosto] = useState(0)
+    const [cuenta, setCuenta] = useState(0)
+    const [gastos, setGastos] = useState(0)
+
+    const getOperaciones = async () => {
+        try {
+            const response = await fetch (`http://localhost:5000/api/v1/taxis/viaje/${id}/query?operacion=cuenta`)
+            if (!response.ok) {
+                throw new Error ("Error en consulta de operacion")
+            }
+            const datos = await response.json()
+            console.log("Operacion: ", datos)
+            setCuenta(datos.resultado)
+
+            // setGastos(datos.resultado)
+        }
+        catch(error) {
+            console.log("Error retrieving operacion: ", error)
+        }
+    }
+    useEffect (() => {
+
+        getOperaciones()
+    }, [user])
 
     useEffect (()=> {
         const getUser = async ()=> {
@@ -55,71 +78,78 @@ const MainPage = () => {
         getUser()
     }, [])
 
-const handleFormSubmit = async (e) => {
-    e.preventDefault()
-    console.log("handleFormSubmit")
-    try {
-        const viaje = {
-            lugar_recogida: lugarRecogida,
-            lugar_destino: lugarDestino,
-            fecha_hora: new Date(),
-            estado: estado, 
-            costo: costo
-        }
-        console.log(viaje)
-        const response = await fetch (`http://localhost:5000/api/v1/taxis/viaje/${id}`,
-            {
-                method: 'POST',
-                headers: {'Content-type': 'application/json; charset=UTF-8'},
-                body: JSON.stringify(viaje)
+    const handleFormSubmit = async (e) => {
+        e.preventDefault()
+        console.log("handleFormSubmit")
+        try {
+            const viaje = {
+                lugar_recogida: lugarRecogida,
+                lugar_destino: lugarDestino,
+                fecha_hora: new Date(),
+                estado: estado, 
+                costo: costo
             }
-        )
-        if (!response.ok) {
-            throw new Error ("Error en guardado viaje")
-        }
-        setUser(prevUser => ({
-            prevUser, viajes: [...prevUser.viajes, viaje] // añadimos viaje a prevUser.viajes via spread
-        }))
-        setErrorMessage("")
-        setLugarRecogida('')
-        setLugarDestino('')
-        setEstado('Reservado')
-        setCosto(0)
-
-    }
-    catch(error) {
-        console.log("Error retrieving users: ", error)
-    }
-}
-
-const handleDelete = async (idViaje) => {
-    // e.preventDefault()
-    console.log("handleDelete")
-    try {   
-        const viaje = {
-            id_viaje: idViaje,
-        }
-        console.log(viaje)
-        const response = await fetch (`http://localhost:5000/api/v1/taxis/viaje/${id}`,
-            {
-                method: 'DELETE',
-                headers: {'Content-type': 'application/json; charset=UTF-8'},
-                body: JSON.stringify(viaje)
+            console.log(viaje)
+            const response = await fetch (`http://localhost:5000/api/v1/taxis/viaje/${id}`,
+                {
+                    method: 'POST',
+                    headers: {'Content-type': 'application/json; charset=UTF-8'},
+                    body: JSON.stringify(viaje)
+                }
+            )
+            if (!response.ok) {
+                throw new Error ("Error en guardado viaje")
             }
-        )
-        if (!response.ok) {
-            throw new Error ("Error en borrando viaje")
+            const datoResponse = await response.json()
+            console.log("Imprimo datoResponse al añadir: ", datoResponse)
+            viaje.id_viaje = datoResponse.id_viaje
+            setUser(prevUser => ({
+                prevUser, viajes: [...prevUser.viajes, viaje] // añadimos viaje a prevUser.viajes via spread
+            }))
+            setErrorMessage("")
+            setLugarRecogida('')
+            setLugarDestino('')
+            setEstado('Reservado')
+            setCosto(0)
+
+            getOperaciones()
+
         }
-        setUser(prevUser => ({
-            prevUser, viajes: [...prevUser.viajes.filter(viaje => 
-                viaje.id_viaje != idViaje
-            )] // añadimos viaje a prevUser.viajes via spread
-        }))
+        catch(error) {
+            console.log("Error retrieving users: ", error)
+        }
     }
-    catch(error) {
-        console.log("Error deleting viaje: ", error)
+
+    const handleDelete = async (idViaje) => {
+        // e.preventDefault()
+        console.log("handleDelete: ", idViaje)
+        try {   
+            const viaje = {
+                id_viaje: idViaje,
+            }
+            console.log(viaje)
+            const response = await fetch (`http://localhost:5000/api/v1/taxis/viaje/${id}`,
+                {
+                    method: 'DELETE',
+                    headers: {'Content-type': 'application/json; charset=UTF-8'},
+                    body: JSON.stringify(viaje)
+                }
+            )
+            if (!response.ok) {
+                throw new Error ("Error en borrando viaje")
+            }
+            const datoResponse = await response.json()
+            console.log("Imprimo response al borrar: ", datoResponse)
+            setUser(prevUser => ({
+                prevUser, viajes: [...prevUser.viajes.filter(viaje => 
+                    viaje.id_viaje != idViaje
+                )] // añadimos viaje a prevUser.viajes via spread
+            }))
+        }
+        catch(error) {
+            console.log("Error deleting viaje: ", error)
+        }
     }
-}
 
 return (
     <>
@@ -137,8 +167,8 @@ return (
                             Historial de Viajes con SS Taxis
                         </Typography>
                         <Typography variant="h5" component="div" sx={{margin: "10px 0",  color: "blue"}}>
-                            hacer count de viajes -
-                            hacer gasto realizado
+                            Viajes {cuenta}-
+                            Gastos {gastos}
                         </Typography>
 
                         {user.viajes && user.viajes.map((viaje, index) => (
@@ -175,7 +205,7 @@ return (
                                     <Button variant="text" size="small" color="primary" sx={{width: "10%"}}>
                                         ✏️
                                     </Button>
-                                    <Button onClick={(e)=>handleDelete(viaje.id_viaje)} variant="text" size="small" color="primary" sx={{width: "10%"}}>
+                                    <Button onClick={()=>handleDelete(viaje.id_viaje)} variant="text" size="small" color="primary" sx={{width: "10%"}}>
                                         🗑️
                                     </Button>
                                 </CardContent>
