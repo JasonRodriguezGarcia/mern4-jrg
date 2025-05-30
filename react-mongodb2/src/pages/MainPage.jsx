@@ -11,6 +11,15 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
+// codigo para el form
+import TextField from '@mui/material/TextField';
+// codigo para la form final de prueba
+import FormControl, { useFormControl } from '@mui/material/FormControl';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import FormHelperText from '@mui/material/FormHelperText';
+
+// codigo para el Floating Action Button
+import Fab from '@mui/material/Fab';
 
 const id = "68388263680b993ece24c2d7"
 
@@ -47,7 +56,13 @@ const MainPage = () => {
         getUser()
     }, [])
 
+const handleFormSubmit = () => {
 
+}
+
+const goToHome = () => {
+
+}
 
 return (
     <>
@@ -55,18 +70,13 @@ return (
         <Typography variant="h4" component="div" sx={{margin: "10px 0",  color: "blue"}}>
             Bienvenid@ a SS Taxis, 
             {/* {users.map(user => ( */}
-                <b>{user.nombre}</b>
+                <b> {user.nombre}</b>
             {/* ))} */}
         </Typography>
 
-            <Box sx={{ flexGrow: 1 }}>
-                <Grid container spacing={2}>
+        <Box sx={{ flexGrow: 1 }}>
+            <Grid container spacing={2}>
                 <Grid size={6}>
-                    {/* <Stack spacing={2}>
-                    <Item>Column 1 - Row 1</Item>
-                    <Item>Column 1 - Row 2</Item>
-                    <Item>Column 1 - Row 3</Item>
-                    </Stack> */}
                     <Box sx={{display: "flex", flexDirection: "column", gap: "10px", backgroundColor: "white"}}>
                         <Typography variant="h5" component="div" sx={{margin: "10px 0",  color: "blue"}}>
                             Historial de Viajes con SS Taxis
@@ -75,13 +85,13 @@ return (
                             <Card key={index} sx={{display: "flex", flexDirection: "row", justifyContent: "space-between",
                                 textAlign: "left", minWidth: 275, backgroundColor: "lightgray" }}>
                                 <CardContent>
-                                    <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
+                                    <Typography sx={{ color: 'text.primary', fontSize: 20, mb: 0}}>
                                         {viaje.lugar_recogida} ➡️ {viaje.lugar_destino}
                                     </Typography>
-                                    <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
+                                    <Typography sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
                                         Estado: <i>{viaje.estado}</i> | Costo: <b>{viaje.costo}</b>
                                     </Typography>
-                                    <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
+                                    <Typography sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
                                         {/* Fecha: {viaje.fecha_hora} */}
                                         Fecha: {new Date(viaje.fecha_hora).toLocaleString('es-ES', {
                                             day: '2-digit',
@@ -94,10 +104,10 @@ return (
                                     </Typography>
                                 </CardContent>
                                 <CardContent sx={{display: "flex", alignItems: "center", gap: "10px"}}>
-                                    <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
+                                    <Typography sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
                                     ✏️
                                     </Typography>
-                                    <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
+                                    <Typography sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
                                     🗑️
                                     </Typography>
                                 </CardContent>
@@ -106,11 +116,64 @@ return (
                     </Box>
                 </Grid>
                 <Grid size={6}>
-                    <Box sx={{ height: '100%', border: "1px solid lightgrey", boxSizing: 'border-box' }}>Column 2</Box>
-                </Grid>
-                </Grid>
-            </Box>
 
+                    <Box component="form" onSubmit={handleFormSubmit}
+                                sx={{
+                                // width: 300,
+                                // height: 300,
+                                borderRadius: 1,
+                                display: "flex",
+                                // justifyContent: "center",
+                                // alignContent: "baseline",
+                                flexDirection: "column",
+                                m: 0,
+                                // gap: 1,
+                                p: 2
+                                }}
+                    >
+                        <Typography variant="h5" component="div" 
+                            sx={{margin: "0 0 1 0",  color: "blue"}}
+                        >
+                            Pedir taxi
+                        </Typography>
+                        <Typography variant="subtitle1" 
+                            sx={{textAlign: "left", mb: 0}}
+                        >
+                            Lugar de recogida:
+                        </Typography>
+                        <TextField id="lugarRecogida" variant="outlined" placeholder="Ej: Calle principal"
+                            onChange={(e)=> setNombre(e.target.value)}
+                        />
+                        <Typography variant="subtitle1" textAlign="left" >
+                            Lugar de destino:
+                        </Typography>
+                        <TextField id="lugarDestino" variant="outlined" placeholder="Ej: Parque Central"
+                            onChange={(e)=> setNombre(e.target.value)}
+                        />
+                        <Typography variant="subtitle1" textAlign="left" >
+                            Estado del viaje:
+                        </Typography>
+                        <TextField id="estado" variant="outlined" defaultValue="Reservado"
+                            onChange={(e)=> setNombre(e.target.value)}
+                        />
+                        <Typography variant="subtitle1" textAlign="left" >
+                            Costo €:
+                        </Typography>
+                        <TextField id="costo" variant="outlined" placeholder="Ej: 15.50"
+                            onChange={(e)=> setNombre(e.target.value)}
+                        />
+                        {/* <Button type="submit" variant="contained" color="primary" sx={{width: "10%"}}>
+                            Guardar
+                        </Button> */}
+                        <Fab type="submit" variant="extended" size="medium" color="primary" 
+                            sx={{width: "15%", position: "fixed", left: "50%", transform: "translateX(-50%)" , bottom: "0", mb: 2}}
+                        >
+                            Reservar Taxi
+                        </Fab>
+                    </Box>
+                </Grid>
+            </Grid>
+        </Box>
     </Box>
     </>
   );
@@ -121,21 +184,21 @@ export default MainPage
     {/* <Card sx={{display: "flex", flexDirection: "row", justifyContent: "space-between",
         textAlign: "left", minWidth: 275, backgroundColor: "lightgray" }}>
         <CardContent>
-            <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
+            <Typography gutterbottom sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
             Calle Principal ➡️ Parque Central
             </Typography>
-            <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
+            <Typography gutterbottom sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
             Estado: <i>completado</i> | Costo: <b>€15.00</b>
             </Typography>
-            <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
+            <Typography gutterbottom sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
             Fecha: 20/05/2025, 16:00:00
             </Typography>
         </CardContent>
         <CardContent sx={{display: "flex", alignItems: "center", gap: "10px"}}>
-            <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
+            <Typography gutterbottom sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
             ✏️
             </Typography>
-            <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
+            <Typography gutterbottom sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
             🗑️
             </Typography>
         </CardContent>
