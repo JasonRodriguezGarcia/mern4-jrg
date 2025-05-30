@@ -44,13 +44,17 @@ router.post('/viaje/:id', async (req, res) => {
     if (!ObjectId.isValid(id_usuario))
       res.status(500).json({ error: 'Invalid ID' });
 
-    viaje.id_viaje = new ObjectId(); // añadiendo dinamicamente propiedad id_viaje a viaje
+    const idViaje = new ObjectId();
+     // añadiendo dinamicamente propiedad id_viaje a viaje
+    viaje.id_viaje = idViaje
+    
     const user = await db.collection(collectionTable).updateOne(
       {_id: new ObjectId(id_usuario)},
       {$push: { viajes: viaje}}
     );
     console.log("Imprimo user: ", user)
-    res.json(user);
+    res.json({mensaje: "Viaje agregado", id_viaje: idViaje});
+    
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ error: 'Failed to fetch user' });
@@ -79,11 +83,84 @@ router.delete('/viaje/:id', async (req, res) => {
     console.error("Error fetching user:", error);
     res.status(500).json({ error: 'Failed to fetch user' });
   }
-  // await db.collection(collectionTable).updateOne(
-  //   { _id: new ObjectId(userId) },
-  //   { $pull: {viajes: {viaje_id: new ObjectId(id_viaje)}}}
-  // )
 });
+
+router.get('/viaje/:id/query', async (req, res) => {
+  try {
+    const db = req.app.locals.db; // get db instance from app.locals
+    const id_usuario = req.params.id
+    const {operacion} = req.query
+    console.log("Imprimo operacion: ", operacion)
+
+        // VALIDANDO EL PARAMETRO ID -- IMPORTANTE !! PARA EVITAR HACKEO
+    if (!ObjectId.isValid(id_usuario))
+      res.status(500).json({ error: 'Invalid ID' });
+
+    if (operacion == "cuenta")
+        console.log("Operacion es cuenta")
+    else if (operacion == "gasto")
+        console.log("Operacion es gasto")
+    else
+        console.log("Error en queryString")
+
+    const resultado = await db.collection(collectionTable).aggregate(
+    [
+        {
+            '$match': {
+                '_id': new ObjectId('68388263680b993ece24c2d7')
+            }
+        }, {
+            '$unwind': {
+                'path': '$viajes', 
+                'includeArrayIndex': 'viajesIndex', 
+                'preserveNullAndEmptyArrays': true
+            }
+        }, {
+            '$group': {
+                '_id': '$_id', 
+                'cuenta_viajes': {
+                    '$sum': 1
+                }
+            }
+        }
+    ]).toArray()
+
+    console.log("imprimo resultado: ", resultado)
+    // // console.log("imprimo req.params: ", req.params, "imprimo viaje: ", , typeof(body))
+    // const user = await db.collection(collectionTable).updateOne(
+    //   {_id: new ObjectId(id_usuario)},
+    //   {$pull: { viajes: {id_viaje: new ObjectId(id_viaje)}}}
+    // );
+    // console.log("Imprimo user: ", user)
+    // res.json(user);
+    res.json({operacion: operacion, resultado: resultado[0].cuenta_viajes});
+  } catch (error) {
+    console.error("Error fetching operation:", error);
+    res.status(500).json({ error: 'Failed to fetch operation' });
+  }
+});
+
+// [
+//     {
+//         '$match': {
+//             '_id': ObjectId('68388263680b993ece24c2d7')
+//         }
+//     }, {
+//         '$unwind': {
+//             'path': '$viajes', 
+//             'includeArrayIndex': 'viajesIndex', 
+//             'preserveNullAndEmptyArrays': True
+//         }
+//     }, {
+//         '$group': {
+//             '_id': '$_id', 
+//             'cuenta_viajes': {
+//                 '$sum': 1
+//             }
+//         }
+//     }
+// ]
+
 
 
 // router.post('/', async (req, res) => {
