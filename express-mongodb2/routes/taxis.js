@@ -20,7 +20,11 @@ router.get('/:id', async (req, res) => {
   try {
     const db = req.app.locals.db; // get db instance from app.locals
     const id = req.params.id
-    console.log("imprimo req.params: ", req.params, "imprimo id: ", id, typeof(id))
+
+      // VALIDANDO EL PARAMETRO ID -- IMPORTANTE !! PARA EVITAR HACKEO
+    if (!ObjectId.isValid(id))
+      res.status(500).json({ error: 'Invalid ID' });
+
     const user = await db.collection(collectionTable).findOne({_id: new ObjectId(id)});
     console.log("Imprimo user: ", user)
     res.json(user);
@@ -29,6 +33,58 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch user' });
   }
 });
+
+router.post('/viaje/:id', async (req, res) => {
+  try {
+    const db = req.app.locals.db; // get db instance from app.locals
+    const id_usuario = req.params.id
+    const viaje = req.body
+
+    // VALIDANDO EL PARAMETRO ID -- IMPORTANTE !! PARA EVITAR HACKEO
+    if (!ObjectId.isValid(id_usuario))
+      res.status(500).json({ error: 'Invalid ID' });
+
+    viaje.id_viaje = new ObjectId(); // añadiendo dinamicamente propiedad id_viaje a viaje
+    const user = await db.collection(collectionTable).updateOne(
+      {_id: new ObjectId(id_usuario)},
+      {$push: { viajes: viaje}}
+    );
+    console.log("Imprimo user: ", user)
+    res.json(user);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ error: 'Failed to fetch user' });
+  }
+});
+
+router.delete('/viaje/:id', async (req, res) => {
+  try {
+    const db = req.app.locals.db; // get db instance from app.locals
+    const id_usuario = req.params.id
+    const {id_viaje} = req.body
+
+        // VALIDANDO EL PARAMETRO ID -- IMPORTANTE !! PARA EVITAR HACKEO
+    if (!ObjectId.isValid(id_usuario))
+      res.status(500).json({ error: 'Invalid ID' });
+
+    console.log("imprimo id_viaje: ", id_viaje)
+    // console.log("imprimo req.params: ", req.params, "imprimo viaje: ", , typeof(body))
+    const user = await db.collection(collectionTable).updateOne(
+      {_id: new ObjectId(id_usuario)},
+      {$pull: { viajes: {id_viaje: new ObjectId(id_viaje)}}}
+    );
+    console.log("Imprimo user: ", user)
+    res.json(user);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ error: 'Failed to fetch user' });
+  }
+  // await db.collection(collectionTable).updateOne(
+  //   { _id: new ObjectId(userId) },
+  //   { $pull: {viajes: {viaje_id: new ObjectId(id_viaje)}}}
+  // )
+});
+
 
 // router.post('/', async (req, res) => {
 //     try {

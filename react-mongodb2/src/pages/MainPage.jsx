@@ -28,10 +28,10 @@ const MainPage = () => {
     const [users, setUsers] = useState([])
     const [user, setUser] = useState({})
     const [errorMessage, setErrorMessage] = useState('')
-    // const [id, setId] = useState("68388263680b993ece24c2d7")
-    // useEffect (()=> {
-    //     console.log("imprimiendo en useEfect user: ", user)
-    // }, [user])
+    const [lugarRecogida, setLugarRecogida] = useState('')
+    const [lugarDestino, setLugarDestino] = useState('')
+    const [estado, setEstado] = useState('Reservado')
+    const [costo, setCosto] = useState(0)
 
     useEffect (()=> {
         const getUser = async ()=> {
@@ -46,7 +46,6 @@ const MainPage = () => {
                 // setUsers(datos)
                 setUser(datos)
                 setErrorMessage("")
-                debugger
             }
             catch(error) {
                 console.log("Error retrieving users: ", error)
@@ -56,12 +55,70 @@ const MainPage = () => {
         getUser()
     }, [])
 
-const handleFormSubmit = () => {
+const handleFormSubmit = async (e) => {
+    e.preventDefault()
+    console.log("handleFormSubmit")
+    try {
+        const viaje = {
+            lugar_recogida: lugarRecogida,
+            lugar_destino: lugarDestino,
+            fecha_hora: new Date(),
+            estado: estado, 
+            costo: costo
+        }
+        console.log(viaje)
+        const response = await fetch (`http://localhost:5000/api/v1/taxis/viaje/${id}`,
+            {
+                method: 'POST',
+                headers: {'Content-type': 'application/json; charset=UTF-8'},
+                body: JSON.stringify(viaje)
+            }
+        )
+        if (!response.ok) {
+            throw new Error ("Error en guardado viaje")
+        }
+        setUser(prevUser => ({
+            prevUser, viajes: [...prevUser.viajes, viaje] // añadimos viaje a prevUser.viajes via spread
+        }))
+        setErrorMessage("")
+        setLugarRecogida('')
+        setLugarDestino('')
+        setEstado('Reservado')
+        setCosto(0)
 
+    }
+    catch(error) {
+        console.log("Error retrieving users: ", error)
+    }
 }
 
-const goToHome = () => {
-
+const handleDelete = async (idViaje) => {
+    // e.preventDefault()
+    console.log("handleDelete")
+    try {   
+        const viaje = {
+            id_viaje: idViaje,
+        }
+        console.log(viaje)
+        const response = await fetch (`http://localhost:5000/api/v1/taxis/viaje/${id}`,
+            {
+                method: 'DELETE',
+                headers: {'Content-type': 'application/json; charset=UTF-8'},
+                body: JSON.stringify(viaje)
+            }
+        )
+        if (!response.ok) {
+            throw new Error ("Error en borrando viaje")
+        }
+        setUser(prevUser => ({
+            prevUser, viajes: [...prevUser.viajes.filter(viaje => 
+                viaje.id_viaje != idViaje
+            )] // añadimos viaje a prevUser.viajes via spread
+        }))
+    }
+    catch(error) {
+        console.log("Error deleting viaje: ", error)
+    }
 }
 
 return (
@@ -69,9 +126,7 @@ return (
     <Box sx={{width: "90vw", marginX: "20px"}}>
         <Typography variant="h4" component="div" sx={{margin: "10px 0",  color: "blue"}}>
             Bienvenid@ a SS Taxis, 
-            {/* {users.map(user => ( */}
-                <b> {user.nombre}</b>
-            {/* ))} */}
+            <b> {user.nombre && user.nombre}</b>
         </Typography>
 
         <Box sx={{ flexGrow: 1 }}>
@@ -81,6 +136,11 @@ return (
                         <Typography variant="h5" component="div" sx={{margin: "10px 0",  color: "blue"}}>
                             Historial de Viajes con SS Taxis
                         </Typography>
+                        <Typography variant="h5" component="div" sx={{margin: "10px 0",  color: "blue"}}>
+                            hacer count de viajes -
+                            hacer gasto realizado
+                        </Typography>
+
                         {user.viajes && user.viajes.map((viaje, index) => (
                             <Card key={index} sx={{display: "flex", flexDirection: "row", justifyContent: "space-between",
                                 textAlign: "left", minWidth: 275, backgroundColor: "lightgray" }}>
@@ -104,12 +164,20 @@ return (
                                     </Typography>
                                 </CardContent>
                                 <CardContent sx={{display: "flex", alignItems: "center", gap: "10px"}}>
-                                    <Typography sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
+                                    {/* <Typography sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
                                     ✏️
-                                    </Typography>
-                                    <Typography sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}>
+                                    </Typography> */}
+                                    {/* <Typography sx={{ color: 'text.secondary', fontSize: 20, mb: 0 }}
+                                        onClick={(e)=> handleDelete()}
+                                    >
                                     🗑️
-                                    </Typography>
+                                    </Typography> */}
+                                    <Button variant="text" size="small" color="primary" sx={{width: "10%"}}>
+                                        ✏️
+                                    </Button>
+                                    <Button onClick={(e)=>handleDelete(viaje.id_viaje)} variant="text" size="small" color="primary" sx={{width: "10%"}}>
+                                        🗑️
+                                    </Button>
                                 </CardContent>
                             </Card>
                         ))}
@@ -141,26 +209,26 @@ return (
                         >
                             Lugar de recogida:
                         </Typography>
-                        <TextField id="lugarRecogida" variant="outlined" placeholder="Ej: Calle principal"
-                            onChange={(e)=> setNombre(e.target.value)}
+                        <TextField id="lugarRecogida" value={lugarRecogida} ariant="outlined" placeholder="Ej: Calle principal"
+                            onChange={(e)=> setLugarRecogida(e.target.value)}
                         />
                         <Typography variant="subtitle1" textAlign="left" >
                             Lugar de destino:
                         </Typography>
-                        <TextField id="lugarDestino" variant="outlined" placeholder="Ej: Parque Central"
-                            onChange={(e)=> setNombre(e.target.value)}
+                        <TextField id="lugarDestino" value={lugarDestino} variant="outlined" placeholder="Ej: Parque Central"
+                            onChange={(e)=> setLugarDestino(e.target.value)}
                         />
                         <Typography variant="subtitle1" textAlign="left" >
                             Estado del viaje:
                         </Typography>
-                        <TextField id="estado" variant="outlined" defaultValue="Reservado"
-                            onChange={(e)=> setNombre(e.target.value)}
+                        <TextField id="estado" value={estado} variant="outlined"
+                            onChange={(e)=> setEstado(e.target.value)}
                         />
                         <Typography variant="subtitle1" textAlign="left" >
                             Costo €:
                         </Typography>
-                        <TextField id="costo" variant="outlined" placeholder="Ej: 15.50"
-                            onChange={(e)=> setNombre(e.target.value)}
+                        <TextField id="cost0" value={costo} variant="outlined" placeholder="Ej: 15.50"
+                            onChange={(e)=> setCosto(e.target.value)}
                         />
                         {/* <Button type="submit" variant="contained" color="primary" sx={{width: "10%"}}>
                             Guardar

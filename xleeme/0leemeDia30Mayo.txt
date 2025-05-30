@@ -1,0 +1,139 @@
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/mongodb/08-triggers.FaaS.changeeventstream.md
+Triggers y Functions as a Service (FaaS) Se guardan en la nube
+sleccionar region
+Create trigger
+trigger type Database
+watch against collection
+Cluster name NZCluster-01
+Database Name Clase
+Collection Name productos
+Operation Type Insert Document
+Ir hasta abajo del todo FUNCTION veremos el código y lo que hace
+
+En otra pestaña si cerrar lo anterior
+Crear en Clase BBdd collection suelta llamada auditoria
+
+Volvemos a la pestaña del trigger otra vez
+Cambios para que funcione con nuestro mongodb
+    cambiar serviceName = "NZCluster-01";
+    database = "clase";
+    comentar anterior collection
+    añadir nueva collection
+    const collection = context.services.get(serviceName).db(database).collection("audit");
+    Dejamos un solo if de Insert
+
+Una funcion en su llamada necesit recibir detalles de un documento
+Testing console
+const changeEvent = {
+  operationType: "insert",
+  fullDocument: {
+    _id: BSON.ObjectId("6658bafab6f3ec9b839d8e91"),
+    name: "Test User",
+    email: "test@example.com"
+  },
+  ns: {
+    db: "clase",
+    coll: "productos"
+  },
+  documentKey: {
+    _id: BSON.ObjectId("6658bafab6f3ec9b839d8e91")
+  }
+};
+
+exports(changeEvent);
+
+RUN
+Result
+
+> ran at Fri May 30 2025 15:39:54 GMT+0200 (hora de verano de Europa central)
+> error: 
+{"message":"Cannot access member '_id' of undefined","name":"TypeError"}
+
+> ran at Fri May 30 2025 15:44:56 GMT+0200 (hora de verano de Europa central)
+> took 988.540594ms
+> result: 
+{
+  "$undefined": true
+}
+> result (JavaScript): 
+EJSON.parse('{"$undefined":true}')
+
+> ran at Fri May 30 2025 15:45:23 GMT+0200 (hora de verano de Europa central)
+> took 280.671169ms
+> result: 
+{
+  "$undefined": true
+}
+> result (JavaScript): 
+EJSON.parse('{"$undefined":true}')
+
+Vover pestaña a audit y ver Datos
+Aparecerá documento con gestor che
+
+Volver pestaña trigger, trigger name
+SAVE
+
+VOLVER pestaña audit pero ahora a collection productos, si insertamos un producto nuevo
+volvemos a audit y se habrá añadido otro documento
+
+Un servidor express siempres esta escuchando, con este tipo de cloud functions (lambda en AWS)
+se ejecuta acciones en el momento que sea necesario y se paga por cada acción
+
+Un insert no inserta directamente en la bbdd,
+primero se escribe en un Oplog y luego lo inserta en la bbdd nodoprimario )operacion 'capped')
+los nodos secundarios cogen el dato del Oplog no del primario
+
+Si hay demasiados insert se desborda el Oplog y se sobreescriben datos
+
+
+Actividad
+Crear una funcion para guardar los datos que han sido borrados.
+
+// 🧪 Simulated delete changeEvent
+pegar en Testing console
+const changeEvent = {
+  operationType: "delete",
+  documentKey: {
+    _id: BSON.ObjectId("6839b77e05cb75346af503df")  // Example _id
+  },
+  ns: {
+    db: "clase",
+    coll: "productos",
+    
+  }
+};
+exports(changeEvent);
+
+CODIGO DEL TRIGGER
+exports = async function(changeEvent) {
+  // A Database Trigger will always call a function with a changeEvent.
+  // Documentation on ChangeEvents: https://docs.mongodb.com/manual/reference/change-events/
+
+  // This sample function will listen for events and replicate them to a collection in a different Database
+
+  // Access the _id of the changed document:
+  const docId = changeEvent.documentKey._id;
+
+  // Get the MongoDB service you want to use (see "Linked Data Sources" tab)
+  // Note: In Atlas Triggers, the service name is defaulted to the cluster name.
+  const serviceName = "NZCluster-01";
+  const database = "clase";
+  const collection = context.services.get(serviceName).db(database).collection("audit");
+
+  // Get the "FullDocument" present in the Insert/Replace/Update ChangeEvents
+  try {
+    if (changeEvent.operationType === "delete") {
+      // aqui pondremos el doc que se guardará en audit
+      const newDoc = {
+        insertedOnAuditAt: new Date(),
+        evento: `borrado ${docId}` , // se podría añadir el nombre del producto
+        document: changeEvent.fullDocument
+      }
+      await collection.insertOne(newDoc)
+    }
+  } catch(err) {
+    console.log("error performing mongodb write: ", err.message);
+  }
+};
+
