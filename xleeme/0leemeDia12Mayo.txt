@@ -248,8 +248,9 @@ Actividad - IoT con VITE
 CREAR FRONTEND CON VITE en directorio iot-react-sql
 
 npm create vite@latest iot-react-sql --template react
-react
-JAVASCRIPT
+y
+bajar con el cursor hasta react y pulsar ENTER
+bajar con el cursor hasta JAVASCRIPT y pulsar ENTER
 
 cd iot-react-sql
 npm install

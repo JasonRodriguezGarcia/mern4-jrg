@@ -1,5 +1,6 @@
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/restapi/01-marketplace.md
-
+/react-frontend/src/components/DogsComponent.jsx
+ejercicio de llamada API de Dogs
 
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/mongodb/01-changeeventstreams.md
 modificar express-mongodb
