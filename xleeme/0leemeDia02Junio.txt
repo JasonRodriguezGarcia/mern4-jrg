@@ -1,0 +1,545 @@
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/restapi/01-marketplace.md
+
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/mongodb/01-changeeventstreams.md
+modificar express-mongodb
+
+en /express-mongodb nuevo fichero
+client-changeeventsstream.js
+copiar codigo de 
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/mongodb/01-client-demo-changeventstream.js
+
+import { MongoClient } from "mongodb";
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+
+// Replace with your actual MongoDB Atlas connection string
+const uri = process.env.MONGODB_URI;
+
+const client = new MongoClient(uri);
+
+async function run() {
+  try {
+    // Connect the client to the server
+    await client.connect();
+
+    const database = client.db("clase");
+    const productos = database.collection("productos");
+
+    // Open a change stream on the collection
+    const changeStream = productos.watch();
+
+
+    changeStream.on("change", (change) => {
+      console.log("Change detected:");
+      console.log(JSON.stringify(change, null, 2));
+
+      if (change.operationType === "insert") {
+        console.log("New document inserted:", change.fullDocument);
+      }
+
+      if (change.operationType === "delete") {
+        console.log("Document deleted with _id:", change.documentKey._id);
+      }
+
+      // Add other operationType handlers as needed
+    });
+
+    process.stdin.resume();
+
+     // Handle shutdown signals gracefully
+    process.on("SIGINT", async () => {
+      console.log("SIGINT received, closing connection...");
+      await client.close();
+      console.log("Connection closed. Exiting...");
+      process.exit(0);
+    });
+
+    process.on("SIGTERM", async () => {
+      console.log("SIGTERM received, closing connection...");
+      await client.close();
+      console.log("Connection closed. Exiting...");
+      process.exit(0);
+    });
+
+
+
+  } catch (error) {
+    console.error("Error connecting to MongoDB or running commands:", error);
+  }
+}
+
+run();
+
+
+
+changeStream.on("error", (error) => {
+  console.error("Change stream error:", error);
+});
+
+changeStream.on("close", () => {
+  console.log("Change stream closed.");
+}); */
+
+
+
+crear .env
+MONGODB_URI= 
+
+ejecutar con node client-changeeventsstream.js
+
+crear en mongodb 1 documento en clase productos
+borrar 1
+
+se reflejaran los movimientos
+
+hay una conexion directa pero sin usar recursos
+no es como una api que mandamos todo y recibimos resultado
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/mongodb/01-changeeventstreams.md
+ejercicio
+Actividad 1:
+Vamos a implantar un sistema de change streaming para controlar que haya un stock minimo
+En lugar de hacer un trigger en backend en este caso hacemos la accion en backend
+
+import { MongoClient } from "mongodb";
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const uri = process.env.MONGODB_URI;
+
+const client = new MongoClient(uri);
+
+// 1. definir un constante de LOW_STOCK
+
+
+async function run() {
+  try {
+   
+    await client.connect();
+
+    const database = client.db("clase");
+    const productos = database.collection("productos");
+
+    // Open a change stream on the collection
+    
+    // 2. ¿Qué operaciones quieres controlar de MongoDB?
+    
+    const changeStream = productos.watch(
+      [
+        {
+          $match: {operationType: {$in : ['delete']}}
+        }
+      ],
+      {
+        fullDocument: "updateLookup"
+      }
+    );
+    // Incluimos fullDocument: "updateLookup" ya que por defecto un update no recibe el documento
+
+
+    changeStream.on("change", (change) => {
+        const id = change.documentKey._id;
+        const producto = change.fullDocument;
+      
+        // 3. Comprobar que tienes un objecto producto
+
+        // 4. Validar si la cantidad es menos o igual que LOW_STOCK
+        // Mandar un mensaje al usuario (console.log)
+
+
+
+    });
+
+    process.stdin.resume();
+
+     // Handle shutdown signals gracefully
+    process.on("SIGINT", async () => {
+      await client.close();
+      process.exit(0);
+    });
+
+    process.on("SIGTERM", async () => {
+      await client.close();
+      process.exit(0);
+    });
+
+
+
+  } catch (error) {
+    console.error("Error connecting to MongoDB or running commands:", error);
+  }
+}
+
+run();
+
+*********************
+solucion
+*******************
+ahora modificar para que además de revisar el insert con LOW_STOCK, y creamos otro cliente (proveedor)
+que escuche los cambios en pedidos
+
+IMPLICA 2 ESCUCHAS la de arriba y otra para proveedor
+
+codigo modificado para client-lowsctockevetstream.js
+import { MongoClient, ObjectId } from "mongodb";
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const uri = process.env.MONGODB_URI;
+
+const client = new MongoClient(uri);
+
+// 1. definir un constante de LOW_STOCK
+const LOW_STOCK = 50
+
+
+async function run() {
+  try {
+   
+    await client.connect();
+
+    const database = client.db("clase");
+    const productos = database.collection("productos");
+    const pedidos = database.collection("pedidos")
+
+    // Open a change stream on the collection
+    
+    // 2. ¿Qué operaciones quieres controlar de MongoDB?
+        
+    // QUITAMOS DEL CODIGO ORIGINAL POR QUE QUEREMOS EN UN INSERT
+    // const changeStream = productos.watch(
+    //     [
+    //       {
+    //         $match: {operationType: {$in : ['delete']}}
+    //       }
+    //     ],
+    //     {
+    //       fullDocument: "updateLookup"
+    //     }
+    //   );
+      const changeStream = productos.watch(
+        [
+          {
+            $match: {operationType: {$in : ['insert']}}
+          }
+        ],
+        {
+          fullDocument: "updateLookup"
+        }
+      );
+        // Incluimos fullDocument: "updateLookup" ya que por defecto un update no recibe el documento
+
+
+    changeStream.on("change", async (change) => {
+        const id = change.documentKey._id;
+        const producto = change.fullDocument;
+      
+        // 3. Comprobar que tienes un objecto producto
+        if (producto) {
+            // 4. Validar si la cantidad es menos o igual que LOW_STOCK
+            // Mandar un mensaje al usuario (console.log)
+            if (producto.cantidad < LOW_STOCK)
+                console.log(`AVISO !! Pedido mínimo 50 has pedido ${producto.cantidad}`)
+            else {
+
+                console.log(`Pedido recibido`)
+                // hacer insert en mensajes
+                const pedido = {
+                    producto_id: producto.producto_id,
+                    producto: producto.nombreProducto,
+                    cantidad: producto.cantidad,
+                    fecha_pedido: new Date()
+                }
+                // db.productos.insertOne(pedido);
+                const result = await pedidos.insertOne(pedido);
+            }
+        }   
+
+    });
+
+    process.stdin.resume();
+
+     // Handle shutdown signals gracefully
+    process.on("SIGINT", async () => {
+      await client.close();
+      process.exit(0);
+    });
+
+    process.on("SIGTERM", async () => {
+      await client.close();
+      process.exit(0);
+    });
+
+
+
+  } catch (error) {
+    console.error("Error connecting to MongoDB or running commands:", error);
+  }
+}
+
+run();
+
+codigo para client-proveedorchangeeventsstream.js
+
+import { MongoClient } from "mongodb";
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+
+// Replace with your actual MongoDB Atlas connection string
+const uri = process.env.MONGODB_URI;
+
+const client = new MongoClient(uri);
+
+async function run() {
+  try {
+    // Connect the client to the server
+    await client.connect();
+
+    const database = client.db("clase");
+    const productos = database.collection("pedidos");
+
+    // Open a change stream on the collection
+    const changeStream = productos.watch(); // conexion directa escuchando todo el rato a la base datos
+
+
+    changeStream.on("change", (change) => { // se recive un change formato json
+      console.log("Change detected:");
+      console.log(JSON.stringify(change, null, 2));
+
+      if (change.operationType === "insert") {
+        console.log("New document inserted:", change.fullDocument);
+        console.log(`Nuevo pedido: ${change.fullDocument._id}`)
+        // aqui se puedría hacer más codigo para por ejempl cuando se cree o añada productos
+        // para que actualice a una nueva tabla de pedidos
+      }
+
+      if (change.operationType === "delete") {
+        console.log("Document deleted with _id:", change.documentKey._id);
+      }
+
+      // Add other operationType handlers as needed
+    });
+
+    process.stdin.resume(); // esto es para que salga info en la consola
+
+     // Handle shutdown signals gracefully
+    process.on("SIGINT", async () => {
+      console.log("SIGINT received, closing connection...");
+      await client.close();
+      console.log("Connection closed. Exiting...");
+      process.exit(0);
+    });
+
+    process.on("SIGTERM", async () => {
+      console.log("SIGTERM received, closing connection...");
+      await client.close();
+      console.log("Connection closed. Exiting...");
+      process.exit(0);
+    });
+
+
+
+  } catch (error) {
+    console.error("Error connecting to MongoDB or running commands:", error);
+  }
+}
+
+run();
+
+
+
+
+/*
+changeStream.on("error", (error) => {
+  console.error("Change stream error:", error);
+});
+
+changeStream.on("close", () => {
+  console.log("Change stream closed.");
+});*/
+
+********************
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/websockets/01-introduccion.md
+ABRIR express-mongodb
+npm run dev
+
+en navegador http://localhost:5000/api/v1/productos
+recibimos respuesta de productos
+
+crear desde mern4-jrg
+npm create vite@latest vite-frontend
+react
+javascript
+cd vite-frontend
+npm run dev
+crear carpeta /src/components
+crear archivo Polling.jsx
+
+/components/Polling.jsx
+
+Para este demo, quitar los comentarios de setInterval
+
+import React, { useEffect, useState } from 'react';
+
+
+const Polling = () => {
+  const [productos, setProductos] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+
+  const fetchProductos = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/v1/productos');
+
+      if (!response.ok) throw new Error('Error en la respuesta');
+      const data = await response.json();
+      setProductos(data);
+      
+
+    } catch (error) {
+      console.error('Error al obtener los productos:', error);
+    }
+  };
+
+  useEffect(() => {
+    /* const interval = setInterval(() => {
+      setIsRefreshing(true);
+      setTimeout(() => {
+        setIsRefreshing(false);
+        fetchProductos();
+      }, 1000); // wait 1 second before fetch
+    }, 5000);
+    */
+
+    fetchProductos(); // initial load
+
+    // return () => clearInterval(interval); // cleanup
+  }, []);
+
+  return (
+    <div style={{ padding: '2rem' }}>
+
+    {isRefreshing && (
+        <div style={{ color: 'orange', marginBottom: '1rem' }}>
+        Actualizando productos...
+        </div>
+    )}
+
+      <h2>📦 Productos (con polling)</h2>
+      {productos.map((prod) => (
+        <div key={prod._id} style={{ marginBottom: '1rem' }}>
+          <strong>{prod.nombreProducto}</strong> — {prod.cantidad} unidades
+          
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default Polling;
+
+modificar App.jsx
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
+import Polling from './components/Polling'
+
+function App() {
+
+  return (
+    <>
+      <Polling />
+    </>
+  )
+}
+
+export default App
+
+
+NOS MOSTRARÁ TODO PRODUCTOS
+si cambiamos un registro en mongodb NO SE ACTUALIZA EN REACT hasta que refresquemos
+pero con este código se refresca cada 5 segundos
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/websockets/01-Polling.jsx
+ejercicio
+import React, { useEffect, useState } from 'react';
+
+
+const Polling = () => {
+  const [productos, setProductos] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+
+  const fetchProductos = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/v1/productos');
+
+      if (!response.ok) throw new Error('Error en la respuesta');
+      const data = await response.json();
+      setProductos(data);
+      
+
+    } catch (error) {
+      console.error('Error al obtener los productos:', error);
+    }
+  };
+
+  useEffect(() => {
+    /* const interval = setInterval(() => {
+      setIsRefreshing(true);
+      setTimeout(() => {
+        setIsRefreshing(false);
+        fetchProductos();
+      }, 1000); // wait 1 second before fetch
+    }, 5000);
+    */
+
+    fetchProductos(); // initial load
+
+    // return () => clearInterval(interval); // cleanup
+  }, []);
+
+  return (
+    <div style={{ padding: '2rem' }}>
+
+    {isRefreshing && (
+        <div style={{ color: 'orange', marginBottom: '1rem' }}>
+        Actualizando productos...
+        </div>
+    )}
+
+      <h2>📦 Productos (con polling)</h2>
+      {productos.map((prod) => (
+        <div key={prod._id} style={{ marginBottom: '1rem' }}>
+          <strong>{prod.nombreProducto}</strong> — {prod.cantidad} unidades
+          
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default Polling;
+
+{/*
+Actualizar:
+- un efecto, indicador visual para el mensaje de 'Actualizando productos' i.e. circular progress
+- un indicador de colores para la cantidad <5 rojo, < 10 verde, ...
+- dejar que el usuario modifique el intervalo de polling - select onChange
+- habilitar / desabilitar el polling
+- detectar cambios y mostrar un mansaje - 'un nuevo producto ha sido añadido' (avanzado)
+*/}
+
+instalar
+npm install @mui/material @emotion/react @emotion/styled
+npm install @fontsource/roboto
+npm install @mui/icons-material

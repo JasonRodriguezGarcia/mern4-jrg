@@ -13,6 +13,7 @@ import DashboardPage from './pages/DashBoardPage';
 import PropDrillingHomePage2 from './pages/PropDrillingHomePage2';
 import PasswordForm from './components/PasswordForm';
 import EmojiRender from './components/EmojiRender';
+import DogsComponent from './components/DogsComponent';
 
 function App() {
     return (
@@ -36,11 +37,12 @@ function App() {
 
                 
         </Routes>
+        <DogsComponent />
 
-        <PasswordForm />
+        {/* <PasswordForm />
 
-        <EmojiRender />
-
+<EmojiRender />
+*/}
         </BrowserRouter>
     );
 }
