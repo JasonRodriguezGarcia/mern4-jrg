@@ -388,7 +388,7 @@ FIN CODIGO EN client-proveedorchangeeventsstream.js
 
 ********************
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/websockets/01-introduccion.md
-ABRIR express-mongodb
+ABRIR express-mongodb (teníamos de un ejercicio anterior mondado para que se use express/mongodb/routes/productos.js)
 npm run dev
 
 en navegador http://localhost:5000/api/v1/productos

@@ -43,7 +43,7 @@ const Polling = () => {
 
     return () => {
         if(interval)
-        clearInterval(interval); // cleanup
+        clearInterval(interval); // cleanup interval
     }
   }, [intervalSelected, intervalActivated]);
 
@@ -60,9 +60,7 @@ const Polling = () => {
   return (
     <>
         <Box sx={{width: "90vw", marginX: "20px"}}>
-
             <div style={{ padding: '2rem' }}>
-
                 {isRefreshing && (
                     <div style={{ color: 'orange', marginBottom: '1rem' }}>
                         <CircularProgress />
@@ -73,8 +71,6 @@ const Polling = () => {
                     <Grid container spacing={2}>
                         <Grid size={6}>
                             <Box sx={{display: "flex", flexDirection: "column", gap: "10px"}}>
-
-
                                 <h2>📦 Productos (con polling)</h2>
                                 {productos.map((prod) => (
                                     <div key={prod._id} style={{ marginBottom: '1rem',
@@ -83,31 +79,24 @@ const Polling = () => {
                                     
                                     </div>
                                 ))}
-
-
                             </Box>
                         </Grid>
                         <Grid size={6}>
-
                             <Box sx={{display: "flex", flexDirection: "column", gap: "10px", backgroundColor: "white"}}>
                                 <Box sx={{display: "flex"}}>
                                     <input type="radio" id="html" name="activated" checked={intervalActivated===true} onChange={()=> setIntervalActivated(true)} />
                                     <label htmlFor="html">Activado</label>
                                     <input type="radio" id="css" name="activated" checked={intervalActivated===false} onChange={()=> setIntervalActivated(false)} />
                                     <label htmlFor="css">Desactivado</label><br />
-                                </Box>
-                                
+                                </Box>                               
                                 <label name="intervalTimeSelect">Tiempo</label>
                                 <select name="intervalTimeSelect" id="intervalTimeSelect" value={intervalSelected} disabled={!intervalActivated} onChange={(event)=> handleSelect(event)}>
                                     {selectInterval()}
                                 </select>
-
                             </Box>
                         </Grid>
                     </Grid>
                 </Box>
-
-
             </div>
         </Box>
     </>

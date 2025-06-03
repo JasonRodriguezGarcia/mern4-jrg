@@ -87,7 +87,9 @@ texto de mongodb atlas
 *************************
 *************************
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/mongodb/06-transactions.mongodb.sql
+TRANSACCIONES en mongodb dentro del fichero playground-1.mongodb.js
 
+Codigo para insertar varios
 use("clase");
 db.accounts.insertMany([
   { name: "Jon", balance: 100 },
@@ -97,11 +99,13 @@ db.accounts.find({});
 
 
 ******************
-https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/mongodb/08-mini-proyecto-taxis.md
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/mongodb/09-mini-proyecto-taxis.md
 
 1- crear docs en MongoDB
-    Creado bbdd taxis collection users
+    Crear bbdd taxis collection users
     Añadir datos con Playground
+CODIGO PARA LA CREACIÓN A USAR EN PLAYGROUND CON CONEXION VSC A MONGODB (CONNECT)
 use('taxis');
 db.users.insertOne(
 {
@@ -130,10 +134,17 @@ db.users.insertOne(
   ]
 });
 
-2- express
+2- /express-mongodb2
     /routes/taxis
-3- reactJS
+        creada la ruta para el ejercicio de pedido de taxis que apunta a mongodb
+3- /react-mongodb2
+    /src/pages/MainPage.jsx
+        fontend para el ejercicio de taxis
+
     ejemplo de pagina sin datos
+    https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/mongodb/09-mini-proyecto.html
+
+
 
 
 

@@ -105,7 +105,7 @@ A la izquierda - Cluster
         PINCHAR en Create Database User
     Chose a connection method (abajo a la derecha)
         MongoDB for VSC
-        Aparece una ventana indicando que tendremos que instalar una extension en VSC y copia una cadena en el apartado 3.
+        Aparece una ventana indicando que tendremos que instalar una extensión en VSC y copia una cadena en el apartado 3.
 
 copiar codigo to connect to your mongodb
 mongodb+srv://mongodb:<db_password>@cluster0jrg.kovfslk.mongodb.net/  -- casa

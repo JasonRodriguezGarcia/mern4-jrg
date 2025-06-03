@@ -81,7 +81,7 @@ Un servidor express siempres esta escuchando, con este tipo de cloud functions (
 se ejecuta acciones en el momento que sea necesario y se paga por cada acción
 
 Un insert no inserta directamente en la bbdd,
-primero se escribe en un Oplog y luego lo inserta en la bbdd nodoprimario )operacion 'capped')
+primero se escribe en un Oplog y luego lo inserta en la bbdd nodoprimario (operacion 'capped')
 los nodos secundarios cogen el dato del Oplog no del primario
 
 Si hay demasiados insert se desborda el Oplog y se sobreescriben datos
