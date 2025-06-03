@@ -3,12 +3,16 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import Polling from './components/Polling'
+import ProductosSocket from './components/ProductosSocket'
+import Chat1 from './components/Chat1'
 
 function App() {
 
   return (
     <>
-      <Polling />
+      {/* <Polling /> */}
+      {/* <ProductosSocket  /> */}
+      <Chat1 />
     </>
   )
 }

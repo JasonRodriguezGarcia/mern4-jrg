@@ -8,7 +8,7 @@ const Polling = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [color, setColor] = useState(["red", "yellow", "green"])
   const [intervalTime, setIntervalTime] = useState([1000, 2000, 3000, 4000, 5000])
-  const [intervalSelected, setIntervalSelected] = useState(0)
+  const [intervalSelected, setIntervalSelected] = useState(4)
   const [intervalActivated, setIntervalActivated] = useState(true)
 
   const fetchProductos = async () => {
@@ -49,7 +49,7 @@ const Polling = () => {
 
   const selectInterval = () => {
     return intervalTime.map ((time, index) => (
-        <option key={index} value={index}>{time}ms</option>   
+        <option key={index} value={index}>{time/1000} segundos</option>   
     ))
   }
 
@@ -75,15 +75,14 @@ const Polling = () => {
                                 {productos.map((prod) => (
                                     <div key={prod._id} style={{ marginBottom: '1rem',
                                         color: `${prod.cantidad < 50? color[0]: prod.cantidad <100? color[1]: color[2]}` }}>
-                                    <strong>{prod.nombreProducto}</strong> — {prod.cantidad} unidades
-                                    
+                                      <strong>{prod.nombreProducto}</strong> — {prod.cantidad} unidades
                                     </div>
                                 ))}
                             </Box>
                         </Grid>
                         <Grid size={6}>
                             <Box sx={{display: "flex", flexDirection: "column", gap: "10px", backgroundColor: "white"}}>
-                                <Box sx={{display: "flex"}}>
+                                <Box sx={{display: "flex", color: "grey", userSelect: "none"}}>
                                     <input type="radio" id="html" name="activated" checked={intervalActivated===true} onChange={()=> setIntervalActivated(true)} />
                                     <label htmlFor="html">Activado</label>
                                     <input type="radio" id="css" name="activated" checked={intervalActivated===false} onChange={()=> setIntervalActivated(false)} />
