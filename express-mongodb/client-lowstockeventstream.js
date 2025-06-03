@@ -10,8 +10,7 @@ const client = new MongoClient(uri);
 // 1. definir un constante de LOW_STOCK
 const LOW_STOCK = 50
 
-console.log("Running ...")
-
+console.log("Listening ...")
 
 async function run() {
   try {
@@ -49,7 +48,6 @@ async function run() {
       );
         // Incluimos fullDocument: "updateLookup" ya que por defecto un update no recibe el documento
 
-
     changeStream.on("change", async (change) => {
         const id = change.documentKey._id;
         const producto = change.fullDocument;
@@ -58,23 +56,22 @@ async function run() {
         if (producto) {
             // 4. Validar si la cantidad es menos o igual que LOW_STOCK
             // Mandar un mensaje al usuario (console.log)
-            if (producto.cantidad < LOW_STOCK)
-                console.log(`AVISO !! Pedido mínimo 50 has pedido ${producto.cantidad}`)
-            else {
-
-                console.log(`Pedido recibido`)
-                // hacer insert en mensajes
+            if (producto.cantidad < LOW_STOCK) {
+                console.log(`AVISO !! STOCK BAJO - ${producto.cantidad}, creando pedido`)
+                // hacer insert en pedidos
                 const pedido = {
-                    producto_id: producto.producto_id,
-                    producto: producto.nombreProducto,
-                    cantidad: producto.cantidad,
+                    prodId: producto.prodId,
+                    nombreProducto: producto.nombreProducto,
+                    cantidad: 100,                  // HACEMOS PEDIDO DE 100 UNIDADES
                     fecha_pedido: new Date()
                 }
                 // db.productos.insertOne(pedido);
                 const result = await pedidos.insertOne(pedido);
             }
+            else {
+                console.log(`Producto creado`)
+            }
         }   
-
     });
 
     process.stdin.resume();
@@ -89,8 +86,6 @@ async function run() {
       await client.close();
       process.exit(0);
     });
-
-
 
   } catch (error) {
     console.error("Error connecting to MongoDB or running commands:", error);

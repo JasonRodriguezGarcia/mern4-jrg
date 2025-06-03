@@ -9,6 +9,8 @@ const uri = process.env.MONGODB_URI;
 
 const client = new MongoClient(uri);
 
+console.log("Listening ...")
+
 async function run() {
   try {
     // Connect the client to the server
@@ -23,7 +25,8 @@ async function run() {
 
     changeStream.on("change", (change) => { // se recive un change formato json
       console.log("Change detected:");
-      console.log(JSON.stringify(change, null, 2));
+    //   console.log(JSON.stringify(change, null, 2)); // mostramos en formato json más legible
+      console.log(change, null, 2);
 
       if (change.operationType === "insert") {
         console.log("New document inserted:", change.fullDocument);
