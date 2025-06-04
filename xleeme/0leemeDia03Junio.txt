@@ -252,11 +252,11 @@ cambiamos  index.js y creamos socket chatmessage
 añadimos codigo
 
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/websockets/01-introduccion.md
-Acción	        Quién	    Código	            Propósito
-Emitir mensaje	Cliente	    socket.emit(...)	Enviar un mensaje al servidor
-Escuchar    	Servidor	socket.on(...)	    Recibir el mensaje desde el cliente
-Emitir a todos	Servidor	io.emit(...)	    Enviar el mensaje a todos los clientes
-Escuchar	    Cliente	    socket.on(...)	    Recibir mensajes del servidor
+Acción	        Quién	      Código	            Propósito
+Emitir mensaje	Cliente	    socket.emit(...)	  Enviar un mensaje al servidor
+Escuchar    	  Servidor	  socket.on(...)	    Recibir el mensaje desde el cliente
+Emitir a todos	Servidor	  io.emit(...)	      Enviar el mensaje a todos los clientes
+Escuchar	      Cliente	    socket.on(...)	    Recibir mensajes del servidor
 
 Ping Pong
 podemos configurar los datos de comprobación de conexion de winsocket

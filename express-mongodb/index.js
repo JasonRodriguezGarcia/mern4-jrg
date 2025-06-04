@@ -3,7 +3,8 @@ import path from "path";
 import cors from "cors";
 import { fileURLToPath } from "url";
 import { Server as SocketIOServer } from "socket.io";
-
+import connectDB from './db-mongodb.js';  // Import your MongoDB connection module
+import chatsRouter from './routes/chats.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,8 +16,13 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-
 async function startServer() {
+
+  // Connect to MongoDB and store the DB instance in app.locals
+  const db = await connectDB();
+  app.locals.db = db; // saving database globally
+
+  app.use('/api/v1/chats', chatsRouter)
 
   try {
     
@@ -33,32 +39,37 @@ async function startServer() {
     });
 
     io.on("connection", (socket) => {
-      console.log("User connected");
-      console.log(`User ${socket.id}`)
-        socket.on("chatMessage", (data) => {  // no hace falta en otro caso poner data si no hay datos
-            console.log(`chat Message recibido ${data}`)
-            socket.emit("chatReply", `Me has enviado ${data}`)
-        })
-        // socket.on("otroMessage")
+      
+      socket.on ("joinRoom", (room) => {
+        console.log(`Socket ${socket.id} has joined ${room}`);
+        socket.join(room);
+      });
 
-    //   socket.on('chatMessage', (msg) => {
-    //     console.log("chtting", msg);
-    //     //io.emit('chatMessage', `Youve just sent me ${msg}`);  // sent to all clients
-    //     //socket.broadcast.emit - to all , except sender (not used here at moment)
-    //     socket.emit('chatMessage', `Youve just sent me ${msg}`);
-    //   });
+      socket.on('chatRoomMessage', async ({room, message, nick, timestamp})=> {
+        console.log("receiving");
+        try {
 
-    //   socket.on('differentMessage', (msg) => {
-    //     console.log("this is a different message", msg);
-        
-    //   });
+          const newDoc = {
+            room: room,
+            message: message,
+            nick: nick,
+            timestamp: timestamp
+          }
+          const resultado = await db.collection("chats").insertOne(newDoc);
+       
+        } catch (error) {
+          console.error("Error finding productos:", error);
+          res.status(500).json({ error: 'Failed finding productos' });
+        }
+    
+        socket.to(room).emit('chatRoomMessage', {message, nick});
+
+      });
 
       socket.on("disconnect", (reason) => {
-          console.log(`User disconnected ${socket.id} and ${reason}`)
-
+          console.log(`User disconnected ${socket.id} and ${socket.reason}`)
       })
     })
-
 
   
   }

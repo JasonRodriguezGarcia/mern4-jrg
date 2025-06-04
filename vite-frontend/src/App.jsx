@@ -5,6 +5,8 @@ import './App.css'
 import Polling from './components/Polling'
 import ProductosSocket from './components/ProductosSocket'
 import Chat1 from './components/Chat1'
+import ButtonCounter from './components/ButtonCounter'
+import ChatRoom from './components/ChatRoom'
 
 function App() {
 
@@ -12,7 +14,10 @@ function App() {
     <>
       {/* <Polling /> */}
       {/* <ProductosSocket  /> */}
-      <Chat1 />
+      {/* <Chat1 /> */}
+      {/* <ButtonCounter /> */}
+      <ChatRoom />
+
     </>
   )
 }

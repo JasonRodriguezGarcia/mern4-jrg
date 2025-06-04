@@ -1,0 +1,280 @@
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/introduccion.md
+Atividades 2
+const scores = [65, 80, 90, 45, 70];
+¿Cómo consigues que este comando devuelve true?
+scores.every((x)=> x> 71) // mira si TODOS > 71
+false
+Todos tienen que ser >71 si no no devuelve true
+
+Quieres saber si cualquier elemento es mayor a 70? Usar some().
+scores.some((x) => x > 70)  // mira si ALGUNO > 70
+true
+
+
+const students = [
+  { name: "Ana", score: 80 },
+  { name: "Jon", score: 45 },
+  { name: "Sofía", score: 90 }
+];
+
+¿Han aprobado todos los alumnos?
+respuesta
+students.every((student) => student.score >= 50)
+otro parecido students.map((x) => x.score > 50 ? true: false)
+
+Encontrar los alumnos que no han aprobado. Usar filter().
+respuesta
+students.filter((student) => student.score < 50)
+
+Recordar que el ternario operador es igual que un if... then...
+const num = 7;
+const result = num % 2 === 0 ? "Even" : "Odd";
+console.log(result); // "Odd"
+
+Mostrar un mensaje apropriado para la edad
+const age = 16;
+const user = {nombre: 'Jon', edad: 18};
+user?.nombre ?? 'None';
+user?.profile ?? 'None';
+respuesta
+user.edad >= 18 ? "mayor":"menor"
+
+Operador	Qué hace	Cuándo usarlo
+?.	Encadenamiento opcional	Para acceder a datos anidados de forma segura // SI EXISTE ALGO
+??	Fusión nula (nullish coalescing)	Para dar un valor por defecto solo si es
+                                         null o undefined//VALOR POR DEFECTO
+
+Construir el objeto para que este comando se ejecuta y devuleve un valor de 'jon@gmail.com'.
+user?.profile?.email ?? "Sin email";
+respuesta
+const user = {
+        nombre: "Jon",
+        profile: { email: "jon@gmail.com"}
+};
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/introduccion.md
+Event-driven
+https://www.youtube.com/watch?v=3cJt3wTaKnk
+
+Event (un evento es un cambio significativo en el sistema que requiere ser informado) driven architecture
+ (escalabilidad y desacoplamiento)
+    Event notification
+    Event-carried state transfer
+    Event sourcing
+
+Cloud function MongoDB
+
+
+Creamos /components/ButtonCounter.jsx abrirlo en varios navegadores
+copiamos index en anterios es index-chat1.jsx
+nuevo index.jsx
+import express from "express";
+import path from "path";
+import cors from "cors";
+import { fileURLToPath } from "url";
+import { Server as SocketIOServer } from "socket.io";
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+
+async function startServer() {
+
+  try {
+    
+    // Create HTTP server from express app
+    const httpServer = app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+
+    // Setup Socket.IO server on the same HTTP server
+    const io = new SocketIOServer(httpServer, {
+      cors: {
+        origin: "*", // adjust for your frontend origin
+      },
+    });
+
+    io.on("connection", (socket) => {
+      console.log("User connected");
+      console.log(`User ${socket.id}`)
+
+
+      socket.on("onClick", (data) => {  // no hace falta en otro caso poner data si no hay datos
+        console.log(`Contador recibido ${data}`)
+        socket.broadcast.emit('recibirClick', `${socket.id} ha pinchado ${data} veces`)
+      })
+
+      socket.on("disconnect", (reason) => {
+        console.log(`User disconnected ${socket.id} and ${reason}`)
+      })
+    })
+  
+  }
+
+  catch (error) {
+      console.error("Failed to start server:", error);
+      process.exit(1);
+    }
+}
+
+startServer();
+***********************
+
+index-sockets-chatroom.js
+import express from "express";
+import path from "path";
+import cors from "cors";
+import { fileURLToPath } from "url";
+import { Server as SocketIOServer } from "socket.io";
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+
+async function startServer() {
+
+  try {
+    
+    // Create HTTP server from express app
+    const httpServer = app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+
+    // Setup Socket.IO server on the same HTTP server
+    const io = new SocketIOServer(httpServer, {
+      cors: {
+        origin: "*", // adjust for your frontend origin
+      },
+    });
+
+    io.on("connection", (socket) => {
+      
+      socket.on ("joinRoom", (room) => {
+        console.log(`Socket ${socket.id} has joined ${room}`);
+        socket.join(room);
+      });
+
+      socket.on('chatRoomMessage', ({room, message})=> {
+        console.log("receiving");
+        socket.to(room).emit('chatRoomMessage', message);
+
+      });
+
+      socket.on("disconnect", (reason) => {
+          console.log(`User disconnected ${socket.id} and ${socket.reason}`)
+      })
+    })
+
+  
+  }
+
+  catch (error) {
+      console.error("Failed to start server:", error);
+      process.exit(1);
+    }
+}
+
+startServer();
+
+********
+crear chatroom.jsx en components
+
+import React, { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:5000'); // Connect once
+
+const ROOM_NAME = 'myRoom';
+
+
+function ChatRoom() {
+  const [connected, setConnected] = useState(true);
+  const [input, setInput]= useState('');
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    socket.on('connect', () => {
+      console.log('Connected to socket');
+      setConnected(true);
+      socket.emit('joinRoom', ROOM_NAME);
+    });
+
+    socket.on('chatRoomMessage', (msg) => {
+      setMessages(prev => [...prev, msg]);
+    })
+
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from socket');
+      setConnected(false);
+    });
+
+    return () => {
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('joinRoom');
+      socket.off('chatRoomMessage');
+      
+    };
+  }, []);
+
+  const handleDisconnect = () => {
+    socket.disconnect();
+    setConnected(false);
+  };
+
+
+
+  const sendChatRoom = () => {
+    socket.emit('chatRoomMessage', {room: ROOM_NAME, message: input}); // can pass in more data here
+    setInput('');
+  }
+
+  return (
+    <div>
+      <h2>💬 Chat Socket</h2>
+      <p>Status: {connected ? 'Connected' : 'Disconnected'}</p>
+
+      {connected && (
+        <button onClick={handleDisconnect}>Disconnect</button>
+      )}
+
+      {messages.map((message) => (
+          <div>{message}</div>
+      ))}
+
+      <input
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Type a message"
+      />
+
+
+      <button onClick={sendChatRoom} style={{ width: 60 }}>
+        Send to Chat Room
+      </button>
+
+    </div>
+  );
+}
+
+export default ChatRoom;
+
+**************

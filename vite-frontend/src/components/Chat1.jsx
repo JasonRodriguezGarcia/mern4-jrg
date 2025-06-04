@@ -19,8 +19,6 @@ function Chat1() {
     
     });
     
-    
-
     socket.on('disconnect', (reason) => {
       console.log('Disconnected from socket');
       setConnected(false);
