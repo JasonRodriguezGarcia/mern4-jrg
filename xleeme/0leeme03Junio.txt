@@ -1,0 +1,262 @@
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/introduccion.md
+
+pegar en consola
+const capitals = {
+  Spain: "Madrid",
+  France: "Paris",
+  Germany: "Berlin",
+  Italy: "Rome",
+  Portugal: "Lisbon"
+};
+
+mostrar las capitales
+Object.keys(capitals)
+muestra
+(5) ['Spain', 'France', 'Germany', 'Italy', 'Portugal']
+
+mostrar los paises
+Object.values(capitals)
+muestra
+(5) ['Madrid', 'Paris', 'Berlin', 'Rome', 'Lisbon']
+
+mostrar capitales que tengan mas de 5 letras
+let array = Object.values(capitals).filter(key => key.length > 5)
+(3) ['Madrid', 'Berlin', 'Lisbon']
+
+mostrar capital y un número ascendente
+Object.values(capitals).map((key, index) => key + " " + index )
+
+conseguir array de numeros con esto
+let valores = '123456';
+
+Array.from(valores, x => x)
+(6) ['1', '2', '3', '4', '5', '6']
+
+Array.from(valores, x => parseInt(x))
+(6) [1, 2, 3, 4, 5, 6]
+
+Array.from(valores, x => Number(x))     --ojo diferencia con parseInt() si un numero es null
+(6) [1, 2, 3, 4, 5, 6]
+
+array con multiplos de 10
+Array.from(valores, x => parseInt(x)*10)
+(6) [10, 20, 30, 40, 50, 60]
+
+
+array de objetos
+const countries = [
+  { name: "Spain", capital: "Madrid" },
+  { name: "France", capital: "Paris" },
+  { name: "Germany", capital: "Berlin" },
+  { name: "Italy", capital: "Rome" },
+  { name: "Portugal", capital: "Lisbon" }
+];
+
+Buscar paises que empiezan con "p"
+countries.filter(country => country.name.startsWith('P'))
+[{…}]
+0
+: 
+{name: 'Portugal', capital: 'Lisbon'}
+length
+: 
+1
+[[Prototype]]
+: 
+Array(0)
+
+Buscar paises que contengan en cualquier parte "rtu"
+countries.filter(country => country.name.includes('rtu'))
+
+paises que terminan en "n"
+countries.filter(country => /n$/.test(country.name))
+
+buscar la n en Berlin
+'Berlin'.match(/n$/)
+devuelve un objeto
+['n', index: 5, input: 'berlin', groups: undefined]
+
+'La capital de JAlemania es Berlin'.match(/n$/)
+['n', index: 32, input: 'La capital de JAlemania es Berlin', groups: undefined]
+
+Objectivos: Usar array métodos de filter, regex test() y match()
+
+
+{name: 'Spain', capital: 'Madrid', loc: 0}
+{name: 'France', capital: 'Paris', loc: 1} 
+{name: 'Germany', capital: 'Berlin', loc: 2}
+
+Queremos añadir un atributo de más a cada uno de los objectos, siendo su valor ubicación en la lista.
+countries.map((country, index) => country.loc = index)
+countries.map((country, index) => country['loc'] = index)
+0: {name: 'Spain', capital: 'Madrid', loc: 0}
+1: {name: 'France', capital: 'Paris', loc: 1}
+2: {name: 'Germany', capital: 'Berlin', loc: 2}
+3: {name: 'Italy', capital: 'Rome', loc: 3}
+4: {name: 'Portugal', capital: 'Lisbon', loc: 4}
+tambien esto pero no modifica el original
+countries.map((c, index) =>(
+    { 
+        ...c,
+        loc : index
+    }
+));
+
+***************
+https://github.com/chekulhan/Desarrollo-Web/tree/main/UF1846-Web-Distribuidas/websockets
+WEB SOCKETS
+VALE PARA EXPRESS Y React
+
+hay que hacer varias instalaciones en EXPRESS
+en REST el cliente pide datos al servidor (unidireccional) y este responde
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/websockets/01-introduccion.md
+
+en vite-frontend
+npm install socket.io-client
+
+en express/mongodb
+npm install socket.io
+copiamos index.js a index.mongodb.js
+Modificamos index.js A index-sockects-mongodb.js
+
+pegamos codigo de https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/websockets/02-index-sockets-mongodb.js
+
+import express from "express";
+import path from "path";
+import cors from "cors";
+import { fileURLToPath } from "url";
+import { Server as SocketIOServer } from "socket.io";
+
+import productosRouter from "./routes/productos.js";
+import connectDB from "./db-mongodb.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+async function startServer() {
+  try {
+    // Connect to MongoDB and store the DB instance in app.locals
+    const db = await connectDB();
+    app.locals.db = db;
+
+    // Mount routes
+    app.use("/api/v1/productos", productosRouter);
+
+    // Create HTTP server from express app
+    const httpServer = app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+
+    // Setup Socket.IO server on the same HTTP server
+    const io = new SocketIOServer(httpServer, {
+      cors: {
+        origin: "*", // adjust for your frontend origin
+      },
+    });
+
+    // Listen for client connections
+    io.on("connection", async (socket) => {
+      console.log("Client connected via Socket.IO");
+
+      // get productos
+      try {
+        const productosCollection = app.locals.db.collection("productos");
+        const productos = await productosCollection.find().toArray();
+        socket.emit("productosLista", productos); // Send full list on connect
+      } catch (error) {
+        console.error("Failed to fetch productos on connect:", error);
+      }
+
+    });
+
+    // Watch MongoDB collection for changes and emit events
+    const productosCollection = db.collection("productos");
+    const changeStream = productosCollection.watch(
+      [
+        { $match: { operationType: { $in: ["insert", "update", "replace", "delete"] } } },
+      ],
+      { fullDocument: "updateLookup" }
+    );
+
+    changeStream.on("change", async (change) => {
+      const id = change.documentKey._id;
+      // Get full document if not present in change
+      const fullDocument =
+        change.fullDocument || (await productosCollection.findOne({ _id: id }));
+
+
+      // emit los cambios al cliente (insert, update)
+      if (change.operationType === "insert") {
+
+          if (!fullDocument) return;
+
+          io.emit("productoNuevo", fullDocument);
+      } else if (change.operationType === "update" || change.operationType === "replace") {
+
+          if (!fullDocument) return;
+
+          io.emit("productoModificado", fullDocument);
+      } else if (change.operationType === "delete") {
+        // Emit just the id of the deleted product - no fullDocument available
+        io.emit("productoEliminado", { _id: id });
+      }
+
+     
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+}
+
+startServer();
+
+****
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/websockets/02-ProductosSocket.jsx
+crear en /components
+ProductosSocket.js y añadir a App.jsx
+
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/websockets/01-introduccion.md
+con MongoDB ProductosSocket.jsx
+Mejoras:
+
+Al lado del cliente (vite), hacer el cálculo de precioTotal para cada uno de los productos, que es 
+precio * cantidad
+Al lado del servidor (express), hacer lo mismo
+Incluir un precio con el valor total del producto, incluyendo IVA.
+Queremos seleccionar solo los productos con un atributo del estado = 'completado'. ¿Dónde podrias 
+incluir este tipo de filtro?
+
+renombrabmos index.jsx a index-socketsconmongodb.js
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/websockets/03-index-sockets-basic.js
+creamos un nuevo.index
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/websockets/03-chat-01.jsx
+crear Chat1 en componentes
+ojo linea 10 connection no connect
+
+cambiar app.jsx y añadir chat1
+cambiamos codigo
+
+cambiamos  index.js y creamos socket chatmessage
+añadimos codigo
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/websockets/01-introduccion.md
+Acción	        Quién	    Código	            Propósito
+Emitir mensaje	Cliente	    socket.emit(...)	Enviar un mensaje al servidor
+Escuchar    	Servidor	socket.on(...)	    Recibir el mensaje desde el cliente
+Emitir a todos	Servidor	io.emit(...)	    Enviar el mensaje a todos los clientes
+Escuchar	    Cliente	    socket.on(...)	    Recibir mensajes del servidor
+
+Ping Pong
+podemos configurar los datos de comprobación de conexion de winsocket
