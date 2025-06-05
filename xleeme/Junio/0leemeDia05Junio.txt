@@ -290,7 +290,7 @@ import { swaggerSpec } from './swagger.js';
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
-en /route/productos.js pegar antes de
+en /route/productos.js pegar antes de get('/')
 /**
  * @swagger
  * /productos:
@@ -332,5 +332,6 @@ http://localhost:5000/docs/ y nos sale toda la info de la api
 podemos cambiar el fichero swagger.js
 hacemos lo mismo con más rutas en /routes/chats.js
 
-podemos pedir a chatgpt para que nos cree para todas las rutas de chats.js
+podemos pedir a chatgpt para que nos cree para todas las rutas de chats.js y con schema para insertar en nuestro productos.js
 pedirle además que ponga tags: - chats
+
