@@ -26,13 +26,12 @@ const router = Router();
  *         enStock:
  *           type: boolean
  *           example: true
- * 
  *     Error:
  *       type: object
  *       properties:
  *         error:
  *           type: string
- *           example: "Failed to delete producto"
+ *           example: "Internal Server Error"
  */
 
 // GET /api/v1/productos
@@ -50,20 +49,18 @@ const router = Router();
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   _id:
- *                     type: string
- *                     example: '664f173bd4e2b36c50ac9b1a'
- *                   nombre:
- *                     type: string
- *                     example: 'Guitarra eléctrica'
- *                   precio:
- *                     type: number
- *                     example: 499.99
- *                   enStock:
- *                     type: boolean
- *                     example: true
+ *                 $ref: '#/components/schemas/Producto'
+ *             examples:
+ *               ejemplo1:
+ *                 value:
+ *                   - prodId: 123
+ *                     nombre: "Guitarra eléctrica"
+ *                     precio: 499.99
+ *                     enStock: true
+ *                   - prodId: 124
+ *                     nombre: "Bajo eléctrico"
+ *                     precio: 399.99
+ *                     enStock: false
  *       500:
  *         description: Error del servidor
  */
@@ -79,35 +76,40 @@ router.get('/', async (req, res) => {
 });
 
 /**
-* @swagger
-* /productos:
-*   post:
-*     summary: Crear un nuevo producto
-*     description: Inserta un nuevo producto en la base de datos.
-*     requestBody:
-*       required: true
-*       content:
-*         application/json:
-*           schema:
-*             $ref: '#/components/schemas/Producto'
-*     responses:
-*       '200':
-*         description: Producto creado exitosamente
-*         content:
-*           application/json:
-*             schema:
-*               type: object
-*               properties:
-*                 message:
-*                   type: string
-*                   example: "INSERTED producto with id: P001"
-*       '500':
-*         description: Error al insertar producto
-*         content:
-*           application/json:
-*             schema:
-*               $ref: '#/components/schemas/Error'
-*/
+ * @swagger
+ * /productos:
+ *   post:
+ *     summary: Crear un nuevo producto
+ *     description: Inserta un nuevo producto en la base de datos.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Producto'
+ *           example:
+ *             prodId: 125
+ *             nombre: "Teclado MIDI"
+ *             precio: 199.99
+ *             enStock: true
+ *     responses:
+ *       200:
+ *         description: Producto creado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "INSERTED producto with id: 125"
+ *       500:
+ *         description: Error al insertar producto
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 
 router.post('/', async (req, res) => {
     try {
@@ -197,6 +199,11 @@ router.delete('/:id', async (req, res) => {
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/Producto'
+ *           example:
+ *             prodId: 123
+ *             nombre: "Guitarra acústica"
+ *             precio: 299.99
+ *             enStock: false
  *     responses:
  *       200:
  *         description: Producto actualizado exitosamente
@@ -243,6 +250,13 @@ router.put('/:id', async (req, res) => {
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Producto'
+ *             examples:
+ *               resultadoBusqueda:
+ *                 value:
+ *                   - prodId: 150
+ *                     nombre: "Amplificador"
+ *                     precio: 799.99
+ *                     enStock: true
  *       500:
  *         description: Error en la búsqueda de productos
  *         content:
@@ -250,6 +264,7 @@ router.put('/:id', async (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
+
 router.get('/search', async (req, res) => {
     try {
       // You can implement your delete logic here, example:
