@@ -1,27 +1,28 @@
-import { MongoClient } from "mongodb";
+import { MongoClient } from "mongodb"; // Environment Import and configuration
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-
+// Creating MongodB client instance using URI
 // Replace with your actual MongoDB Atlas connection string
 const uri = process.env.MONGODB_URI;
-
-const client = new MongoClient(uri);
+const client = new MongoClient(uri);  
 
 async function run() {
   try {
     // Connect the client to the server
     await client.connect();
 
+    // Access to database
     const database = client.db("clase");
     const productos = database.collection("productos");
 
+    // Listen all the time to database 
     // Open a change stream on the collection
-    const changeStream = productos.watch(); // conexion directa escuchando todo el rato a la base datos
+    const changeStream = productos.watch(); 
 
 
-    changeStream.on("change", (change) => { // se recive un change formato json
+    changeStream.on("change", (change) => { // change received in json format
       console.log("Change detected:");
       console.log(JSON.stringify(change, null, 2));
 

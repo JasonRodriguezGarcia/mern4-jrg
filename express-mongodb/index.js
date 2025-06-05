@@ -67,7 +67,7 @@ async function startServer() {
       });
 
       socket.on("disconnect", (reason) => {
-          console.log(`User disconnected ${socket.id} and ${socket.reason}`)
+          console.log(`User disconnected ${socket.id} and ${reason}`)
       })
     })
 

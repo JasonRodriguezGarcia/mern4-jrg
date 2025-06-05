@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// Creating MongodB client instance using URI
 const uri = process.env.MONGODB_URI;
-
 const client = new MongoClient(uri);
 
 // 1. definir un constante de LOW_STOCK

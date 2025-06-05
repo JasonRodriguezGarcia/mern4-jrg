@@ -121,6 +121,7 @@ Modificamos index.js A index-sockects-mongodb.js
 
 pegamos codigo de https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/websockets/02-index-sockets-mongodb.js
 
+Este codigo mezcla el uso de websockets events y MongoDB events
 import express from "express";
 import path from "path";
 import cors from "cors";
@@ -161,7 +162,7 @@ async function startServer() {
       },
     });
 
-    // Listen for client connections
+    // Listen for client connections and once client is connected send all products using websocket event "productosLista"
     io.on("connection", async (socket) => {
       console.log("Client connected via Socket.IO");
 
@@ -253,10 +254,10 @@ añadimos codigo
 
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/websockets/01-introduccion.md
 Acción	        Quién	      Código	            Propósito
-Emitir mensaje	Cliente	    socket.emit(...)	  Enviar un mensaje al servidor
-Escuchar    	  Servidor	  socket.on(...)	    Recibir el mensaje desde el cliente
-Emitir a todos	Servidor	  io.emit(...)	      Enviar el mensaje a todos los clientes
-Escuchar	      Cliente	    socket.on(...)	    Recibir mensajes del servidor
+Emitir mensaje	Cliente	    socket.emit(...)	Enviar un mensaje al servidor
+Escuchar        Servidor	socket.on(...)	    Recibir el mensaje desde el cliente
+Emitir a todos	Servidor	io.emit(...)	    Enviar el mensaje a todos los clientes
+Escuchar	    Cliente	    socket.on(...)	    Recibir mensajes del servidor
 
 Ping Pong
 podemos configurar los datos de comprobación de conexion de winsocket

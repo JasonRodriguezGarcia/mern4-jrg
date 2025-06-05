@@ -194,7 +194,8 @@ startServer();
 
 ********
 crear chatroom.jsx en components
-
+ejercicio en el que se crea un chatroom y se envían mensajes. Hay que tenerlo abierto en varios navegadores.
+codigo inicial, el codigo final en el propio fichero chatroom.jsx y su index.js correspondiente
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
@@ -278,3 +279,11 @@ function ChatRoom() {
 export default ChatRoom;
 
 **************
+añadido al fichero chatroom.jsx:
+1- select con salas disponibles
+2- Select con nick disponibles
+3- configurar UI para diferenciar mensajes enviados y recibidos
+4- que se guarden los mensajes en la collection(tabla) chats
+5- añadir boton a la interface para mostrar historial mensajes del chat actual
+
+

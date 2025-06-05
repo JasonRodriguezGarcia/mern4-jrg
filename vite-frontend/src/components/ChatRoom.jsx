@@ -16,6 +16,7 @@ function ChatRoom() {
     const [selectNick, setSelectNick] = useState("Pepeillo")
     const [historial, setHistorial] = useState([])
     const [historialVisible, setHistorialVisible] = useState(false)
+    const [historialButtonText, setHistorialButtonText] = useState("Ver historial")
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -26,9 +27,13 @@ function ChatRoom() {
     });
 
     socket.on('chatRoomMessage', (msg) => {
-      setMessages(prev => [...prev, msg.nick + " dice " + msg.message]);
+    //   setMessages(prev => [...prev, msg.nick + " dice " + msg.message]);
+        setMessages(prev => {
+            const updated = [...prev, {message: msg.message, nick: msg.nick}];
+            console.log("Agregado mensaje:", updated);
+            return updated;
+        });
     })
-
 
     socket.on('disconnect', () => {
       console.log('Disconnected from socket');
@@ -70,10 +75,21 @@ function ChatRoom() {
             timestamp: new Date()
 
         }); // can pass in more data here
+
+        setMessages(prev => {
+            const updated = [...prev, {message: input, nick: selectNick}];
+            console.log("Agregado mensaje:", updated);
+            return updated;
+        });
         setInput('');
     }
 
     const handleHistorial = async () => {
+        if (historialVisible){
+            setHistorialVisible(false)
+            setHistorialButtonText("Ver historial")
+            return
+        }
         try {
             setHistorial([])
             const response = await fetch('http://localhost:5000/api/v1/chats');
@@ -84,6 +100,7 @@ function ChatRoom() {
             console.log("filtrado: ", filtrado)
             setHistorial(prev => [ ...prev, ...filtrado]);
             setHistorialVisible(true)
+            setHistorialButtonText("Cerrar historial")
         } catch (error) {
             console.error('Error al obtener los historial:', error);
         }
@@ -108,7 +125,9 @@ function ChatRoom() {
       )}
 
       {messages.map((message) => (
-          <div>{message}</div>
+            <div style={{margin: "0px", textAlign: message.nick == selectNick? "right" : "left"}}>
+                <sup>{message.nick}</sup>{message.message}
+            </div>
       ))}
 
       <input
@@ -124,14 +143,20 @@ function ChatRoom() {
       </button>
 
       <button onClick={handleHistorial}>
-        Ver historial
+        {/* Ver historial */}
+        {historialButtonText}
       </button>
-      <ul>
-        {historialVisible ? historial.map((history, index) => (
-            <li key={index}>{history.room}- {history.message} - {history.nick}</li>
-            )) : null
+      {/* <ul> */}
+        {historialVisible 
+            ? historial.length == 0 ? <p>NO HAY DATOS</p> : (historial.map((history, index) => (
+                // <li key={index} style={{textAlign: history.nick == selectNick? "right" : "left"}}>{history.room}- {history.message} - {history.nick}</li>
+                <p key={index} style={{margin: "0px", textAlign: history.nick == selectNick? "right" : "left"}}>
+                    <sup>({history.nick})</sup>- {history.message}
+                </p>
+                )))
+            : null
         }
-      </ul>
+      {/* </ul> */}
 
     </div>
   );
