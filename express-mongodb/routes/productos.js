@@ -3,6 +3,37 @@ import { Router } from 'express';
 const router = Router();
 
 // GET /api/v1/productos
+/**
+ * @swagger
+ * /productos:
+ *   get:
+ *     summary: Obtener todos los productos
+ *     description: Devuelve una lista de todos los productos disponibles.
+ *     responses:
+ *       200:
+ *         description: Lista de productos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     example: '664f173bd4e2b36c50ac9b1a'
+ *                   nombre:
+ *                     type: string
+ *                     example: 'Guitarra eléctrica'
+ *                   precio:
+ *                     type: number
+ *                     example: 499.99
+ *                   enStock:
+ *                     type: boolean
+ *                     example: true
+ *       500:
+ *         description: Error del servidor
+ */
 router.get('/', async (req, res) => {
   try {
     const db = req.app.locals.db; // get db instance from app.locals
@@ -13,6 +44,37 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch productos' });
   }
 });
+
+/**
+* @swagger
+* /productos:
+*   post:
+*     summary: Crear un nuevo producto
+*     description: Inserta un nuevo producto en la base de datos.
+*     requestBody:
+*       required: true
+*       content:
+*         application/json:
+*           schema:
+*             $ref: '#/components/schemas/Producto'
+*     responses:
+*       '200':
+*         description: Producto creado exitosamente
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 message:
+*                   type: string
+*                   example: INSERTED producto with id: P001
+*       '500':
+*         description: Error al insertar producto
+*         content:
+*           application/json:
+*             schema:
+*               $ref: '#/components/schemas/Error'
+*/
 
 router.post('/', async (req, res) => {
     try {

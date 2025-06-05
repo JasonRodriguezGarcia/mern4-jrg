@@ -1,0 +1,336 @@
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/introduccion.md#actividades-3
+Actividades 3
+const profile = {email: 'jon@gmail.com', admin: false}
+const user = {nombre: 'Jon', edad: 19 }
+
+
+const userProfile = {...profile, ...user}
+resultado:
+userProfile
+{email: 'jon@gmail.com', admin: false, nombre: 'Jon', edad: 19}
+¿Qué occure si el user contiene {nombre: 'Jon', edad: 19, admin: true } ?
+resultado:
+userProfile
+{email: 'jon@gmail.com', admin: true, nombre: 'Jon', edad: 19}
+machaca el campo admin
+
+
+...defaultFruits, newFruits
+OJO !!! ES LO MISMO QUE
+defaultFruits.newFruits = ["apple", "banana", "cherry"]
+
+
+const defaultFruits = ["apple", "banana", "cherry"];
+const newFruits = ["date", "elderberry"];
+
+const allFruits = [...defaultFruits, ...newFruits];
+fusiona los 2 arrays
+
+const defaultFruits = ["apple", "banana", "cherry"];
+const newFruits = ["date", "elderberry", "banana"];
+const allFruits = [...defaultFruits, ...newFruits];
+repite "banana"
+
+
+const defaultUsers = [
+  { id: 1, name: "Alice", role: "user" },
+  { id: 2, name: "Bob", role: "user" },
+];
+
+const newUsers = [
+  { id: 2, name: "Robert", role: "admin" },  
+  { id: 3, name: "Charlie", role: "user" }, 
+];
+¿Qué ocurre con usuario id 2 si combinamos los dos arrays?
+añade y hay 2 id:2
+¿Qué hace este código a continuación?
+const usersMap = new Map();
+OJO AVANZADO LA SIGUIENTE INSTRUCCION!!!
+[...defaultUsers, ...newUsers].forEach(user => {
+    usersMap.set(user.id, { ...usersMap.get(user.id), ...user}); });
+const mergedUsers = Array.from(usersMap.values());
+CREA UNA CONBINACION Y EL ID:2 NO SE repite
+
+
+
+MAS EJEMPLOS:
+const map = new Map() // OBJETO MAP QUE CONTENDRÁ CLAVE - VALOR
+undefined
+map
+Map(0) {size: 0}
+map.set(1,'Maria')
+Map(1) {1 => 'Maria'}
+map.set(2,'Pepe')
+Map(2) {1 => 'Maria', 2 => 'Pepe'}
+map.set(1,'MARIAAA') // SI EXISTE LA CLAVE LA ACTUALIZA
+Map(2) {1 => 'MARIAAA', 2 => 'Pepe'}
+map.set('ooo', {nombre: 'Jon', edad: 12})
+Map(3) {1 => 'MARIAAA', 2 => 'Pepe', 'ooo' => {…}}
+map.get(1)  // SACA LA CLAVE 1
+'MARIAAA'
+map.get('ooo')
+{nombre: 'Jon', edad: 12}
+map.delete(2)
+true
+map.has(1) // MIRA SI TIENE LA CLAVE 1
+true
+map.has(2)
+false
+
+Más ejemplos:
+const map = new Map();
+map.set('color', 'red');
+map.set('size', 'large');
+map.set('size', 'medium')
+map.delete('size')
+Quitar los duplicados de este array:
+
+
+instanciar un Map objecto
+pasar por todos con un bucle foreach y asignar cada elemento al object Map (usar set(num, true))
+Convertir los keys() en un Array - Array.from()
+const numbers = [1, 1, 4, 5, 6, 6, 7]
+SOLUCION
+const numbers = [1, 1, 4, 5, 6, 6, 7]
+const mapa = new Map()
+numbers.forEach(n => mapa.set(n, true))
+numbers.forEach(n => mapa.set(n, true))
+Array.from(mapa.keys())
+OJO AVANZADO !!!
+const uniqueNumbers = [...new Set(numbers)];
+
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/restapi/02-seguridad.md
+SEGURIDAD ENFOCADA EN APIS
+
+express-mongodb/routes/seguridad.js
+modificar el index.js para añadir el seguridadRouter.js
+añadir además
+app.use('/api/v1/seguridad', seguridadRouter) debajo de app.use(express)
+
+podemos probar la ruta con Postman
+curl -H "x-api-key: abc123" http://localhost:5000/api/v1/seguridad
+{"message":"exito"}
+
+opcion 1 para seguridad (más sencillo)
+codigo para React llamando a la api
+fetch('http://localhost:5000/api/v1/seguridad', {
+  method: 'GET',
+  headers: {
+    'x-api-key': 'abc123', // Remplezar con tu acceso 
+  },
+})
+  .then(response => {
+    if (!response.ok) throw new Error('Access denied');
+    return response.json();
+  })
+  .then(data => {
+    console.log('Success:', data);
+  })
+  .catch(err => {
+    console.error('Error:', err.message);
+  });
+
+Option 2: Authorization': 'Bearer'
+
+OAuth: Authorization': 'Bearer token123', https://www.youtube.com/watch?v=GeXbsMezj8s
+// la acción GET desde el cliente seria:
+headers: {
+        'Authorization': 'Bearer token123',  // use your actual token here
+        'Content-Type': 'application/json',
+      },
+
+// y en express ...
+
+router.use((req, res, next) => {
+  const authHeader = req.headers['Authorization']; // get Authorization header
+
+  if (!authHeader) {
+    return res.status(401).json({ message: 'Authorization header missing' });
+  }
+
+********
+youtube
+que es OAuth 2 - OpenWebinars
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/restapi/02-seguridad.md
+RBAC
+RBAC significa Role-Based Access Control — en español, Control de Acceso Basado en Roles.
+Es un método para controlar quién puede hacer qué en una aplicación o sistema, asignando permisos a usuarios 
+según su rol.
+¿Cómo funciona? En vez de asignar permisos individualmente a cada usuario, agrupas los permisos en roles.
+Luego asignas uno o varios roles a cada usuario.
+Cuando un usuario intenta realizar una acción, el sistema verifica si su rol le permite hacerlo.
+
+const roles = {
+  admin: ['read:any', 'write:any'],  // El admin puede leer y escribir todo
+  user: ['read:own'],                 // El usuario sólo puede leer sus propios datos
+};
+Si un usuario tiene rol admin, podrá leer y modificar cualquier dato.
+Si un usuario tiene rol user, sólo podrá leer sus propios datos.
+
+
+añadimos a index.js
+    const role = req.headers[`x-api-role`];
+a seguridad.js
+    req.role = role
+
+        res.json({message: "exito", role:req.role});
+probar
+curl -H "x-api-role: guest" http://localhost:5000/api/v1/seguridad
+o con postman añadiendo x-api-role y guest como valor
+
+OJO EL ORDEN ES MUY IMPORTANTE
+PRIMERO PUBLICO Y LUEGO PRIVADOS
+
+hacemos una copia a seguridad.js como seguridad copy.js
+
+crear carpeta /middleware
+crear fichero rbac.js
+crear fichero authorise.js
+añadir funcion authorise
+
+probar en postman
+http://localhost:5000/api/v1/seguridad
+header: x-api-role
+value: admin
+{
+    "message": "exito",
+    "role": "admin"
+}
+
+value: user
+{
+    "message": "Forbidden: insufficient permissions"
+}
+
+
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/restapi/02-seguridad.md
+Actividad
+Implementamos una conexion con un usuario de MongoDB, que solo puede acceder a sus datos.
+
+Por ejemplo, al pasar un ObjectId al rest endpoint para obtener sus datos,
+
+const fetchReadOwn = async () => {
+  try {
+    const response = await fetch('http://localhost:5000/api/v1/users/683536ff702fa24a37aac4f2', {
+      method: 'GET',
+      headers: {
+        'x-api-key': 'abc123',  // Obtender desde .env
+        'Content-Type': 'application/json', // Optional for GET
+        'x-user-role': 'user',  // NO es seguro! Demo solo!
+        'x-user-id': '683536ff702fa24a37aac4f2'  // OJO: deberia ser igual que la /:id de ruta
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log('Success:', result);
+
+  } catch (error) {
+      console.error('Error fetching seguridad:', error.message);
+  }
+}
+Empezamos con roles como:
+
+export const roles = {
+  user: ['read:own', 'write:own'],
+};
+
+en roles pondremos
+export const roles = {
+  user: ['read:own', 'write:own'],
+};
+
+
+1crear ruta
+2comprobar que el usuario x-user-id sea igual que el api/v1/users/:id
+probando
+http://localhost:5000/api/v1/seguridad/6835d16ae7861161f8204fb2
+
+
+*************
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/restapi/03-swagger.md
+USANDO SWAGGER PARA DOCUMENTAR APIS
+en /express-mongodb
+npm install swagger-ui-express swagger-jsdoc
+
+definir archivo configuracion swagger.js
+// swagger.js
+import swaggerJsdoc from 'swagger-jsdoc';
+
+export const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'My API',
+      version: '1.0.0',
+      description: 'A sample API using RBAC and MongoDB',
+    },
+    servers: [
+      {
+        url: 'http://localhost:5000/api/v1',
+      },
+    ],
+  },
+  apis: ['./routes/*.js'], // Your route files with Swagger comments
+};
+
+export const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
+añadir a index.js
+
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './swagger.js';
+...
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+
+en /route/productos.js pegar antes de
+/**
+ * @swagger
+ * /productos:
+ *   get:
+ *     summary: Obtener todos los productos
+ *     description: Devuelve una lista de todos los productos disponibles.
+ *     tags:
+ *       - Productos
+ *     responses:
+ *       200:
+ *         description: Lista de productos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     example: "664f173bd4e2b36c50ac9b1a"
+ *                   nombre:
+ *                     type: string
+ *                     example: "Guitarra eléctrica"
+ *                   precio:
+ *                     type: number
+ *                     example: 499.99
+ *                   enStock:
+ *                     type: boolean
+ *                     example: true
+ *       500:
+ *         description: Error del servidor
+ */
+router.get('/', async (req, res) => {
+
+abrir
+http://localhost:5000/docs/ y nos sale toda la info de la api
+
+podemos cambiar el fichero swagger.js
+hacemos lo mismo con más rutas en /routes/chats.js
+
+podemos pedir a chatgpt para que nos cree para todas las rutas de chats.js
+pedirle además que ponga tags: - chats
