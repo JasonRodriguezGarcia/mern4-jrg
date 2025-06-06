@@ -12,7 +12,6 @@ export function authorise(permission,) {
   };
 }
 
-// comporar: 
 export function authoriseOwnership() {
     return (req, res, next) => {
 

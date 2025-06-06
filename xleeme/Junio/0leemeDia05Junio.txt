@@ -42,7 +42,7 @@ const newUsers = [
   { id: 3, name: "Charlie", role: "user" }, 
 ];
 ¿Qué ocurre con usuario id 2 si combinamos los dos arrays?
-añade y hay 2 id:2
+Añade los 2 arrays y hay 2 id:2
 ¿Qué hace este código a continuación?
 const usersMap = new Map();
 OJO AVANZADO LA SIGUIENTE INSTRUCCION!!!
@@ -53,7 +53,7 @@ CREA UNA CONBINACION Y EL ID:2 NO SE repite
 
 
 
-MAS EJEMPLOS:
+MAS EJEMPLOS DE MAP Y SUS PROPIEDADES .SET .GET .DELETE:
 const map = new Map() // OBJETO MAP QUE CONTENDRÁ CLAVE - VALOR
 undefined
 map
@@ -117,7 +117,7 @@ codigo para React llamando a la api
 fetch('http://localhost:5000/api/v1/seguridad', {
   method: 'GET',
   headers: {
-    'x-api-key': 'abc123', // Remplezar con tu acceso 
+    'x-api-key': 'abc123', // Reemplazar con tu acceso OJO SOLO PARA PRUEBAS
   },
 })
   .then(response => {
@@ -180,15 +180,29 @@ probar
 curl -H "x-api-role: guest" http://localhost:5000/api/v1/seguridad
 o con postman añadiendo x-api-role y guest como valor
 
-OJO EL ORDEN ES MUY IMPORTANTE
-PRIMERO PUBLICO Y LUEGO PRIVADOS
+OJO EL ORDEN DEL CODIGO ES MUY IMPORTANTE (router.use router.get router.use router.post)
+PRIMERO LO PUBLICO Y LUEGO LO PRIVADO
 
 hacemos una copia a seguridad.js como seguridad copy.js
 
 crear carpeta /middleware
 crear fichero rbac.js
 crear fichero authorise.js
-añadir funcion authorise
+***añadir el siguiente codigo al fichero authorise.js
+import { roles } from './rbac.js';
+
+export function authorise(permission,) {
+  return (req, res, next) => {
+    const userRole = req.role;
+    // Check if role exists and has the permission
+    if (roles[userRole] && roles[userRole].includes(permission)) {
+      return next(); // allowed
+    }
+
+    return res.status(403).json({ message: 'Forbidden: insufficient permissions' });
+  };
+}
+***
 
 probar en postman
 http://localhost:5000/api/v1/seguridad
@@ -210,7 +224,7 @@ https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/re
 Actividad
 Implementamos una conexion con un usuario de MongoDB, que solo puede acceder a sus datos.
 
-Por ejemplo, al pasar un ObjectId al rest endpoint para obtener sus datos,
+Por ejemplo en react, al pasar un ObjectId al rest endpoint para obtener sus datos,
 
 const fetchReadOwn = async () => {
   try {
@@ -235,13 +249,8 @@ const fetchReadOwn = async () => {
       console.error('Error fetching seguridad:', error.message);
   }
 }
-Empezamos con roles como:
 
-export const roles = {
-  user: ['read:own', 'write:own'],
-};
-
-en roles pondremos
+Empezamos en rbac.js con roles como:
 export const roles = {
   user: ['read:own', 'write:own'],
 };
@@ -249,6 +258,21 @@ export const roles = {
 
 1crear ruta
 2comprobar que el usuario x-user-id sea igual que el api/v1/users/:id
+
+en seguridad.js añadido debajo de router.get('/', authorise('read:any'), async (req, res) => { lo siguiente
+    router.get('/:id', authoriseOwnership(), async (req, res) => {
+en authorise.js añadida funcion authoriseOwnership
+    export function authoriseOwnership() {
+        return (req, res, next) => {
+
+            if (req.userId == req.params.id)
+                return next()
+            
+            return res.status(403).json({ message: 'Forbidden: No eres el usuario del ID' });
+        } 
+    }
+
+
 probando
 http://localhost:5000/api/v1/seguridad/6835d16ae7861161f8204fb2
 
@@ -290,7 +314,7 @@ import { swaggerSpec } from './swagger.js';
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
-en /route/productos.js pegar antes de
+en /route/productos.js pegar antes de get('/')
 /**
  * @swagger
  * /productos:
@@ -332,5 +356,6 @@ http://localhost:5000/docs/ y nos sale toda la info de la api
 podemos cambiar el fichero swagger.js
 hacemos lo mismo con más rutas en /routes/chats.js
 
-podemos pedir a chatgpt para que nos cree para todas las rutas de chats.js
+podemos pedir a chatgpt para que nos cree para todas las rutas de chats.js y con schema para insertar en nuestro productos.js
 pedirle además que ponga tags: - chats
+
