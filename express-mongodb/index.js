@@ -1,13 +1,16 @@
-import express from "express";
-import path from "path";
-import cors from "cors";
-import { fileURLToPath } from "url";
-import { Server as SocketIOServer } from "socket.io";
-import connectDB from './db-mongodb.js';  // Import your MongoDB connection module
-import chatsRouter from './routes/chats.js'
-import seguridadRouter from './routes/seguridad.js'
-import swaggerUi from 'swagger-ui-express';
-import { swaggerSpec } from './swagger.js';
+import express from 'express';
+import path from 'path';
+import cors from 'cors';
+import { fileURLToPath } from 'url';
+
+import { createYoga, createSchema } from 'graphql-yoga';
+// import { typeDefs, resolvers } from './schema.js';
+// import { typeDefs, resolvers } from './productosSchema.js';
+import { typeDefs, resolvers } from './recetasSchema.js';
+
+
+import productosRouter from './routes/productos.js';
+import connectDB from './db-mongodb.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,31 +21,40 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use('/api/v1/seguridad', seguridadRouter)
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 async function startServer() {
-
-  // Connect to MongoDB and store the DB instance in app.locals
-  const db = await connectDB();
-  app.locals.db = db; // saving database globally
-
-  app.use('/api/v1/chats', chatsRouter)
-
   try {
-    
-    // Create HTTP server from express app
-    const httpServer = app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
+    // Connect to MongoDB
+    const db = await connectDB();
+    app.locals.db = db;
+
+    // Mount REST routes
+    // app.use('/api/v1/productos', productosRouter);
+
+    // Setup GraphQL Yoga
+    const yoga = createYoga({ // definiendo squema, formato de datos
+      schema: createSchema({
+        typeDefs,
+        resolvers,
+      }) ,
+      context: ({ request }) => ({ // enlazamos MongoDB con graphql para conseguir los datos
+        db: app.locals.db,  // Pass your MongoDB connection to resolvers
+      }),
     });
 
- 
-  }
 
-  catch (error) {
-      console.error("Failed to start server:", error);
-      process.exit(1);
-    }
+    // Mount Yoga at /graphql
+    app.use('/graphql', yoga); // UN SOLO ENDPOINT
+
+    // Start server
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+      console.log(`GraphQL endpoint at http://localhost:${PORT}/graphql`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
 }
 
 startServer();

@@ -1,0 +1,422 @@
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/02-Review.jsx
+en vite-frontend/src/components/Review.jsx
+import React, { useState } from 'react';
+
+export default function Review() {
+  const [personas, setPersonas] = useState([]);
+  const [nombre, setNombre] = useState('');
+  const [edad, setEdad] = useState('');
+
+  const handleAddPersona = () => {
+    
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>Add a Person</h2>
+      <input
+        placeholder="Name"
+        value={nombre}
+        onChange={(e) => setNombre(e.target.value)}
+      />
+      <input
+        placeholder="Edad"
+        type="number"
+        value={edad}
+        onChange={(e) => setEdad(e.target.value)}
+      />
+      <button onClick={handleAddPersona}>Add</button>
+
+      <h3>People List:</h3>
+     
+    </div>
+  );
+}
+
+
+
+{/*
+    
+    - Agregar una propiedad de email.
+    
+    - Al añadir una persona:
+        - validar que la edad sea mayor que 0 y not null.
+        - validar que el nombre no es nulo y empieza por la letra P.
+
+    - Mostrar una lista de personas.
+
+    - Agregar un botón para mostrar/ocultar la lista de personas. 
+        - Recordar que hay que cambiar el texto del boton según el estado de la lista (mostrar/ocultar).
+        - Utilizar un booleano (mostrarPersonas true/false) para controlar el estado de la lista.
+    
+    - Agregar un select list (drop down) con generos, 
+        por ejemplo: const generos = ['hombre', 'mujer', 'binario', 'otro'];
+   
+    - Modificar la lista de generos con:
+        const generos = [
+            { key: 'h', label: 'Hombre' },
+            { key: 'm', label: 'Mujer' },
+            { key: 'b', label: 'Binario' },
+            { key: 'o', label: 'Otro' }
+            ];
+
+    */}
+
+ crear y añadir a App.js
+/components/Review.jsx
+
+
+******************
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/graphql/01-introduccion.md
+
+en express-mongodb 
+npm install graphql @graphql-yoga/node
+
+copiar index.js a index-swagger.js
+y borramos contenido index.js y reemplamos por el contenido de index-graphql-basic.js
+
+crear squema.js con contenido de 01-squema.js
+
+1º probamos npm run dev
+
+ir a http://localhost:5000/graphql
+se abre un interface graphql
+borramos todo el contenido y ponemos
+query {
+  hello
+}
+ejecutamos con el play
+
+si modificamos schema.js
+
+export const typeDefs = `
+  type Query {
+    hello: String!
+    precio: Int
+  }
+`;
+
+export const resolvers = {
+  Query: {
+    hello: () => 'Hello from Yoga and Express!',
+    precio: () => 200,
+  },
+};
+
+y ponemos en interface graphql
+query {
+  hello
+  precio
+}
+
+PLAY
+DEVUELVE
+{
+  "data": {
+    "hello": "Hello from Yoga and Express!",
+    "precio": 200
+  }
+}
+
+Nos mostrará los campos que queremos
+
+
+copiar client.graphql.js contenido en cliente.graphql.js
+abrir otra consola ir a express-mongodb y ejecutar
+node client.graphql.js
+nos DEVUELVE
+GraphQL response: { data: { hello: 'Hello from Yoga and Express!' } }
+
+copia de squema.js
+cambiamos el contenido de squema.js por 02-productosSchema.js
+crear productos squema.js
+import { ObjectId } from 'mongodb';
+
+export const typeDefs = /* GraphQL */ `
+  type Producto {
+    _id: ID!
+    nombreProducto: String!
+    precio: Float
+    cantidad: Int
+  }
+
+
+  type Query {
+    productos: [Producto!]!
+    producto(id: ID!): Producto
+  }
+
+  input ProductoInput {
+    nombreProducto: String!
+    precio: Float!
+    cantidad: Int
+  }
+
+  type Mutation {
+    addProducto(input: ProductoInput!): Producto!
+    updateProducto(id: ID!, input: ProductoInput!): Producto
+    deleteProducto(id: ID!): Boolean
+  }
+`;
+
+
+
+export const resolvers = {
+  Query: {
+    productos: async (_parent, _args, context) => {
+      const db = context.db;
+      return await db.collection('productos').find().toArray();
+    },
+    producto: async (_parent, { id }, context) => {
+      const db = context.db;
+      return await db.collection('productos').findOne({ _id: new ObjectId(id) });
+    },
+  },
+  Mutation: {
+    addProducto: async (_parent, { input }, context) => {
+      const db = context.db;
+      const now = new Date();
+      const producto = { ...input }; //, createdAt: now.toISOString(), updatedAt: now.toISOString() };
+      const result = await db.collection('productos').insertOne(producto);
+      return { _id: result.insertedId, ...producto };
+    },
+    updateProducto: async (_parent, { id, input }, context) => {
+      const db = context.db;
+      //const now = new Date();
+      const updateResult = await db.collection('productos').findOneAndUpdate(
+        { _id: new ObjectId(id) },
+        { $set: { ...input} }, //, updatedAt: now.toISOString() } },
+        { returnDocument: 'after' }
+      );
+      return updateResult.value;
+    },
+    deleteProducto: async (_parent, { id }, context) => {
+      const db = context.db;
+      const result = await db.collection('productos').deleteOne({ _id: new ObjectId(id) });
+      return result.deletedCount === 1;
+    },
+  },
+};
+
+ir a index.js y añadirlo
+
+modificamos index.js y descomentamos context
+
+ir a interface graphql
+query {
+  productos{
+    	nombreProducto
+    	precio
+    	cantidad
+  }
+}
+NOS DEVUELVE
+"data": {
+    "productos": [
+      {
+        "nombreProducto": "Pantalón",
+        "precio": 10.5,
+        "cantidad": 234
+      },
+      {
+        "nombreProducto": "Chaqueta",
+        "precio": 15.75,
+        "cantidad": 432
+      },
+      {
+        "nombreProducto": "Zapatos",
+        "precio": 17.3,
+        "cantidad": 320
+      },
+      ...
+
+      PEGAMOS
+      query {
+  producto (id:"68347b7f3b6df6545cb51871"){
+    	_id
+    	nombreProducto
+    	precio
+    	cantidad
+  }
+}
+DEVUELVE
+{
+  "data": {
+    "producto": {
+      "_id": "68347b7f3b6df6545cb51871",
+      "nombreProducto": "Pantalón",
+      "precio": 10.5,
+      "cantidad": 234
+    }
+  }
+}
+
+ponemos
+query {
+  producto (id:"68347b7f3b6df6545cb51871"){
+    	_id
+    	nombreProducto
+    	precio
+    	cantidad
+  },
+  productos {
+    	_id
+    	nombreProducto
+    	precio
+    	cantidad
+  }
+}
+DEVUELVE
+{
+  "data": {
+    "producto": {
+      "_id": "68347b7f3b6df6545cb51871",
+      "nombreProducto": "Pantalón",
+      "precio": 10.5,
+      "cantidad": 234
+    },
+    "productos": [
+      {
+        "_id": "68347b7f3b6df6545cb51871",
+        "nombreProducto": "Pantalón",
+        "precio": 10.5,
+        "cantidad": 234
+      },
+      {
+        "_id": "68347b7f3b6df6545cb51872",
+        "nombreProducto": "Chaqueta",
+        "precio": 15.75,
+        "cantidad": 432
+      },
+     ....
+
+
+sacar productos <100
+en productosSchema.js
+añadir
+  type Query {
+  productos: [Producto!]!
+  producto(id: ID!): Producto
+  productosConBajaCantidad: [Producto!]!  # 👈 Nueva query
+}
+
+añadir
+    productosConBajaCantidad: async (_parent, _args, context) => {
+        const db = context.db;
+        return await db.collection('productos').find({ cantidad: { $lt: 100 } }).toArray();
+    },
+
+usar en interfaz
+query {
+  productosConBajaCantidad {
+    _id
+    nombreProducto
+    cantidad
+  }
+}
+
+************
+MUTACIONES (MODIFICACION DATOS CRUD)
+
+PEGAR EN interfaz
+mutation {  // CREAMOS UNO NUEVO
+  addProducto(input: {
+    nombreProducto: "Cámara", 
+    precio: 250.50,
+    cantidad: 5
+  }) {
+    _id
+    nombreProducto
+    precio
+    cantidad
+  }
+}
+PLAY
+{
+  "data": {
+    "addProducto": {
+      "_id": "6843146d8d8c6ba62082742f",
+      "nombreProducto": "Cámara",
+      "precio": 250.5,
+      "cantidad": 5
+    }
+  }
+}
+
+CREAR DELETE Y UPDATE
+DELETE
+mutation {
+  updateProducto(
+    id: "6843146d8d8c6ba62082742f"
+    input: {
+    nombreProducto: "Cámara555",
+    precio: 250.50,
+    cantidad: 555
+  }) {
+    _id
+    nombreProducto
+    precio
+    cantidad
+  }
+}
+
+borrar producto
+mutation {
+  deleteProducto(
+    id: "6843146d8d8c6ba62082742f"
+  )
+}
+
+modificamos en squema
+  type Query {
+    productos(cantidadMin: Int): [Producto!]!  
+    producto(id: ID!): Producto
+  }
+
+    productos: async (_parent, args, context) => {
+      const db = context.db;
+
+      const query = {}
+      if (args.cantidadMin !== undefined) {
+        query.cantidad = {$gte: args.cantidadMin}
+      }
+      return await db.collection('productos').find(query).toArray();
+    },
+
+en interfaz
+
+query {
+  productos {
+    _id
+    nombreProducto
+    precio
+    cantidad
+  }
+}
+SACA TODO SIN CAMBIOS
+AHORA PONEMOS PARAMETRO
+query {
+  productos (cantidadMin: 100) {
+    _id
+    nombreProducto
+    precio
+    cantidad
+  }
+}
+SACA LOS QUE TENGAN >= 100
+
+
+CREAR recetas.jsx partiendo de 03-recetas.frontend.jsx
+nombre recetas
+dificultad
+tiempo
+
+**********
+OJO SE PUEDEN TENER ESQUEMAS MULTIPLES POR SI QUEREMOS DATOS DE DISTINTOS SQUEMAS
+POR AHORA COMENTO SQUEMAS ANTERIORES EN INDEX.JS
+EL CODIGO ESTA AL FINAL DE GraphQL/01-INTRODUCCION.md
+**********
+CREAMOS recetasSchema.js partiendo de productosSchema.js y haciendo los cambios oportunos
+
+
