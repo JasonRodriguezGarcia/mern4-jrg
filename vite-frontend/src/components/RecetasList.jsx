@@ -18,7 +18,7 @@ export default function RecetasList() {
         tiempo
       }
     }`,
-    `mutation {
+    `mutation($nombreReceta: String!, $dificultad: Int!, $tiempo: Int!) {
       addReceta (input: {
           nombreReceta: $nombreReceta,
           dificultad: $dificultad,
@@ -46,8 +46,8 @@ export default function RecetasList() {
             query: actionGraphql[action],
             variables: {
               nombreReceta,
-              dificultad,
-              tiempo
+              dificultad: parseInt(dificultad),
+              tiempo: parseInt(tiempo)
             }
           }),
       });
@@ -55,7 +55,10 @@ export default function RecetasList() {
       if (json.errors) {
         setError(json.errors[0].message);
       } else {
-        setRecetas(json.data.recetas);
+        if (action == 0)
+            setRecetas(json.data.recetas);
+        else if (action == 1)
+            fetchRecetas(0)
       }
     } catch (err) {
       setError('Error fetching data');
@@ -100,7 +103,7 @@ export default function RecetasList() {
       tiempo: parseInt(tiempo)
     }
     console.log("Receta: ", receta)
-    setRecetas([...recetas, receta])
+    // setRecetas([...recetas, receta]) // quitamos esto porque lo de abajo ya añade datos incluido los nuevos
     setNombreReceta('')
     setDificultad(0)
     setTiempo(0)
@@ -140,7 +143,7 @@ export default function RecetasList() {
               <h2>Recetas List</h2>
               <ul>
                 {recetas.map((receta, index)=> (
-                    <li key={index}>{receta.nombreReceta}</li> 
+                    <li key={index}>{receta.nombreReceta} <button>borrar receta</button></li> 
                 ))}
               </ul>
             </>

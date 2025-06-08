@@ -6,7 +6,7 @@ const socket = io('http://localhost:5000'); // Connect once
 // const ROOM_NAME = 'myRoom';
 
 const rooms = ["Sala 1", "Sala 2", "Sala3"]
-const nicks = ["Pepeillo", "Manué", "Lola", "Itxel"]
+const nicks = ["Pepe", "Manuel", "Lola", "Maria"]
 
 function ChatRoom() {
     const [connected, setConnected] = useState(true);
