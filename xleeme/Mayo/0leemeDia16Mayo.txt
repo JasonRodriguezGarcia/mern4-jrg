@@ -51,7 +51,8 @@ crear bbdd backup en interface web
 restaurar copia .txt en backup
 boton derecho en backup - restaurar (IMPORTANTE HAY QUE PULSAR BOTON ENCIMA DE BBDD !!!)
     formato: plain
-    nombre: /jason1backup.txt
+    nombre: /jason1backup.sql (aunque es texto, se restaura con psql)
+SI USAMOS formato: Custom el fichero sería nombre.dump (ideal para pg_restore)
 
 borrar tabla emp en scott
 boton derecho restaurar

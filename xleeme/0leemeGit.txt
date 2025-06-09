@@ -9,7 +9,7 @@ Si lo hay, lo borramos para empezar de nuevo.
     git add .
 3º ejecutamos un primer commit (punto de version de ficheros):
     git commit -m "primer commit ficheros"
-
+CREAR EN GITHUB EL REPOSITORY DesarrolloWeb
 luego para sincronizar con el github en el que previamente
 hemos creado el repositorio DesarrolloWeb, ejecutamos:
 4º git remote add origin https://github.com/JasonRodriguezGarcia/DesarrolloWeb.git

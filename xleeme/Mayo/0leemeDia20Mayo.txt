@@ -349,11 +349,14 @@ OJO GUARDE LA FUNCION POR ERROR EN SQUEMA SCOTT DEBERIA SER BIBLIOTECA
 SELECT id_socio, nombre, scott.libros_prestados(id_socio) FROM biblioteca.socios
 
 
+******************
+******************
 
-inse upd dele procedimientos
-
+insert update delete hacer con procedimientos por regla general
 
 ******************
+******************
+
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/postgres/07-db.indexes.md
 
 INDICES
@@ -376,7 +379,7 @@ con esto revisamos qué tipo de búsquedas se hacen para cambiar para ver que va
 en la tabla
 indices
 crear indice
-    generalnombre idx_email
+    general nombre idx_email
 columnas
     desactivar IS EXPRESSION
     email ADD

@@ -238,7 +238,7 @@ BEGIN
 END;
 INSERT INTO scott.emp (empno, ename, job, sal, deptno)
 VALUES (8888, 'Bob', 'CLERK', 2000, 30);
-DESABILITAR OTROS TRIGGERS !!!!!!!!!!!!!!!!!!
+OJO IGUAL HAY TRIGGERS QUE DAN PROBLEMAS CON OTROS, DESABILITAR OTROS TRIGGERS !!!!!!!!!!!!!!!!!!
 
 SELECT empno, ename, hiredate FROM scott.emp WHERE empno = 8888;
 
@@ -259,6 +259,9 @@ INSERT INTO scott.emp (empno, ename, job, sal, deptno)
 VALUES (8888, 'Bob', 'clerk', 2000, 10);
 codigo funcion disparadora
 
+
+**************
+codigo incorrecto mirar en fichero 0leemeDia22Mayobis.txt
 DECLARE
 	-- ¿qué variables intermedios hace falta?
 	-- _deptno integer :=10 ;
