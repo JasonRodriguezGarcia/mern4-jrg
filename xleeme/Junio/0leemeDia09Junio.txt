@@ -1,0 +1,221 @@
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/03-client-movies-review.js
+import promptSync from 'prompt-sync';
+import connectDB from './db-mongodb.js';
+
+const prompt = promptSync();
+
+async function main() {
+  const db = await connectDB();
+  const collection = db.collection('movies'); 
+
+  while (true) {
+    const action = prompt('¿Qué quieres hacer? ').toLowerCase();
+
+    if (action === 'exit') {
+      console.log('Exiting...');
+      process.exit(0);
+    } else if (action === 'buscar') {
+        // buscar por algun datos de la pelicula
+        
+    } else if (action === 'insert') {
+      // insertar un nueve user - preguntar al usuario por los datos para insertar
+      
+    }
+
+    // Borrar
+    // Borrar una pelicula basado en el criterio de busqueda. 
+    //    Solo puedes borrar uno, asi que se se devuelve mas de uno, mostrar un mensaje
+
+    // Actualizar
+    // actualizar el plot (argumento) y el rating (rated) de una pelicula. 
+
+  }
+
+}
+
+main();
+
+
+
+/*
+
+
+
+Llevar a cabo los siguientes buscadas usando MongoDB Atlas
+
+- las películas que no son type: 'movies'
+{type: {$eq: "movie"}}
+{"type": {$ne: "movie"}}
+- las películas que contiene la palabra 'tradition' en su plot (argumento)
+{plot: "tradition"}
+{plot: /tradition/}
+{plot: {$regex: "tradition"}}
+{rated: {$regex: /tradition/}}
+{rated: {$regex: "tradition"}}
+- las películas con un atributo rated de "TV-G" o "G"
+{$or: [{rated: "TV-G"}, {rated: "G"}]}
+- las películas con atributo awards.wins igual a 1
+{"awards.wins": 1}
+- las películas con el idioma (languages) igual a 'Basque'
+{"languages": "Basque"}
+
+
+
+
+
+const result = await collection.updateOne(
+        { title: titleToUpdate.trim() },
+        { $set: { plot: newPlot, rated: newRated } }
+      );
+
+if (result.deletedCount === 1) {
+*/
+
+en express-mongodb
+pegar en cliente-review-movies.js el codigo de arriba
+cambiar en db-mongodb.js
+    const DB_NAME = 'sample_mflix';
+
+
+***********
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/kafka/01-configuracion.md
+KAFKA arquitectura Event Driven Acquitecture
+
+entramos en docker
+carpeta nueva y abrirla
+kafka-backend
+
+copiar docker-compose.yml
+teclear en consola de VSC
+    docker compose up -d
+docker logs kafa (info de logs)
+docker exec -it kafka bash
+cd ..
+cd ..
+ls muestra varios directorios
+cd bin
+ls muestra programas/comandos que se pueden usar
+kafka-console-consumer
+kafka-console-producer
+kafka-topics
+
+tecleamos (punto de entrada a nuestro servidor de kafka que esta funcionando)
+    kafka-topics --bootstrap-server localhost:29092 --list
+No aparece nada porque por ahora no hay ninguno
+Creamos un topic donde colocamos mensajes (lista de eventos)
+    kafka-topics --bootstrap-server localhost:29092 --create --topic test-topic
+Mandar mensaje
+    kafka-console-producer --broker-list localhost:29092 --topic test-topic
+tecleamos hola
+
+en otro command console "consumimos" ese topic (tarda un poco la primera vez)
+kafka-console-consumer --bootstrap-server localhost:29092 --topic test-topic --from-beginning
+
+en window consola
+{message: "hola"}
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/kafka/01-configuracion.md
+Simular un chatroom
+En Docker Terminal, crear un nuevo topic: orders $ kafka-topics --bootstrap-server localhost:29092 --create --topic orders $ kafka-topics --bootstrap-server localhost:29092 --list
+
+$ kafka-console-producer --broker-list localhost:29092 --topic orders $ kafka-console-consumer --bootstrap-server localhost:29092 --topic orders --from-beginning
+
+Mandar los pedidos :
+
+{OrderID: 1235, Item: Monitors, Quantity: 15 }
+{OrderID: 1234, Item: Laptops, Quantity: 20 }
+
+Un usuario manda con un click datos
+En medio está kafka
+Se guardan en una base de datos
+
+en VSC
+npm init -y
+camiar package.json
+  "type": "module",
+  "main": "index.js"
+"scripts":
+  "dev": "node index.js"
+
+npm install kafkajs
+
+crear
+kafka-producer.js
+import { Kafka } from 'kafkajs';
+
+const kafka = new Kafka({
+  clientId: 'my-app',
+  brokers: ['localhost:29092'],  // Connect to Kafka on localhost:9092
+});
+
+const producer = kafka.producer();
+
+const run = async () => {
+  await producer.connect();
+  console.log('Producer connected to Kafka');
+
+  // Send a message to the topic "test-topic"
+  await producer.send({
+    topic: 'test-topic',
+    messages: [
+      { value: 'Hello Kafka again!' },
+    ],
+  });
+
+  console.log('Message sent to Kafka topic "test-topic"');
+
+  await producer.disconnect();
+}
+
+run();
+********
+
+crear kafka-comsumer.js
+import { Kafka } from 'kafkajs';
+
+const kafka = new Kafka({
+  clientId: 'my-app',
+  brokers: ['localhost:29092'],  // Connect to Kafka on localhost:9092
+});
+
+const consumer = kafka.consumer({ groupId: 'test-group' });
+
+const run = async () => {
+  await consumer.connect();
+  console.log('Consumer connected to Kafka');
+
+  // Subscribe to the topic "test-topic"
+  await consumer.subscribe({ topic: 'test-topic', fromBeginning: true });
+
+  // Consume messages from the topic
+  await consumer.run({
+    eachMessage: async ({ topic, partition, message }) => {
+      console.log(`Received message: ${message.value.toString()}`);
+    },
+  });
+};
+
+run().catch(console.error);
+************
+
+
+Actividad
+Vamos a generar datos aleatorios de acciones. En el producer, simularemos acciones en formato JSON. En 
+el consumidor, guardaremos sus datos en una colección en MongoDB.
+
+const acciones = ['AAPL', 'GOOGL', 'TSLA', 'AMZN', 'MSFT'];
+
+
+  const accionUpdate = {
+    symbol: acciones[Math.floor(Math.random() * acciones.length)],
+    price: (100 + Math.random() * 1000).toFixed(2),  // Random price between 100 and 1100
+    timestamp: new Date().toISOString(),
+  };
+
+1generar datos en producer mandar al consumer
+acciones-producer.js
+2consumer recibe y manda datos a mongodb
+acciones-consumer.js
+
+
+

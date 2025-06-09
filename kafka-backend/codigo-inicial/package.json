@@ -1,0 +1,16 @@
+{
+  "name": "kafka-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "kafkajs": "^2.2.4"
+  }
+}
