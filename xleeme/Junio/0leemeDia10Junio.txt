@@ -112,16 +112,21 @@ npm install kafkajs
 ejercicio añadir a codigo
 
 crear un frontend para dar un me gusta a un post que mande a 
-graphql
-que pase a kafka
+Kafka-backend con graphql un like de un id
+en vite el componente para añadir el pulgar hacia arriba
+npm install @mui/icons-material @mui/material @emotion/react @emotion/styled
+en componente vite
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 
 crear en vite 5 posts 
-que al pinchar en me gusta mande el codigo del post a graphql express
+que al pinchar en "Me gusta" mande el codigo del post a graphql express
 
 
 Crear topic de likes en kafka
 kafka-topics --bootstrap-server localhost:29092 --create --topic likes
 kafka-topics --bootstrap-server localhost:29092 --list
+Dejar kafka a la escucha de topic likes
+kafka-console-consumer --bootstrap-server localhost:29092 --topic likes --from-beginning
 
 crear en kafka-backend postSchema.js
 
