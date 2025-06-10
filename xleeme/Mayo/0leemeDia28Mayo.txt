@@ -77,7 +77,11 @@ db.peliculas.find(
   },
   {titulo: 1, director: 1, año: 1}
 );
-TAMBIEN VALE
+TAMBIEN VALEN
+{$or: [
+    {titulo: {$regex: /Misión Imposible/, $options: "i"}},
+    {titulo: {$regex: /Matrix/, $options: "i"}}
+]}
 use('clase'); // ojo regex con i es case insensitive
 db.peliculas.find(
   {titulo:  {$or: [{$regex: /Mision Imposible/i},
@@ -89,7 +93,7 @@ db.peliculas.find(
 
 
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/mongodb/07-aggregations.md
-se van haciendo paso a paso
+Las consultas en MongoDB se van haciendo paso a paso
 SELECT EN mongodb se llaman aggregation, son más rápidos los resultado que en frontend
     STAGES (PULSAR ESTA A LA DERECHA)
     add stage (abajo) $group

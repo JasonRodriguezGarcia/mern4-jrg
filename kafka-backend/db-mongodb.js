@@ -12,8 +12,9 @@ const __dirname = path.dirname(__filename);
 const MONGODB_URI = process.env.MONGODB_URI;
            
 // const DB_NAME = 'scott';
-const DB_NAME = 'clase';
+// const DB_NAME = 'clase';
 // const DB_NAME = 'sample_mflix';
+const DB_NAME = 'Clase'; ////////// OJO ESTO ES EN CASA
 
 let client;
 let db;

@@ -427,6 +427,7 @@ dia 28 Mayo
 creamos coleccion (tabla) en bbdd clase
 ya que no existe peliculas SE CREA !!!
 use('clase');
+use('Clase');
 db.peliculas.insertMany([
   { titulo: "Volver al Futuro", director: "Robert Zemeckis", año: 1985 },
   { titulo: "The Matrix", director: "Lana Wachowski", año: 1999 },

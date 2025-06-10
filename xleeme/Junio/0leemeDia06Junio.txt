@@ -69,8 +69,11 @@ export default function Review() {
 ******************
 
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/graphql/01-introduccion.md
+En API rest definimos multitud de rutas.
+Con Graphql lo se que tiene es una única ruta API para TODO tipo de llamadas API, pero en la llamada se indica lo que 
+se quiere hacer (consulta datos, insert, delete, update, ...).
 
-en express-mongodb 
+En express-mongodb 
 npm install graphql @graphql-yoga/node
 
 copiar index.js a index-swagger.js

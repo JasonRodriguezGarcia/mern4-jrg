@@ -2,14 +2,11 @@ import { Kafka } from 'kafkajs';
 import connectDB from './db-mongodb.js';
 
 const kafka = new Kafka({
-  clientId: 'my-app',
+  clientId: 'my-app-consumer',
   brokers: ['localhost:29092'],  // Connect to Kafka on localhost:9092
 });
 
 const consumer = kafka.consumer({ groupId: 'test-group' });
-// Connect to MongoDB
-// const db = await connectDB();
-// const collection = db.collection('acciones'); 
 
 const run = async () => {
   await consumer.connect();

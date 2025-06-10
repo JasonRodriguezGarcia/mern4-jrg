@@ -1,14 +1,12 @@
 import { Kafka } from 'kafkajs';
 
 const kafka = new Kafka({
-  clientId: 'my-app',
+  clientId: 'my-app-producer',
   brokers: ['localhost:29092'],  // Connect to Kafka on localhost:9092
 });
 
 const producer = kafka.producer();
 const acciones = ['AAPL', 'GOOGL', 'TSLA', 'AMZN', 'MSFT'];
-
-
 
 const run = async () => {
   await producer.connect();
@@ -19,8 +17,7 @@ const run = async () => {
   };
   console.log('Producer connected to Kafka');
 
-  // Send a message to the topic "test-topic"
-  // setInterval(async ()=> {
+  // Sending messages to the topic "test-topic"
     await producer.send({
       topic: 'acciones-topic',
       messages: 
@@ -28,7 +25,6 @@ const run = async () => {
         { value: JSON.stringify(accionUpdate) },
       ],
     });
-  // }, 5000)
 
   console.log('Message sent to Kafka topic "test-topic"');
 

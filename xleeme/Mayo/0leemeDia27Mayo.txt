@@ -21,6 +21,16 @@ db.getName()
 
 /*
 Busquedas de repaso
+Resumen de patrones RegExp en MongoDB
+Patrón	        Significado	Ejemplo                         (campo: artist o title)
+^abc	        Empieza con "abc"	                        "^Blue" → Blue Öyster Cult
+abc$	        Termina con "abc"	                        "Cult$" → Blue Öyster Cult
+.*	            Cualquier carácter, cualquier cantidad	    "Blue.*Cult" → Blue Öyster Cult, Blue Cult Revival
+\d	            Un dígito del 0 al 9	                    "\d" → 99 Problems
+\w	            Un carácter alfanumérico o guion bajo	    "\w+\s\w+" → Take Me
+[aeiou]	        Cualquier vocal	                            "[aeiou]" → coincide con cualquier vocal
+[^aeiou]	    Cualquier carácter que no sea vocal	        "[^aeiou]" → coincide con consonantes, etc.
+`a	b`	        Coincide con "a" o con "b"
 
 Encontrar:
 Embedded Movies

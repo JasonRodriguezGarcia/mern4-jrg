@@ -104,8 +104,10 @@ countries.map((c, index) =>(
 
 ***************
 https://github.com/chekulhan/Desarrollo-Web/tree/main/UF1846-Web-Distribuidas/websockets
-WEB SOCKETS
+WEBSOCKETS
 VALE PARA EXPRESS Y React
+La forma de funcionar de websocket es que se comunican backend y frontend a la espera de cambios.
+Si hay un cambio en backend, éste cambio se comunica inmediatamente a frontend.
 
 hay que hacer varias instalaciones en EXPRESS
 en REST el cliente pide datos al servidor (unidireccional) y este responde
