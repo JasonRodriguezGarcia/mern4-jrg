@@ -4,19 +4,18 @@ import cors from 'cors';
 import { fileURLToPath } from 'url';
 
 import { createYoga, createSchema } from 'graphql-yoga';
-// import { typeDefs, resolvers } from './schema.js';
-// import { typeDefs, resolvers } from './productosSchema.js';
-import { typeDefs, resolvers } from './recetasSchema.js';
+import { typeDefs, resolvers } from './productosSchema.js';
 
+import { Kafka } from 'kafkajs';
 
-import productosRouter from './routes/productos.js';
 import connectDB from './db-mongodb.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+// const PORT = process.env.PORT || 5001;
+const PORT = 5000;
 
 // Middleware
 app.use(cors());
@@ -28,23 +27,52 @@ async function startServer() {
     const db = await connectDB();
     app.locals.db = db;
 
-    // Mount REST routes
-    // app.use('/api/v1/productos', productosRouter);
 
     // Setup GraphQL Yoga
-    const yoga = createYoga({ // definiendo squema, formato de datos
+    const yoga = createYoga({
       schema: createSchema({
         typeDefs,
         resolvers,
       }) ,
-      context: ({ request }) => ({ // enlazamos MongoDB con graphql para conseguir los datos
+      context: ({ request }) => ({
         db: app.locals.db,  // Pass your MongoDB connection to resolvers
       }),
     });
 
 
     // Mount Yoga at /graphql
-    app.use('/graphql', yoga); // UN SOLO ENDPOINT
+    app.use('/graphql', yoga);
+
+    // === Kafka consumer setup ===
+      const kafka = new Kafka({
+        clientId: 'express-kafka-consumer',
+        brokers: ['localhost:29092'], // adjust broker address if needed
+      });
+  
+      const consumer = kafka.consumer({ groupId: 'productos-group' });
+  
+      await consumer.connect();
+      await consumer.subscribe({ topic: 'productos', fromBeginning: true });
+  
+        // nada más arrancar manda datos continuamente
+      consumer.run({
+        eachMessage: async ({ topic, partition, message }) => {
+          const value = message.value.toString();
+          console.log(`Kafka message received on topic ${topic}:`, value);
+          // You can parse JSON here if your messages are JSON
+          try {
+            const data = JSON.parse(value);
+            console.log('Parsed data:', data);
+
+            //queda mandar a mongodb desde consumer
+            const res = await db.collection("productos").insertOne(data)
+          } catch {
+            // not JSON, just log raw value
+          }
+        },
+      });
+      // === end Kafka consumer setup ===
+    
 
     // Start server
     app.listen(PORT, () => {

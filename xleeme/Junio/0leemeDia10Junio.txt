@@ -1,0 +1,129 @@
+https://github.com/chekulhan/Desarrollo-Web/tree/main/UF1846-Web-Distribuidas
+Actividades 4
+Usando comments coleccion de sample_mflix:
+
+1contar las filas
+2contar los comentarios para cada email. O sea, groupBy email
+3contar los comentarios para cada email, pero solo oona_chaplin@gameofthron.es, amanda_jordan@fakegmail.com y john_bishop@fakegmail.com
+{
+  _id: "$email",
+  count: {$sum: 1}
+}
+
+1
+$count
+'contarTotal'
+
+2
+$goup
+{
+  _id: "$email",
+  count: {
+    $sum: 1
+  }
+}
+
+3
+$group
+{
+  _id: "$email",
+  cuenta: {
+    $sum: 1
+  }
+}
+
+$match
+{
+  _id: {$in: [ 
+    "oona_chaplin@gameofthron.es",
+    "amanda_jordan@fakegmail.com",
+    "john_bishop@fakegmail.com"
+  ]}
+}
+
+$sort
+{
+  cuenta: 1
+}
+******************
+vamos a livesql.oracle.com
+en squema SCOTT
+CREATE TABLE MiDept (deptno int, dname varchar(20), loc varchar(20))
+
+share.streamlit.io
+
+sqlite
+
+********
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/kafka/01-configuracion.md
+Actividad: Web architectura
+En el el
+1 front end -->> graphql:5001
+2 backend 
+
+en vite/src/components
+kafka.jsx
+
+en kafka-backend
+crear index.jsx con contenido de 
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/kafka/graphql/index.KAFKA.GRPAHQL.producer.js
+pero cambiar 5000 a 5001
+poner const PORT = 5001; SOLO
+
+vamos a kafka-backend
+npm install express cors graphql graphql-yoda mongodb
+
+crear kafkaSchema.js
+
+npm install  --save-dev nodemon
+
+cambiamos en package.json
+dev: "nodemon index.js"
+
+ejecutamos para arrancar graphql
+npm run dev 
+
+en navegador
+http://localhost:5000/graphql
+
+en docker (ojo estaba abierto el docker-compose ya que antes no lo borramos)
+docker exec -it kafka bash 
+en una consola
+kafka-topics --bootstrap-server localhost:29092 --create --topic productos
+revisamos que topics hay
+kafka-topics --bootstrap-server localhost:29092 --list
+
+
+express-mongodb/index.js
+el viejo a index-graphql.js
+
+cambiamos productosSquema.js a productosSquema-Basic.js
+creamos uno nuevo
+productosSquema.js
+
+instalar
+npm install kafkajs
+
+
+
+
+
+*******
+ejercicio añadir a codigo
+
+crear un frontend para dar un me gusta a un post que mande a 
+graphql
+que pase a kafka
+
+crear en vite 5 posts 
+que al pinchar en me gusta mande el codigo del post a graphql express
+
+
+Crear topic de likes en kafka
+kafka-topics --bootstrap-server localhost:29092 --create --topic likes
+kafka-topics --bootstrap-server localhost:29092 --list
+
+crear en kafka-backend postSchema.js
+
+probar en http://localhost:5000/graphq
+

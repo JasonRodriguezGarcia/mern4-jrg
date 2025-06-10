@@ -1,5 +1,7 @@
 import { ObjectId } from 'mongodb';
 
+
+// ! indica que es obligatorio
 export const typeDefs = /* GraphQL */ `
   type Producto {
     _id: ID!
@@ -10,7 +12,7 @@ export const typeDefs = /* GraphQL */ `
 
 
   type Query {
-    productos: [Producto!]!
+    productos(cantidadMin: Int): [Producto!]!  
     producto(id: ID!): Producto
   }
 
@@ -25,20 +27,38 @@ export const typeDefs = /* GraphQL */ `
     updateProducto(id: ID!, input: ProductoInput!): Producto
     deleteProducto(id: ID!): Boolean
   }
+
+  type Query {
+    productos: [Producto!]!
+    producto(id: ID!): Producto
+    productosConBajaCantidad: [Producto!]!  # 👈 Nueva query
+  }
 `;
 
 
 
 export const resolvers = {
   Query: {
-    productos: async (_parent, _args, context) => {
+    // pedimos todos los productos
+    productos: async (_parent, args, context) => {
       const db = context.db;
-      return await db.collection('productos').find().toArray();
+
+      const query = {}
+      if (args.cantidadMin !== undefined) {
+        query.cantidad = {$gte: args.cantidadMin}
+      }
+      return await db.collection('productos').find(query).toArray();
     },
+    // pedimos uno
     producto: async (_parent, { id }, context) => {
       const db = context.db;
       return await db.collection('productos').findOne({ _id: new ObjectId(id) });
     },
+    productosConBajaCantidad: async (_parent, _args, context) => {
+        const db = context.db;
+        return await db.collection('productos').find({ cantidad: { $lt: 100 } }).toArray();
+    },
+
   },
   Mutation: {
     addProducto: async (_parent, { input }, context) => {
@@ -48,6 +68,7 @@ export const resolvers = {
       const result = await db.collection('productos').insertOne(producto);
       return { _id: result.insertedId, ...producto };
     },
+
     updateProducto: async (_parent, { id, input }, context) => {
       const db = context.db;
       //const now = new Date();

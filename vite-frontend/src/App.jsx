@@ -8,7 +8,9 @@ import './App.css'
 // import ButtonCounter from './components/ButtonCounter'
 // import ChatRoom from './components/ChatRoom'
 // import Review from './components/Review'
-import RecetasList from './components/RecetasList'
+// import RecetasList from './components/RecetasList'
+import Kafka from './components/Kafka'
+import MeGusta from './components/MeGusta'
 
 function App() {
 
@@ -20,7 +22,9 @@ function App() {
       {/* <ButtonCounter /> */}
       {/* <ChatRoom /> */}
       {/* <Review /> */}
-      <RecetasList />
+      {/* <RecetasList /> */}
+      <Kafka />
+      <MeGusta />
 
     </>
   )
