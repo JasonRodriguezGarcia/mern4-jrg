@@ -1,0 +1,138 @@
+Buscar ($match) los documentos con el precio menor o igual a 25 euros. 
+  {
+    $match:
+      {
+        precio: {
+          $lte: 25
+        }
+      }
+  }
+Ahora, contar ($count) el número de productos en total con el precio igual o menos a 15 euros.
+
+  {
+    $count:
+      "Precio<25"
+  }
+
+Convertir esta búsqueda en un $match con agregación:
+db.collection.find({ nombreProducto: { $in: ["Camiseta", "Pantalón"] } })
+
+  {
+    $match:
+      /**
+       * query: The query in MQL.
+       */
+      {
+        nombreProducto: {
+          $in: ["Camiseta", "Pantalón"]
+        }
+      }
+  }
+
+MODIFICAREMOS client-test-conn asignando a pipeline con la cadena de lo que exportamos
+de mongodb cuando andamos con AGGREGATE
+Queremos conseguir los siguientes resultados en una aplicacion de consola de Node:
+[
+  { _id: 'Camiseta', total_cantidad: 375 },
+  { _id: 'Pantalón', total_cantidad: 234 },
+  { _id: 'Chaqueta', total_cantidad: 432 },
+  { _id: 'Zapatos', total_cantidad: 320 },
+  { _id: 'Calcetines', total_cantidad: 200 },
+  { _id: 'Clone', total_cantidad: 111 }
+]
+SOLUCION
+  {
+    $group:
+      {
+        _id: "$nombreProducto",
+        total_cantidad: {
+          $sum: 1
+        }
+      }
+  }
+
+Si quisieramos que nos sume el stock de 2 productos "Camiseta" y "Pantalón":
+[
+  {
+    $match: {
+      /*prodId: {$gte: 102, $lte: 103}*/
+      nombreProducto: {
+        $in: ["Camiseta", "Pantalón"]
+      }
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      Suma: {
+        $sum: "$cantidad"
+      }
+    }
+  }
+]
+
+Mostrar cada producto con el siguiente formato:
+prodId		Codigo_producto 
+nombreProducto 	Descripcion
+cantidad 	Stock
+precio		PVP
+SOLUCION
+{
+    $project: {
+      _id: null,
+      Codigo_producto: "$prodId",
+      Descripcion: "$nombreProducto",
+      Stock: "$cantidad",
+      PVP: "$precio"
+    }
+  }
+
+
+EN POSTGRESS CREAR UNA TABLA public.departamentos
+
+SELECT * FROM public.departamentos
+
+INSERT INTO public.departamentos (dname)
+VALUES ('Contabilidad'),
+('Marketing'),
+('IT'),
+('Finanzas'),
+('Produccion'),
+('Compras')
+
+INSERT INTO public.departamentos (dname)
+VALUES ('Churros')
+
+DELETE FROM public.departamentos
+WHERE dname = 'Churros'
+
+UPDATE public.departamentos SET dname = 'Ventas'
+WHERE dname = 'Compras'
+
+crear tabla public.empleados
+INSERT INTO public.empleados (ename, edeptno)
+VALUES ('Pepa', 1),
+('Maria', 2),
+('Andres', 1),
+('Fernando', 3),
+('Félix', 4),
+('Gumersinda', 1),
+('Ascojoncio', 3),
+('Niceforo', 5),
+('Filomena', null),
+('Ortensia', null)
+
+Mostrar los empleados con su departamento
+SELECT e.empno, e.ename, e.edeptno, d.deptno, d.dname FROM public.empleados e
+INNER JOIN public.departamentos d ON e.edeptno = d.deptno
+
+Mostrar que empleados no tienen departamento
+SELECT e.empno, e.ename, e.edeptno, d.deptno, d.dname FROM public.empleados e
+LEFT JOIN public.departamentos d ON e.edeptno = d.deptno
+WHERE e.edeptno is null
+
+Mostrar cuantos empleados tiene cada departamento
+SELECT deptno, dname, COUNT(*) AS empleados FROM public.departamentos d
+INNER JOIN public.empleados e ON d.deptno = e.edeptno
+GROUP BY deptno, dname
+
