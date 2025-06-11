@@ -100,10 +100,10 @@ const MeGusta = () => {
                             style={{ background: 'none', border: 'none', cursor: 'pointer' }}
                         >
                             <ThumbUpIcon
-                            style={{
-                                color: likes[post.id] ? 'blue' : 'gray',
-                                fontSize: 30,
-                            }}
+                                style={{
+                                    color: likes[post.id] ? 'blue' : 'gray',
+                                    fontSize: 30,
+                                }}
                             />
                         </button>
 

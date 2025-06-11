@@ -219,7 +219,7 @@ console.log(result[0]?.total ?? 0);
 
 *********************
 https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1845-Acceso-a-Datos/mongodb/07-aggregations.md
-Buscar ($match) los documentos con el precio menos o igual a 15 euros. Ahora, contar ($count) 
+Buscar ($match) los documentos con el precio menor o igual a 15 euros. Ahora, contar ($count) 
 el número de productos en total con el precio igual o menos a 15 euros.
 [
   {
@@ -234,7 +234,6 @@ el número de productos en total con el precio igual o menos a 15 euros.
 ]
 
 Convertir esta búsqueda en un $match con agregación:
-
 db.collection.find({ nombreProducto: { $in: ["Camiseta", "Pantalón"] } })
 CREAMOS UN aggregate en mongodb
 $match
@@ -278,6 +277,8 @@ CREAR AGGREGATE
     }
   }
 ]
+
+
 
 ****************************
 ****************************
