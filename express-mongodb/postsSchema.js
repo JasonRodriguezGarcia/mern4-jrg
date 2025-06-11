@@ -44,9 +44,9 @@ export const resolvers = {
   },
   Mutation: {
     addPostLike: async (_parent, { input }) => {
-      await producer.send({
+      await consumer.send({
         topic: 'likes',
-        messages: [{ value: JSON.stringify( input ) }],
+        messages: [{ value: JSON.stringify({ input }) }],
       });
       return true;
     },    

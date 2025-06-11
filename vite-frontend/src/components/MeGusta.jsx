@@ -7,25 +7,30 @@ const MeGusta = () => {
     const [posts, setPosts] = useState([
         {
             id: 1,
-            descripcion: "Ir a clase los Domingos"
+            tema: "Logro profesional reciente",
+            descripcion: "¡Logro desbloqueado! Esta semana cerramos con éxito un proyecto que llevaba meses de trabajo en equipo, planificación y mucha pasión. Liderar esta iniciativa me enseñó el valor de la comunicación constante y la flexibilidad ante los cambios. Agradezco a cada persona que formó parte. ¡Vamos por más!"
         },
         {
             id: 2,
-            descripcion: "Comer chuleta en horario de clase"
+            tema: "Lección aprendida en el trabajo", 
+            descripcion: "A veces, los errores son los mejores maestros. Hace unos meses tomé una decisión apresurada que impactó el flujo de un proyecto. ¿El resultado? Un gran aprendizaje sobre la importancia de escuchar primero y actuar después. Hoy, valoro aún más el feedback del equipo y la revisión cuidadosa antes de ejecutar. ¿Cuál ha sido tu mayor aprendizaje reciente?",
         },
         {
             id: 3,
-            descripcion: "Dormir después de comer"
+            tema: "Habilidades blandas",
+            descripcion: "En un mundo lleno de automatización, las habilidades humanas hacen la diferencia. He estado trabajando en mejorar mi empatía y comunicación asertiva, y los resultados se notan tanto en reuniones como en liderar equipos. No todo es saber técnico: también hay que saber conectar. ¿Qué soft skill consideras esencial hoy?"
         },
         {
             id: 4,
-            descripcion: "Comprar pistachos a la tarde"
+            tema: "Desarrollo profesional",
+            descripcion: "Nunca dejamos de aprender. Este mes terminé un curso de [nombre del curso] en [plataforma/escuela], centrado en [tema específico, ej. liderazgo estratégico]. Me llevo herramientas valiosas que ya estoy aplicando en mi día a día. ¿Estás tomando algún curso o formándote en algo nuevo?"
         }
     ])
     const [likes, setLikes] = useState({});
     
     const handleMeGusta = async (meGustaID) => {
         try {
+            debugger
             const query = `
                 mutation addPostLike ($input: PostLikeInput!) {
                     addPostLike(input: $input)
@@ -82,6 +87,9 @@ const MeGusta = () => {
         setLikes(newLikes)
         console.log("imprimo like: ", newLikes)
         console.log("newLikes.id: ", newLikes[id])
+        if (!newLikes[id])
+            return
+        handleMeGusta(id)
     }
 
     return (
@@ -97,7 +105,7 @@ const MeGusta = () => {
                         >Me Gusta</button> */}
                         <button
                             onClick={() => toggleLike(post.id)}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                            style={{ background: 'lightgrey', border: 'none', cursor: 'pointer', margin: "10px" }}
                         >
                             <ThumbUpIcon
                                 style={{
@@ -106,7 +114,6 @@ const MeGusta = () => {
                                 }}
                             />
                         </button>
-
                         {post.id} -- {post.descripcion} 
                     </li>
                 ))}

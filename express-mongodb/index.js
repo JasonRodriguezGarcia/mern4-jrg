@@ -4,7 +4,8 @@ import cors from 'cors';
 import { fileURLToPath } from 'url';
 
 import { createYoga, createSchema } from 'graphql-yoga';
-import { typeDefs, resolvers } from './productosSchema.js';
+// import { typeDefs, resolvers } from './productosSchema.js';
+import { typeDefs, resolvers } from './postsSchema.js';
 
 import { Kafka } from 'kafkajs';
 
@@ -52,11 +53,13 @@ async function startServer() {
       const consumer = kafka.consumer({ groupId: 'productos-group' });
   
       await consumer.connect();
-      await consumer.subscribe({ topic: 'productos', fromBeginning: true });
+      await consumer.subscribe({ topic: 'likes', fromBeginning: true });
   
         // nada más arrancar manda datos continuamente
+        // consulta si hay algo nuevo
       consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
+          // const value = message.value.toString();
           const value = message.value.toString();
           console.log(`Kafka message received on topic ${topic}:`, value);
           // You can parse JSON here if your messages are JSON
@@ -65,7 +68,7 @@ async function startServer() {
             console.log('Parsed data:', data);
 
             //queda mandar a mongodb desde consumer
-            const res = await db.collection("productos").insertOne(data)
+            const res = await db.collection("likes").insertOne(data)
           } catch {
             // not JSON, just log raw value
           }

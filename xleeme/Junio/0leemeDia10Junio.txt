@@ -99,7 +99,7 @@ el viejo a index-graphql.js
 
 cambiamos productosSquema.js a productosSquema-Basic.js
 creamos uno nuevo
-productosSquema.js
+productosSquema.js renombrar a postsSquema.js
 
 instalar
 npm install kafkajs
@@ -128,7 +128,25 @@ kafka-topics --bootstrap-server localhost:29092 --list
 Dejar kafka a la escucha de topic likes
 kafka-console-consumer --bootstrap-server localhost:29092 --topic likes --from-beginning
 
-crear en kafka-backend postSchema.js
+crear en kafka-backend postsSchema.js
 
-probar en http://localhost:5000/graphq
+probar en http://localhost:5001/graphql
+
+
+Una vez probado que de react manda a Kafka
+
+Queda arrancar express-mongodb
+RECORDAR QUE TENEMOS 3 CONSOLAS A LA VEZ
+1 KAFKA-backend
+2- vite-frontend
+3- express-mongodb
+
+trabajaremos en express-mongodb
+y postsSchema.js es igual que el postsSchema de kafka-backend
+cambiar el index.js de express-mongodb para apuntar al postsSchema.js
+y modificar el postsSchema para que todo su codigo sea igual que el de kafka-backend 
+pero cambiaremos para que sea un consumer
+
+
+
 

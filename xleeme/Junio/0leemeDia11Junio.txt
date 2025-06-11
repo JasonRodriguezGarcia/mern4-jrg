@@ -1,0 +1,86 @@
+Trabajamos con el ejercicio de react-graphql-kafka-mongodb-basedatos del dia 10Junio
+
+kafka no tiene límite de topics solo el harware del ordenador en el que funciona
+
+Haciendo particiones en Kafka en un determinado topic
+
+Hay que tener una clave
+https://github.com/chekulhan/Desarrollo-Web/blob/main/UF1846-Web-Distribuidas/kafka/01-configuracion.md
+Vamos a docker
+docker exec -it kafka bash
+
+creamos un topic con 2 particiones
+$>> kafka-topics --bootstrap-server localhost:29092 --create --topic partition-topic --partitions 2 --replication-factor 1
+pero pondremos
+kafka-topics --bootstrap-server localhost:29092 --create --topic demo1 --partitions 2 --replication-factor 1
+kafka-topics --bootstrap-server localhost:29092 --describe     muestra info
+mandamos datos a la particiones e indicamos clave
+kafka-console-producer --bootstrap-server localhost:29092 --topic demo1 --property "parse.key=true" --property "key.separator=:"
+simulamos mandar mensajes con clave valor cada clave es distinta y deja en distintas particiones
+user1:Hola soy user 1
+user2:hola soy User 2
+user1:hola de nuevo 1
+user2:hola de nuevo 2
+
+agrergar consola nueva para un consumer de demo1
+docker exect -it kafka bash
+kafka-console-consumer --bootstrap-server localhost:29092 --topic demo1 --from-beginning --property print.partition=true
+nos muestra toda la informacion del topic con sus particiones
+control+C para cancelar
+kafka-console-consumer --bootstrap-server localhost:29092 --topic demo1 --partition 1 --from-beginning
+nos muestra info de particion 1
+añadimos en la otra consola
+user1: taluego 1
+en otra consola particion 0
+kafka-console-consumer --bootstrap-server localhost:29092 --topic demo1 --partition 0 --from-beginning
+
+según añadimmos mensajes se guarda en una particion en una u otra
+
+Actividad 4: Partitions en el contexto de un banco
+Crear un topic con 2 particiones para gestionar los datos de un banco, según el tipo de transacción:
+ Partition 0: para depositar dinero Partition 1: para sacar dinero
+Al consumir, tendremos un cliente que está consumiendo los ingresos y otro que está consumiendo los gastos.
+Fijate en el –group atributo.
+$>> ./kafka-topics.sh --bootstrap-server localhost:9092 --create --topic banco --partitions 2 
+--replication-factor 1
+$>> ./kafka-topics.sh --bootstrap-server localhost:9092 --describe --topic banco
+$>> ./kafka-console-producer.sh --bootstrap-server localhost:9092 --topic banco --property "parse.key=true" 
+--property "key.separator=:"
+$>> ./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic banco --from-beginning 
+--property print.partition=true --property print.partition=true
+Sacar solo los datos de ingreso (realmente se hace con un cliente usando la programación):
+./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic banco --from-beginning 
+--property print.key=true --property print.partition=true | grep "^ingreso"
+
+solucion
+kafka-topics --bootstrap-server localhost:29092 --create --topic banco --partitions 2 --replication-factor 1
+kafka-topics --bootstrap-server localhost:29092 --describe
+kafka-console-producer --bootstrap-server localhost:29092 --topic banco --property "parse.key=true" --property "key.separator=:"
+>ingreso:200
+>ingreso:500
+>retiro:300
+ctrl+C para cancelar
+consola nueva
+kafka-console-consumer --bootstrap-server localhost:29092 --topic banco --partition 0 --from-beginning
+200
+500
+consola nueva
+kafka-console-consumer --bootstrap-server localhost:29092 --topic banco --partition 1 --from-beginning
+300
+
+vamos a la primera consola y pondremos otra vez
+kafka-console-producer --bootstrap-server localhost:29092 --topic banco --property "parse.key=true" --property
+ "key.separator=:"
+>ingreso:100
+>retiro:50
+
+Los cambios se ven reflejados en las otras CONSOLAS
+
+Actividad de banco con Node
+Queremos implantar un sistema de deteccion de fraudes, si al sacar dinero, sobrepasa 10,000 euros, 
+indicar al administrador de tecnologias.
+
+ir a kafa-backend
+crear 2 ficheros
+banco-producer.js
+banco-consumer.js
