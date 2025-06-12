@@ -9,8 +9,10 @@ import './App.css'
 // import ChatRoom from './components/ChatRoom'
 // import Review from './components/Review'
 // import RecetasList from './components/RecetasList'
-import Kafka from './components/Kafka'
-import MeGusta from './components/MeGusta'
+// import Kafka from './components/Kafka'
+// import MeGusta from './components/MeGusta'
+import FradudeBanco from './components/FraudeBanco'
+
 
 function App() {
 
@@ -23,8 +25,9 @@ function App() {
       {/* <ChatRoom /> */}
       {/* <Review /> */}
       {/* <RecetasList /> */}
-      <Kafka />
-      <MeGusta />
+      {/* <Kafka /> */}
+      {/* <MeGusta /> */}
+      <FradudeBanco />
 
     </>
   )

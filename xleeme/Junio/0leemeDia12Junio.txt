@@ -1,0 +1,171 @@
+el 11 junio teníamos un ejercicio con
+
+con banco-producer.js
+con banco-consumer.js que usaba la particion 1 para los resultados
+
+Hoy haremos una pagina web en vite FraudeBanco.jsx
+que "consuma" todos los resultados de la particion 1
+refrescamos a mano los datos
+
+en index.js 
+cambiamos schemaBanco.js que buscara el topic (en kafka) y lo meterá
+en un array transacciones que mandaremos via graphql a frontend cuando este lo pida (useefect)
+
+1empezar pagina web que muestre datos de prueba con array transacciones
+mostrar con un map
+Titulo fraude mostrar transacciones
+
+en kafka-backend
+hacer una copia de kafkaSchema.js y llamarla bancosSchema.js
+cambiar en bancoSchema el producer de línea 13 y 15 a consumer
+cambiamos linea 9
+  clientId: 'graphql-fraude',
+
+añadir codigo de banco-consumer desde
+  await consumer.subscribe({ topic: 'banco', fromBeginning: true });
+    ....
+creamos en typedef:
+  type Transaccion {
+    cantidad: Float!
+  }
+
+
+quitamos mutaciones
+creamos arriba un array transacciones
+
+TITULO SCRUM MASTER
+
+CONTROLADOR- RUTAS
+MODELO-  GRABAR DATOS
+
+
+websockets
+graphql
+kafka
+
+******************
+PROYECTO FINAL (COMPARTIR EN DRIVE CON CHE)
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/proyecto/01-proyecto-requisitos.md
+******************
+Documento de Actividad Diaria (POR DIA)
+    Descripción detallada de las tareas realizadas cada día.
+
+    Dificultades encontradas y cómo se resolvieron.
+
+    Aprendizajes y reflexiones personales.
+
+    Formato: texto estructurado, mínimo una página semanal.
+
+
+******************
+Sprint Showcase
+    Documento breve que incluye una presentación informal de los avances del sprint.
+
+    Puede incluir descripción de funcionalidades desarrolladas, objetivos alcanzados y planes para el 
+    siguiente sprint.
+
+    Formato: presentación interactivo con el profesor o compañero con el objetivo de conseguir feedback 
+    para la siguiente interación.
+
+******************
+Evidencias de Trabajo Realizado
+    Capturas de pantalla, fragmentos de código, prototipos, demos o cualquier evidencia que respalde el trabajo hecho en el sprint.
+
+    Organizado según la planificación del sprint.
+
+    Puede incluir enlaces a repositorios, vídeos o herramientas colaborativas.
+******************
+Fase 1: Aprender la metodología AWS Working Backwards y entrega de POC
+En esta fase inicial, los estudiantes se familiarizarán con la metodología Working Backwards utilizada en AWS, que se centra en comenzar el desarrollo de un producto a partir de la experiencia y necesidades del cliente final. Como parte del aprendizaje, deberán elaborar un documento que recoja los conceptos clave, el proceso y un análisis crítico de la metodología.
+
+Además, para consolidar la comprensión práctica, cada estudiante o equipo desarrollará un prototipo o prueba de concepto (PoC) utilizando Streamlit en Python. Este prototipo deberá demostrar una aplicación sencilla que refleje la filosofía de diseño centrada en el cliente, facilitando la interacción y validación temprana de ideas.
+
+Entrega:
+
+documento de AWS Working Backwards
+documentación diaria
+ejemplo de POC (screenshots) PROBE OF CONCEPTS CON Streamlit
+
+VIDEO 
+WORKING Backwards diseñada por amazon
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/proyecto/02-aws-working-backwards.md
+https://www.youtube.com/watch?v=sd3VY2kd8Vk
+
+
+PressRelease 1 página (pensando en el futuro, crear el producto y presentar en prensa para ver cómo puede ir)
+    mirar en internet first press release amazon ever
+
+prompt chat meto
+ejemplo de press release con un parrafo con problema, solucion , customer experience, customer testimonial sobre una 
+idea de marcador digital de turno con una pantalla en la que aparece el número de turno al usar un pulsador que te 
+entrega un ticket, luego en distintos departamentos a los que acceder pulsarán otro para indicar en la pantalla el 
+turno siguiente
+
+COMUNICADO DE PRENSA
+
+Nuevo Sistema de Turnos Inteligente con Pantalla Digital Optimiza la Atención Multidepartamental
+
+Barcelona, 12 de junio de 2025 – La startup tecnológica FlowLine Systems ha presentado su innovador marcador digital de turnos con pantalla y pulsadores integrados por departamento, una solución diseñada para optimizar la atención al público en espacios con múltiples puntos de servicio, como clínicas, centros administrativos o empresas de atención integral.
+
+En muchos centros de atención, los usuarios se enfrentan a procesos confusos: obtienen un turno, pero al haber varios departamentos implicados, no siempre queda claro cuál es el siguiente paso ni quién debe ser atendido. Esto genera desorganización, pérdida de tiempo y frustración tanto para usuarios como para el personal.
+
+FlowLine resuelve esta problemática con un sistema de pulsador inteligente: al ingresar, el usuario presiona el primer botón que le entrega un ticket numerado. En cada uno de los departamentos o módulos de atención, los empleados utilizan un segundo pulsador para avanzar el número de turno, que se muestra en una pantalla central. El sistema guía al usuario durante todo el recorrido, mejorando el orden y reduciendo la incertidumbre.
+
+“La experiencia ha sido muy positiva”, afirma Carlos Méndez, coordinador de atención al ciudadano en un ayuntamiento donde se ha implementado el sistema. “Antes, los usuarios se perdían entre pasos y no sabían cuándo les tocaba. Ahora, con solo mirar la pantalla, saben exactamente en qué punto del proceso están. Y nuestro equipo ya no tiene que estar gritando nombres ni resolviendo confusiones.”
+
+Desde su instalación piloto en varias oficinas públicas y clínicas privadas, el sistema ha demostrado reducir los tiempos de espera hasta en un 40% y ha mejorado significativamente la experiencia del cliente, al proporcionar un entorno más claro, ordenado y predecible.
+
+FlowLine Systems ya ofrece este sistema en modalidad de compra o suscripción, con instalación rápida y soporte personalizado.
+
+Para más información, demostraciones o contacto comercial:
+www.flowlinesystems.com
+Contacto de prensa:
+Elena Ramírez – prensa@flowlinesystems.com – +34 912 345 678
+
+******************
+******************
+******************
+OTRO
+
+ejemplo de press release con un parrafo con problema, solucion , customer experience, customer testimonial sobre una idea de juego rapido online en la que un usuario que se conecta puede acceder a una sala, en la que elige un juego y luego un jugador contrincante que puede ser un ordenador y un humano. Al final se puede empezar a jugar al juego seleccionado.
+
+RESPUESTA DE CHATGPT
+COMUNICADO DE PRENSA
+
+“PlayArena” Revoluciona los Juegos Online con Partidas Rápidas, Salas Inteligentes y Oponentes a Elección
+
+Madrid, 12 de junio de 2025 – La nueva plataforma de entretenimiento digital PlayArena ha llegado para transformar la forma en que los jugadores casuales y competitivos disfrutan de sus juegos favoritos. En solo segundos, los usuarios pueden acceder a una sala virtual, elegir el juego que desean jugar y enfrentarse a un oponente humano o a una inteligencia artificial, todo desde un solo clic.
+
+Hoy en día, muchos jugadores enfrentan largas esperas, interfaces complicadas o procesos engorrosos para iniciar una simple partida. Esto frustra especialmente a quienes buscan entretenimiento rápido, sin sacrificar la calidad del juego o la interacción social. PlayArena resuelve esto con un sistema optimizado: una vez conectado, el usuario entra a una sala, selecciona el juego (desde ajedrez hasta trivia o cartas), elige si quiere jugar contra otro jugador conectado o contra la IA, ¡y comienza la partida al instante!
+
+“La experiencia es increíblemente fluida”, comenta Lucía Ortega, una jugadora habitual. “Trabajo muchas horas y cuando quiero despejarme, entro en PlayArena, elijo un juego y en menos de un minuto ya estoy jugando. Me encanta poder decidir si quiero competir contra alguien real o simplemente practicar contra el ordenador.”
+
+Con una interfaz intuitiva, tiempos de espera mínimos y variedad de juegos actualizados semanalmente, PlayArena ya ha captado la atención de miles de usuarios en Europa y América Latina, consolidándose como una opción favorita para partidas rápidas, sin compromiso pero con toda la emoción del juego online.
+
+Descubre PlayArena hoy mismo en www.playarena.io y empieza a jugar en segundos.
+
+Contacto de prensa:
+Marcos Dávila
+prensa@playarena.io
++34 911 234 567
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FAQ
+
+
+

@@ -5,7 +5,8 @@ import { fileURLToPath } from 'url';
 
 import { createYoga, createSchema } from 'graphql-yoga';
 // import { typeDefs, resolvers } from './kafkaSchema.js';
-import { typeDefs, resolvers } from './postsSchema.js';
+// import { typeDefs, resolvers } from './postsSchema.js';
+import { typeDefs, resolvers } from './bancoSchema.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
