@@ -1,0 +1,94 @@
+https://github.com/chekulhan/Desarrollo-Web/tree/main/MF0493-Implantaci%C3%B3n/php
+Creamos directorio /php
+crear Dockerfile con el contenido de arriba
+
+cd php
+crerar /src
+index.html
+
+ir a directorio /php
+abrir en consola
+docker build -t my-php .
+docker images aparecera my-php
+luego abrimos el container -v (en local path working directory y /src:...) --name (nombre) con:
+docker run -d -p 8080:80 -v "$(pwd)/src:/var/www/html" --name php-container my-php
+
+docker ps (ver contenedores arrancados)
+docker -ls (este en docker)
+
+en navegador localhost:8080
+
+en vsc /php
+nuevo archivo en src index.php
+
+si vamos al navegador F5 y se refrescará con la info del index.php
+
+Ahora miramos en docker el contenedor para ver los archivos
+docker exec -it php-container bash
+
+hacer un 
+ls
+vermos que aparecen nuestros archivos cuyo directorio está vinculado con nuestro vsc
+cd..
+cd ..
+cd ..
+cd 
+
+php-config muestra informacion de php
+
+ejecutar el contenido de index.php en el contenedor
+en docker
+cd /var/www/html (vamos al volumen que creamos en docker que esta vinculado en vsc)
+php index.php
+mostrara mensaje "Hola desde PHP ... "
+
+ejecutamos un fichero en perl (lenguaje de scripting) se uso en principio de lenguaje html con .cgi
+creamos en /php/src en vsc
+p1.perl
+
+Un "shebang" (también conocido como "hashbang") es una secuencia de caracteres que se coloca al principio de un 
+archivo de script en sistemas operativos tipo Unix, específicamente #!. Su función principal es indicar al sistema 
+operativo qué intérprete debe utilizar para ejecutar el script. 
+
+p2.pl
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+print "¿Cómo te llamas? ";
+my $nombre = <STDIN>;        # Leer entrada del usuario
+chomp($nombre);              # Quitar el salto de línea
+
+print "¡Hola, $nombre!\n";
+
+ejecumtamos como perl.p2.pl
+
+
+p3.sh (el mismo ejemplo en un script de Shell (Bash) (.sh), que solicita el nombre del usuario y lo saluda)
+#!/bin/bash
+
+echo -n "¿Cómo te llamas? "
+read nombre
+echo "¡Hola, $nombre!"
+Ejecutamos con ./p3.sh
+
+comando bash
+chmod +x hello.sh (permiso ejecucion)
+
+
+Ahora creamos en vsc
+ex1.php
+
+localhost:8080/ex1.php
+
+PHP es un lenguaje de scripting del lado del servidor (server-side)
+Esto significa que:
+
+El código PHP se ejecuta en el servidor web (como Apache, Nginx, etc.).
+Lo que el navegador del usuario recibe no es el código PHP, sino el resultado generado por él (normalmente HTML).
+El usuario nunca ve el código fuente PHP, solo el contenido que genera.
+
+(service apache restart)¿?
+
+httpd ó apache2: daemon esta a la escucha de un puerto
+

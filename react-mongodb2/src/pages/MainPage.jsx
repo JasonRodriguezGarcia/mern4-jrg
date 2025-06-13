@@ -161,7 +161,7 @@ return (
 
         <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
-                <Grid size={6}>
+                <Grid size={2}>
                     <Box sx={{display: "flex", flexDirection: "column", gap: "10px", backgroundColor: "white"}}>
                         <Typography variant="h5" component="div" sx={{margin: "10px 0",  color: "blue"}}>
                             Historial de Viajes con SS Taxis
@@ -213,7 +213,7 @@ return (
                         ))}
                     </Box>
                 </Grid>
-                <Grid size={6}>
+                <Grid size={10}>
 
                     <Box component="form" onSubmit={handleFormSubmit}
                                 sx={{
