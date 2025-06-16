@@ -1,0 +1,160 @@
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/php/02-docker-compose.yaml
+
+en /php creamos un dockercompose.yml con la info de arriba
+
+
+en la línea 
+  php:
+    build: . <-- usa el dockerfile que ya hay en el directorio actual. El de antes que lo renovamos OLDdockerfile
+y creamos uno nuevo
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/php/02-Dockerfile
+
+en /php en VSC
+abrir docker
+borramos containers e imagen php para no interferir
+docker compose up --build -d
+
+en consola docker en cualquier directorio (por defecto sin problema)
+docker exec -it mysql-db bash
+mysql -u user -p
+(metemos contraseña que no se ve )
+userpass
+nos situará en 
+mysql>
+(mirar en internet mysql comandos de linea)
+show database;
+show tables;
+
+CREATE TABLE tabla1 (valor int);
+SELECT * FROM tabla1;
+(en internet buscar mysql data types)
+
+INSERT INTO tabla1 (valor) VALUES (10), (20), (30)
+
+CREATE TABLE departamentos (deptno int, deptname varchar(30));
+INSERT INTO departamentos (deptno, deptname) VALUES (10, 'Contabilidad');
+INSERT INTO departamentos (deptno, deptname) VALUES (20, 'Ventasd');
+UPDATE departamentos set deptname="Ventas" WHERE deptno=20;
+CREATE TABLE empleados (empno, empname, deptno)
+
+USE information_schema;
+SELECT * FROM tables;
+SELECT * FROM TABLES LIMIT 1;
+SELECT * FROM TABLES WHERE table_name="tabla1";
+SELECT * FROM TABLES WHERE table_name="departamentos";
+
+ACCEDIENDO MEDIANTE INTERFAZ GRAFICA
+http://localhost:8081/
+
+
+PARA TENER PRIVILEGIOS DE ADMIN EN PHPMYADMIN VOLVER A Docker
+show grants for user;
+muestra nuestros PRIVILEGIOS
+
+fuera de mysql (exit)
+
+mysql -u root -p
+(metemos contraseña que no se ve )
+rootpass
+show grants for root;
+SET GLOBAL log_bin_trust_function_creators=1;   <--- OJO !!!
+
+EN PHPMYADMIN crear en base de datos- rutinas
+
+codigo rutina
+BEGIN
+
+DECLARE total INT;
+
+SELECT COUNT(*) INTO total 
+FROM empleados 
+WHERE deptno = departamento;
+
+RETURN total;
+
+END
+
+
+EN PHPMYADMIN
+SELECT fn_contar_empleados(10);
+fn_contar_empleados(10)
+3
+
+select *, fn_contar_empleados(deptno) FROM departamentos;
+Textos completos				                    deptno	deptname	deptbudget	deptloc	fn_contar_empleados(deptno)
+	Editar Editar	Copiar Copiar	Borrar Borrar	10	Contabilidad	1000	    Madrid	3
+	Editar Editar	Copiar Copiar	Borrar Borrar	20	Ventas	        2000	    Barcelona	1
+	Editar Editar	Copiar Copiar	Borrar Borrar	30	IT	            2300	    Donosti	0
+	Editar Editar	Copiar Copiar	Borrar Borrar	40	Taller	        2200	    Bilbado	1
+
+
+VSC en php/src teníamos ficheros para practicar
+https://github.com/chekulhan/Desarrollo-Web/tree/main/MF0493-Implantaci%C3%B3n/php/src
+mysql1.php
+<?php
+$mysqli = new mysqli("mysql", "user", "userpass", "myapp");
+if ($mysqli->connect_error) {
+    die("Connection failed: " . $mysqli->connect_error);
+}
+echo "Connected successfully!";
+
+
+abrrir en docker consola
+docker exec -it 713d26a6c4808f5314ec9ca0e9c4e4162a103001df742b3436c3f4694214841c bash
+ó
+docker exec -it php-app bash
+lo vemos en docker ps
+
+ls y vemos nuestros fichero en php/src
+
+vamos a localhost:8080/mysql1.php
+
+crear mysql2.php del link de arriba y adaptarlo a la tabla departamentos creada antes a mano en phpmyadmin
+<?php
+// Connect to MySQL
+$mysqli = new mysqli("mysql", "user", "userpass", "myapp");
+
+// Check connection
+if ($mysqli->connect_error) {
+    die("Connection failed: " . $mysqli->connect_error);
+}
+
+// Query the database
+$result = $mysqli->query("SELECT id, value FROM test1");
+
+if (!$result) {
+    die("Query error: " . $mysqli->error);
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Table Data</title>
+    <style>
+        table { border-collapse: collapse; width: 50%; margin: 20px auto; }
+        th, td { border: 1px solid #aaa; padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+    <h2 style="text-align:center;">Test Table Data</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Value</th>
+        </tr>
+        <?php while($row = $result->fetch_assoc()): ?>
+        <tr>
+            <td><?= htmlspecialchars($row['id']) ?></td>
+            <td><?= htmlspecialchars($row['value']) ?></td>
+        </tr>
+        <?php endwhile; ?>
+    </table>
+</body>
+</html>
+
+<?php
+$mysqli->close();
+?>
+
+CREAR EX3.PHP PARA AÑADIR DATOS A LA BASE DE DATOS
