@@ -143,8 +143,72 @@ BEGIN
 	RETURN x+10;
 END
 
-ACTIVAR DETERMINISTICO (GUARDAR EN CACHE)
-acceso datos NO SQL
+ACTIVAR DETERMINISTICO
+****En MySQL, el término "DETERMINISTIC" se utiliza para describir una característica de una función o rutina (procedimiento o función almacenada) que siempre devuelve el mismo resultado cuando se le dan los mismos valores de entrada.
+****
+****📌 ¿Qué significa DETERMINISTIC?
+****Cuando marcas una función o rutina como DETERMINISTIC, estás afirmando que:
+****
+****No depende de valores variables como la hora actual, datos de otras tablas, o funciones aleatorias.
+****
+****Siempre que reciba los mismos parámetros de entrada, devolverá exactamente el mismo resultado.
+****
+****📌 ¿Qué es lo contrario?
+****El opuesto es NOT DETERMINISTIC, que indica que:
+****
+****El resultado puede variar aunque los parámetros de entrada sean los mismos.
+****
+****Puede depender de funciones como NOW(), RAND(), UUID(), o datos externos.
+****
+****📋 Ejemplo de uso en una función:
+****sql
+****Copiar
+****Editar
+****CREATE FUNCTION calcular_iva(precio DECIMAL(10,2))
+****RETURNS DECIMAL(10,2)
+****DETERMINISTIC
+****BEGIN
+****   RETURN precio * 0.21;
+****END;
+****Esta función es DETERMINISTIC porque el resultado solo depende del valor del parámetro precio, y la fórmula es fija.
+****
+****⚠️ ¿Por qué es importante?
+****MySQL necesita saber si una función es DETERMINISTIC para tareas como:
+****
+****Optimización de consultas
+****
+****Replicación entre servidores
+****
+****Seguridad y consistencia
+****
+****Cuando una función es NOT DETERMINISTIC, MySQL podría tratarla de forma diferente, por ejemplo, evitar usarla en vistas indexadas o funciones con determinismo obligatorio.
+****Ejemplo con NOT DETERMINISTIC
+****sql
+****Copiar
+****Editar
+****CREATE FUNCTION obtener_fecha_actual()
+****RETURNS DATETIME
+****NOT DETERMINISTIC
+****BEGIN
+****   RETURN NOW();
+****END;
+****🔍 ¿Por qué es NOT DETERMINISTIC?
+****La función NOW() devuelve la fecha y hora actuales del sistema, por lo tanto:
+****
+****Aunque llames a la función con los mismos parámetros (ninguno en este caso),
+****
+****El resultado cambiará dependiendo de cuándo la ejecutes.
+****
+****👉 Por eso no se puede garantizar que el mismo input produzca el mismo output, y MySQL exige marcarla como NOT DETERMINISTIC.
+****
+****✅ Comparación rápida:
+****Función	Determinismo	¿Siempre da el mismo resultado?
+****precio * 0.21	DETERMINISTIC	✅ Sí
+****NOW()	NOT DETERMINISTIC	❌ No
+****RAND()	NOT DETERMINISTIC	❌ No
+****UUID()	NOT DETERMINISTIC	❌ No
+****LENGTH(nombre)	DETERMINISTIC	✅ Sí (depende solo del input)
+
 
 
 CREAR PROCEDIMIENTO
