@@ -12,7 +12,7 @@ https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/p
 en /php en VSC
 abrir docker
 borramos containers e imagen php para no interferir
-docker compose up --build -d
+docker compose up --build -d (1ª vez, luego sin el --build)
 
 en consola docker en cualquier directorio (por defecto sin problema)
 docker exec -it mysql-db bash
@@ -157,4 +157,6 @@ if (!$result) {
 $mysqli->close();
 ?>
 
-CREAR EX3.PHP PARA AÑADIR DATOS A LA BASE DE DATOS
+CREAR ex3.PHP PARA AÑADIR DATOS A LA BASE DE DATOS
+
+

@@ -1,0 +1,225 @@
+docker compose up -d
+http://localhost:8081/
+
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/php/02-mysql.md
+basedatos myapp
+crear tabla
+test_csv
+2 columnas
+id  int
+valor   varchar   200
+
+motor almacenamiendo
+innodb (defecto)
+cambiar a 
+csv
+
+guardar
+
+pestaña sql
+INSERT INTO test_csv (id, valor) VALUES (1, 'hola'), (2, 'Adios');
+
+PARA VER LA TABLA
+show TABLES;
+
+IR A LA TABLA information_schema
+sql
+SELECT * FROM TABLES
+ WHERE TABLE_NAME = 'test_csv';
+
+nos aparece nuestra tabla test_csv
+
+
+ir a docker
+docker exec -it mysql-db bash
+ir al directorio
+cd /var/lib/mysql/myapp/
+ls
+aparece
+departamentos.ibd  empleados.ibd  tabla1.ibd  test_csv.CSM  test_csv.CSV  test_csv_375.sdi
+
+ir a phpmyadmin otra vez creamos otra tabla
+en myapp
+text_archive    2 columnas
+igual que test_csv
+motor almacenamiendo ARCHIVE
+insertar 2 filas
+INSERT INTO test_csv (id, valor) VALUES (1, 'hola'), (2, 'Adios');
+
+hacer un update
+UPDATE text_archive SET valor = 'Hola HOla' 
+WHERE id = 1;
+NO SE PUEDE
+
+Error
+consulta SQL: Copiar
+UPDATE text_archive SET valor = 'Hola HOla' 
+WHERE id = 1;
+MySQL ha dicho: Documentación
+#1031 - El manejador de la tabla de 'text_archive' no tiene esta opcion
+
+
+DELETE FROM text_archive 
+WHERE id = 1;
+
+TAMPOCO DEJA
+
+ir a docker a cd /var/lib/mysql/myapp
+ls
+text_archive.ARZ es el fichero creado es comprimido (SEGURIDAD)
+
+
+borrar archivo
+DROP TABLE text_archive;
+
+crear otra tabla en myapp
+text_inmemory 2columnas
+id int
+valor varchar 200
+motor almacenamiendo MEMORY
+crear
+
+sql
+insertamos datos
+INSERT INTO text_inmemory (id, valor) VALUES (1, 'hola'), (2, 'Adios');
+
+SELECT * FROM text_inmemory;
+ir a docker para ver fichero
+ls
+text_inmemory_377.sdi
+cat text_inmemory_377.sdi
+
+si paramos docker y lo volvemos a arrancar al ser un fichero los datos de MEMORY desaparece
+en docker
+exit
+docker ps aparecen los contenedores
+en lugar de docker compose down
+docker stop mysql-db (desmontamos un servicio del contenedor)
+docker start mysql-db
+la tabla text_memory esta pero sus datos no
+docker exec -it mysql-db bash
+cd /var/lib/mysql/myapp
+ls
+cat text_inmemory_377.sdi aparece el fichero con su estructura pero sin datos
+
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/php/02-mysql.md
+Actividad - funciones
+añadir campo salario a empleados
+ir a phpmyadmin y hacer cambios
+
+crear rutina
+fn_salarios
+typo funcion
+parametro   i_deptno    int
+BEGIN
+
+DECLARE total FLOAT;
+
+	select sum(empsal) INTO total
+    FROM empleados
+    WHERE deptno = i_deptno;
+    RETURN total;
+END
+acceso sql READS DATA
+
+en docker
+mysql -u root -p
+rootpass
+SET GLOBAL log_bin_trust_function_creators=1;
+
+phpmyadmin
+sql
+SELECT *, fn_salarios(deptno)
+FROM departamentos;
+
+crear rutina
+funcion
+fn_sumar
+PARAMETRO X INT
+BEGIN
+
+	RETURN x+10;
+END
+
+ACTIVAR DETERMINISTICO (GUARDAR EN CACHE)
+acceso datos NO SQL
+
+
+CREAR PROCEDIMIENTO
+usp_mostrar_departamentos
+ELIMINAR FILA PARAMETROS (DERECHA DE TODO ELIMINAR)
+
+BEGIN
+
+	SELECT * FROM departamentos;
+
+END
+
+READ SQL DATA
+
+guardar
+
+
+EN SQL
+call usp_mostrar_departamentos;
+saca todos datos
+
+crear procedimiento para que saque un departamentoc on un parametro
+parametros IN i_deptno
+BEGIN
+
+
+	SELECT departamentos.deptname
+    FROM departamentos
+    WHERE departamentos.deptno = i_deptno;
+    
+
+END
+acceso a datos READS SQL DATA;
+
+EN SQL USAR
+call usp_mostrar_departamento(10);
+
+
+Actividad - procedimientos almacenados
+usp_upsert_departamentos(50, 'venta chuches', 6000, 'Estepona', 2100); (CREARA UNO)
+call usp_upsert_departamentos(10, 'CONTABILIDAD', 10050, 'CADIZ', 10005); (UNO EXISTENTE)
+crear procedimiento usp_upsert_departamentos
+typo PROCEDURE
+PARAMETROS
+i_deptno        INT
+i_deptname      VARCHAR 100
+i_deptbudget    INT
+i_deptloc       VARCHAR 100
+i_deptsal       BIGINT
+
+BEGIN
+-- (10, 'Venta chuches', 5000, 'Estepona', 1300)
+
+
+	IF EXISTS (SELECT 1 FROM departamentos WHERE deptno = i_deptno) THEN
+		UPDATE departamentos SET deptname = i_deptname,
+        						deptbudget = i_deptbudget,
+                                deptloc = i_deptloc,
+                                deptsal = i_deptsal
+        	WHERE deptno = i_deptno;
+    ELSE
+    	INSERT INTO departamentos (deptno, deptname, deptbudget, deptloc, deptsal)
+        		VALUES (i_deptno, i_deptname, i_deptbudget, i_deptloc, i_deptsal);
+    
+    END IF;
+END
+
+Acceso a datos MODIFIES SQL DATA
+
+HAY OTRA OPCION EN codigo
+    INSERT INTO departamentos (dept_no, nombre, ubicacion)
+    VALUES (i_deptno, i_nombre, i_ubicacion)
+    ON DUPLICATE KEY UPDATE
+        nombre = i_nombre,
+        ubicacion = i_ubicacion;
+
+
+
