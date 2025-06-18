@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             die("Connection failed: " . $mysqli->connect_error);
         }
 
-        // Query the database
+        // Insert into the database
         $result = $mysqli->prepare("INSERT INTO departamentos (deptno, deptname, deptbudget, deptloc) VALUES (?, ?, ?, ?)");
         $result->bind_param("isis", $detpno, $deptname, $deptbudget, $deptloc); //s- string, i - integer para cada parametro
 

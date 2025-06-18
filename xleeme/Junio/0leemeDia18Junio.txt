@@ -1,0 +1,35 @@
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/introduccion.md
+para dejar el código bonito y poder publicarlo en redes
+OJO EL CODIGO QUE PEGAMOS (PUEDE SER UN TROZO) DEBE FUNCIONAR!!
+carbon.now.sh
+
+seleccionamos php y pegamos nuestro trozo de código. OJO TABULACIONES, LINEAS LARGAS, <?php ?>, ...
+
+otro
+https://gist.github.com/
+podemos añadir nuestro codigo, como file ex3.php
+guardar como public (boton abajo del todo color verde)
+se abre otra pantalla en la que aparece en la parte superior izq
+de pone script que podremos insertarlo donde queramos
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/php/src/mysql3.php
+hacer una pagina sp1.php
+cuando usuario introduce datos
+departamento
+
+el boton es un submit del form
+recoger en vars los datos
+hacer un upsert completo
+
+abrir docker
+en vsc
+cd php
+docker compose up -d
+crear sp1.php
+****************
+
+crear sp2.php
+hacer otra pagina para listar una tabla con boton (GET)
+al pulsar boton se borra la línea del boton
+
+
