@@ -1,0 +1,263 @@
+Versiones de nuestra aplicacion
+nuevos desplieges, cambios, correcciones
+
+Major(a) . Minor(b) . patch(c)
+v1.0.1
+
+a - rompe funcionalindad NO compatible con versiones anteriores
+b - agregar funcionalidad MANTENIENDO compatibilidad con versiones anteriores
+c - correcion errores, cambios
+
+para versiones de prueba
+v1.0.1-alpha
+v1.0.1-beta
+
+
+en github interface web
+1º crear tag
+2º crear release
+
+subir programa node.js a github
+
+crear carpeta /node-pkg en raiz con VSC
+abrir directorio /node-pkg en consola
+npm init -y
+
+cambiamos package.json añadiendo "type": "module" bajo "main"
+
+crear main.js conteniendo
+console.log("Hola desde NODE JS");
+
+instalar un modulo para empaquetar nuestro programa (SERÍA SOLO PARA EJECUTABLES MAC O WINDOWS)
+https://github.com/chekulhan/Desarrollo-Web/tree/main/MF0493-Implantaci%C3%B3n/devops
+DESPLIEGE
+
+npm install --save-dev pkg (modo desarrollo)
+o
+npm install -g pkg (modo global)
+
+
+luego 
+npx pkg main.js --targets node18-win-x64 (windows)
+ó
+npx pkg main.js --targets node18-macos-x64 (mac)
+
+en windows nos creará un main.exe
+
+
+ir a consola WINDOWS e ir a la carpeta \mern4-jrg\node-pkg>
+main para ejecutar nuestro programa COMPILADO
+
+en consola vsc
+ir al directorio ie ejecutar con ./main
+
+podemos configurar el pkg a crear:
+
+{
+  "name": "package",
+  "version": "1.0.0",
+  "bin": "main.js"
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  },
+  "pkg": {
+   "output": "my-app",
+    "assets": [
+      "images/**/*"
+    ],
+    "targets": [
+      "node18-macos-x64",
+      "node18-win-x64",
+      "node18-linux-x64"
+    ]
+  }
+}
+
+añadiremos imagenes y los detalles de arriba a nuestro package.json del archivo ejecutamos
+"bin" ...
+"pkg" ...
+
+creamos node-pkg/images y añadimos 2 imagenes
+
+npx pkg .
+
+crear aplicaciones ejecutables node con
+flet.dev
+node gui
+
+hay mas maneras de crear ejecutables node
+
+
+*************
+
+DEVOPS (filosofia de integracion de equipos)
+para desplegar 1 aplicacion primero devs desarrola el codigo y ops son los que instalan y despliegan infraestructuras
+solia haber conflictos y fricciones que hacen que se desplieguen cada al menos varios meses
+flickr en la era de web 2.0, consiguio desplegar 10 veces al día por solucionar este problema, creando
+una metodología llamada DEVOPS (ESTABILIDAD+FUNCIONALIDAD)
+FLICKR fue de los primeros programas creados por usuarios en lugar de empresas
+
+HERRAMIENTAS PARA HACERLO POSIBLE
+github
+    Se suben archivos y funcionalidades y se despliegan
+grafan
+Jenkins -CI (integracion continua)
+Docker y Kubernetes (K8)
+Terraform - IaC
+
+
+ci(integracion continua)/cd (despliege continuo)
+pipeline en github
+subir a la mr
+
+
+so linux, windows
+aws azure
+redes
+securizar y monitorizar container
+github
+comunicacion
+
+AUTOMATIZAR PROCESOS
+CREAR VM EN AWS TIENEs que hacer todo a mano tanto en interface web como en consola, si tenemos que crear
+varios más tarea tediosa con posibilidad de errores
+Podemos automatizar el PROCESOS
+Infraestructura como código (IaC Infraestructura as Code)
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/devops/introduccion.md
+Terraform
+
+ubuntu maas
+    https://maas.io/docs/how-to-get-maas-up-and-running
+
+EJERCICIO
+Automatizar subida de archivo y comprobar que todo funcione
+CI Integracion Continuo
+Agregar un archivo de requirements.txt al proyecto
+
+# requirements.txt
+pytest
+
+carpeta nueva python-ci y dentro
+crear .gitignore
+    __pycache__/
+    *.py[cod]
+    *.pyo
+    *.pyd
+    .env
+    venv/
+    env/
+    dist/
+    build/
+crear fichero test_add.py (test incluido en el prefijo del nombre para ser usado con pytest)
+    from add import add
+
+    def test_add():
+        assert add(2, 3) == 5
+        assert add(-1, 1) == 10
+        assert add(0, 0) == 0
+
+    test_add() # solo para probarlo
+
+crear fichero requirements.txt
+    pytest
+
+crear fichero add.py
+def add(x, y):
+    return x + y
+
+python test_add.py para probarlo
+si hay errores no hay resultados
+si los hay saldrán resultados
+
+EN /python-ci/ git init
+git add .
+git status  VEMOS LOS COMMIT QUE HAY
+git commit -m "Initial commit"
+git status  NO HAY COMMITS
+git log
+git branch
+git remote (que hay enlazado en nube)
+
+git workflows (ACCIONES)
+(aparece en ACTIONS en repositorio)
+crear directorio dentro de /python-ci/.github
+dentro directorio workflows dentro fichero
+    python-ci.yml
+        name: Python CI
+
+        on:
+        push:
+            branches: [ main ]
+        pull_request:
+            branches: [ main ]
+
+        jobs:
+        test:
+            runs-on: ubuntu-latest
+
+            steps:
+            - name: Checkout code
+            uses: actions/checkout@v3
+
+            - name: Set up Python
+            uses: actions/setup-python@v4
+            with:
+                python-version: '3.11'
+
+            - name: Install dependencies
+            run: |
+                python -m pip install --upgrade pip
+                pip install -r requirements.txt
+
+            - name: Run tests
+            run: |
+                pytest
+
+ejecutará un pytest en un Github con todo lo de arriba
+
+Crear repo manualmente en github sin README y al final nos da los datos para poner en vsc para conectar nuestro git
+en consola vsc /python-ci/
+git remote add origin https://github.com/JasonRodriguezGarcia/python-ci.git
+git branch -M main
+git push -u origin main (-u es para que nos pida loggearnos)
+
+git remote -v (nos lista)
+
+vamos a github en nuestro repo ACTIONS
+CADA VEZ que ejecutamos un commit ejecuta el fichero .yml
+
+ATENCION SE PUEDE USAR DOCKER !!
+Usando Docker contenedores
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.11
+
+al hacer git add . de mern4-jrg
+aparecen las siguientes líneas en la consola
+warning: in the working copy of 'node-pkg/package-lock.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'node-pkg/package.json', LF will be replaced by CRLF the next time Git touches it
+warning: adding embedded git repository: python-ci
+hint: You've added another git repository inside your current repository.
+hint: Clones of the outer repository will not contain the contents of
+hint: the embedded repository and will not know how to obtain it.
+hint: If you meant to add a submodule, use:
+hint:
+hint:   git submodule add <url> python-ci
+hint:
+hint: If you added this path by mistake, you can remove it from the
+hint: index with:
+hint:
+hint:   git rm --cached python-ci
+hint:
+hint: See "git help submodule" for more information.
+
