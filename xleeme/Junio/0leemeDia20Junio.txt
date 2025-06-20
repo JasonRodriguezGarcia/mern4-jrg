@@ -1,0 +1,75 @@
+REPASO 19JUNIO
+en /python-ci
+creamos test_mathematics.py
+con pruebas de las funciones
+creamos mathematics.py con las funciones pero con 
+    return 0
+luego cambiamos mathematics.py para poner
+    return x + y
+    O
+    return x * y
+Segun funcion
+
+
+creamos entorno virtual en .venv
+python -m venv .venv
+
+ACTIVAMOS ENTORNO
+.venv\Scripts\activate   
+pip install pytest
+pip list
+
+ejecutamos pruebas con 
+pytest (ejecuta los ficheros comenzando nombre por test_)
+
+creamos main.py
+if __name__=='__main__'
+    print("Main program para ayudarle con las mates)
+    accion = input("Qué quieres hacer? s- suma, m- multiplica")
+    if accion == 's'
+
+pip freeze > requirements.txt generamos un package.json de python
+
+EJECUTAMOS main.py
+    python main.py
+cerramos el entorno virtual
+    deactivate
+
+**************
+kahoot
+
+*************
+C:\Users\alu01>nslookup google.com
+Servidor:  Livebox
+Address:  192.168.1.1
+
+Respuesta no autoritativa:
+Nombre:  google.com
+Addresses:  2a00:1450:4003:801::200e
+          142.250.185.14
+
+https://whatismyipaddress.com/
+
+https://www.submarinecablemap.com/
+
+
+compra dominios
+arsys.es
+dinahosting.es
+https://www.godaddy.com/es-es
+
+1   root
+        root-server.org
+    dns
+        whatsmydns.me
+    a ... m
+2 TLD
+    .com.org.
+root-servers.org
+
+red.es
+
+
+Para ver el camino hasta una ip
+https://geotraceroute.com/
+https://visualtraceroute.net/ (instacion)

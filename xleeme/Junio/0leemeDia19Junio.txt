@@ -137,7 +137,7 @@ Terraform
 ubuntu maas
     https://maas.io/docs/how-to-get-maas-up-and-running
 
-EJERCICIO
+EJERCICIO TDD (TEST DRIVE DEVELOPING) PARA PYTHON
 Automatizar subida de archivo y comprobar que todo funcione
 CI Integracion Continuo
 Agregar un archivo de requirements.txt al proyecto
