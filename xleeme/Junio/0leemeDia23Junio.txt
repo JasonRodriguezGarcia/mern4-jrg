@@ -78,7 +78,17 @@ MODIFICAMOS PARA AÑADIR UNA VARIABLE DE entorno EN /render-project
 en fichero .env poner en backend
 FRONTEND_URL_RENDER=https://playarena-1.onrender.com/
 en index.js
+
 const allowedOrigins = process.env.FRONTEND_URL_RENDER;
 
 EN frontend recuperamos la variable VITE_URL_RENDER
 const VITE_URL_RENDER = import.meta.env.VITE_URL_RENDER
+
+
+
+zoeradio.zapto.org
+https://zoeradio.zapto.org/gitlab/users/sign_in
+jason_rg1@hotmail.com
+12345678@Aa
+
+1J@son2Rosita
