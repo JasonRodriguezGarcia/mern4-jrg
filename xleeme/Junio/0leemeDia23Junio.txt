@@ -1,0 +1,84 @@
+CD Continius Deployment (de CI/CD)
+Despliege aplicacion
+
+render.com free forever
+vercel.com
+amazon aws
+google cloud
+firebase 
+supabase postgress apirest graphql
+infinityfree php mysql
+
+En render Dasboard
+Add New
+    Static site
+        para frontend (React, ...)
+    Web service 
+        para backend (Express, ...)
+    ...
+    Postgress (gratuito solo 1 mes)
+
+creamos carpetas /render-project
+    /backend
+    /frontend
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/devops/cd/introduccion.md
+
+crear .gitignore en /render-project con el contenido del link de arriba
+crear en /backend packging.json con el contenido del link
+
+en /backend hacer
+    npm install
+crear en /backend index.js con el link
+    npm run dev PARA PROBAR
+
+en /frontend
+    npm create vite@latest .    <-- ojo incluido en punto !!
+        React
+        JavaScript
+    npm install
+    npm run dev
+NO HACE FALTA CREAR UN /DIST
+situados en render-project render.yml o render.yaml para automatizar la actualización
+
+subir a github para ello
+    git init
+    git add .
+    git commit -m "first commit"
+    git push
+ir a github y crear repositorio render-project
+    git remote add origin https://github.com/JasonRodriguezGarcia/render-project.git
+    git branch -M main
+    git push -u origin main
+
+en render
+Add New
+    Web service
+Git public repository
+    https://github.com/JasonRodriguezGarcia/render-project
+Connect
+
+START COMMAND y START COMMAND # not required
+ENV VARIABLE
+
+como falla metemos los datos a mano
+
+ahora en render
+Add New
+    Static site
+git public repository
+
+prefijos para variables de entorno para React en render
+REACT_APP_
+
+en Vite
+VITE_
+
+MODIFICAMOS PARA AÑADIR UNA VARIABLE DE entorno EN /render-project
+en fichero .env poner en backend
+FRONTEND_URL_RENDER=https://playarena-1.onrender.com/
+en index.js
+const allowedOrigins = process.env.FRONTEND_URL_RENDER;
+
+EN frontend recuperamos la variable VITE_URL_RENDER
+const VITE_URL_RENDER = import.meta.env.VITE_URL_RENDER
