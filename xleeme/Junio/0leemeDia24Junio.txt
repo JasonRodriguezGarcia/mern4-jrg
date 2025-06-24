@@ -1,0 +1,61 @@
+en /vite-frontend crear componente
+test1.jsx
+
+creamos una funcion suma
+
+luego en /utils guardamos la funcion suma
+y la llamamos en test1.jsx
+
+añadimos props
+nombreDeUsuario edad
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/devops/01-testing-integracion.md
+Cypress (solo JavaScript), Selenium (para Java, python, JS, c#, Ruby, ...)
+Pruebas a nivel cliente
+
+vamos a /vite-frontend 
+npm install --save-dev cypress
+añadir al package.json
+"scripts":
+    "cypress": "cypress open",
+    "cypress:run": "cypress run"
+crear archivo cypress.config.js
+dentro vite-frontend crear carpeta /cypress
+
+crear en cypress 
+    crear carpeta e2e
+        y dentro e2e fichero example.cy.js 
+    crear carpeta support
+        dentro e2e.js
+        dentro commands.js
+
+en vite-frontend
+npm run cypress
+
+autorizar
+
+Seleccionar E2E testing
+Chrome
+Y se abrira e2e pero hay que 
+en otra consola ejecutar vite
+    npm run dev
+
+en e2e refrescar y funcionara todo
+ cambiamos en example.cy.js "vite + react" por "Vite xxx + React" y e2e nos indicará fallo
+
+ en example.cy.js
+    añadimos otra prueba it()
+        con un hola en h1
+
+en /e2e
+    uses.cy.js
+    añadir h2 en app.jsx
+
+form.cy.js (rellena datos en un formulario)
+    crear componente Form con el contenido de test1.jsx y lo adaptamos
+
+api.cy.js (prueba a nivel de apis)
+
+
+en consola vsc /vite-frontend
+npm run cypress:run

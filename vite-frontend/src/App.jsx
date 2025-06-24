@@ -11,13 +11,17 @@ import './App.css'
 // import RecetasList from './components/RecetasList'
 // import Kafka from './components/Kafka'
 // import MeGusta from './components/MeGusta'
-import FradudeBanco from './components/FraudeBanco'
-
+// import FradudeBanco from './components/FraudeBanco'
+// import Test1 from './components/test1'
+import Form from './components/Form'
 
 function App() {
 
+  const nombre = "Jason"
   return (
     <>
+    {/* h2 para probar con cypress */}
+    <h2 data-testid="page-title">Second test</h2>  
       {/* <Polling /> */}
       {/* <ProductosSocket  /> */}
       {/* <Chat1 /> */}
@@ -27,7 +31,9 @@ function App() {
       {/* <RecetasList /> */}
       {/* <Kafka /> */}
       {/* <MeGusta /> */}
-      <FradudeBanco />
+      {/* <FradudeBanco /> */}
+      {/* <Test1 nombreDeUsuario={nombre} edad={50}/> */}
+      <Form nombreDeUsuario={nombre} edad={50}/>
 
     </>
   )
