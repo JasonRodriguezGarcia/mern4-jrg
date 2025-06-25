@@ -59,3 +59,4 @@ api.cy.js (prueba a nivel de apis)
 
 en consola vsc /vite-frontend
 npm run cypress:run
+

@@ -1,0 +1,45 @@
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/reactjs/02-rendimiento.md
+
+UseMemo
+useMemo es un hook de React que sirve para memorizar el resultado de una función y evitar que se vuelva a calcular si las dependencias no han cambiado.
+
+¿Por qué es útil? En React, cada vez que un componente se vuelve a renderizar, todo el código dentro de su función se ejecuta otra vez. Si tienes una operación pesada (por ejemplo, filtrar una lista grande, hacer cálculos complejos, ordenar muchos datos), hacerlo en cada render puede hacer que la app vaya lenta.
+
+Aquí entra useMemo: te permite que esa operación solo se ejecute cuando cambien ciertos datos de los que depende, y si no, reutiliza el resultado guardado (cacheado).
+
+en /vite-frontend
+crear componente src/components/LongComput.jsx
+
+El renderizado de todo es retrasado por el cálculo que puede llevar mucho tiempo, este cálculo puede ser
+un filtro con gran cantidad de datos que no es necesario renderizar salvo en una determinada situación
+
+Para evitar esto usaremos useMemo en este caso en el cálculo
+import React, { useEffect, useState, useMemo} from 'react'
+let longComput = useMemo(() => sumarTo(100), []);
+
+Lazy loading (carga perezosa)
+Lazy loading (carga perezosa) es una técnica que consiste en no cargar o descargar ciertos recursos (como componentes o imágenes) hasta que realmente se necesitan.
+
+En React, esto se usa con React.lazy y Suspense para cargar componentes bajo demanda y mejorar el rendimiento.
+
+
+crear componente LazyLoad.jsx y LargeImage.jsx
+LazyLoad.jsx
+export const LazyLoad = () => {
+  const [showImage, setShowImage] = useState(false);
+
+  return (
+    <div>
+      <h2>Ejemplo sin Lazy Loading</h2>
+      <button onClick={() => setShowImage(true)}>Mostrar Imagen Grande</button>
+
+      {showImage && <LargeImage />}
+    </div>
+  );
+}
+Este ejemplo vemos en consola-network que la imagen se recarga al renderizar aunque no se muestre
+Este flujo de informacion que puede consumir ancho de banda en projectos grandes, se puede retardar y Mostrar
+cuando interese.
+Versión final en el propio LazyLoad.jsx
+
+

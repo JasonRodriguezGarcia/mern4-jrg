@@ -13,7 +13,9 @@ import './App.css'
 // import MeGusta from './components/MeGusta'
 // import FradudeBanco from './components/FraudeBanco'
 // import Test1 from './components/test1'
-import Form from './components/Form'
+// import Form from './components/Form'
+// import { LongComput } from './components/LongComput'
+import { LazyLoad } from './components/LazyLoad'
 
 function App() {
 
@@ -32,9 +34,11 @@ function App() {
       {/* <Kafka /> */}
       {/* <MeGusta /> */}
       {/* <FradudeBanco /> */}
+      {/*  PODRÍAMOS PASAR TAMBIÉN UN ESTADO EN LOS PROPS */}
       {/* <Test1 nombreDeUsuario={nombre} edad={50}/> */}
-      <Form nombreDeUsuario={nombre} edad={50}/>
-
+      {/* <Form nombreDeUsuario={nombre} edad={50}/>  */}
+      {/* <LongComput /> */}
+      <LazyLoad />
     </>
   )
 }
