@@ -1,0 +1,70 @@
+https://github.com/chekulhan/Desarrollo-Web/tree/main/MF0493-Implantaci%C3%B3n/reactjs
+
+Ejercicio en el que creamos un contenedor con un servidor html llamado nginx el cual usará nuestro código en html
+En el curso anterior cuando usábamos VSC con la extensión Live Server, la cual ejecutaba nuestro fichero html
+y lo mostraba en pantalla.
+Live Server en Visual Studio Code (VSC) es una extensión que permite lanzar un servidor local de desarrollo con
+ recarga en tiempo real (live reload) para páginas web estáticas o simples (HTML, CSS, JS).
+
+¿Qué hace exactamente Live Server?
+Cuando editas archivos HTML, CSS o JavaScript, Live Server:
+Inicia un servidor local para mostrar tu sitio web.
+Abre tu archivo HTML automáticamente en el navegador.
+Recarga la página del navegador automáticamente cada vez que guardas un archivo, para que veas los cambios de
+ inmediato sin tener que recargar manualmente.
+
+En este ejercicio el contenedor que creamos tiene nginx y un código html que en este caso se consigue compilando
+nuestro código en React con npm run build, comando que creará un directorio dist que contiene nuestro código
+en React ya compilado a html
+
+en vite-frontend verificamos que el proyecto actual funciona, da igual qué ejercicio era, que en este caso es
+el ejercicio de la imagen y compilaremos con
+
+npm run build
+
+abrimos docker 
+en vsc en vite-frontend
+crear nginx.conf para la configuracion del servidor html nginx
+    server {
+    listen 80;
+    server_name localhost;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location / {
+        try_files $uri /index.html;
+    }
+}
+crear Dockerfile con el contenido de:
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/reactjs/04-Dockerfile
+
+en vsc
+    docker build -t my-vite-app .
+    docker run -d -p 80:80 my-vite-app
+    docker exec -it nombre_del_contenedor /bin/sh   <-- ojo nombre_del_contenedor el que ponga docker
+
+$ docker build -t my-vite-app .
+    Crea una imagen de Docker a partir del archivo Dockerfile que esté en el directorio actual (.).
+    -t my-vite-app: Le da un nombre (o "tag") a la imagen: my-vite-app.
+    Resultado: Se genera una imagen Docker lista para ser ejecutada.
+$ docker run -d -p 80:80 my-vite-app
+    docker run: Crea y ejecuta un contenedor basado en la imagen construida.
+    -d: Ejecuta el contenedor en segundo plano (modo "detached").
+    -p 80:80: Expone el puerto 80 del contenedor en el puerto 80 de tu máquina. Esto te permite acceder a la app
+     en tu navegador con http://localhost.
+    my-vite-app: Es el nombre de la imagen que se va a ejecutar.
+    Resultado: Tu app web Vite está corriendo y disponible en tu navegador.
+$ docker exec -it nombre_del_contenedor /bin/sh
+    docker exec: Ejecuta un comando dentro de un contenedor en ejecución.
+    -it: Permite interacción en la terminal (modo interactivo + tty).
+    nombre_del_contenedor: Deberías reemplazar esto por el nombre real del contenedor (puedes verlo con docker ps).
+    /bin/sh: Abre una shell dentro del contenedor.
+    Resultado: Entras al sistema de archivos del contenedor como si fuera una mini computadora virtual. Puedes 
+    explorar, depurar, modificar archivos, etc.
+
+en /nodejs crear fichero
+    promises.jS
+ejercicio en el que se presentas varias formas de hacer promesas.
+Importante: 
+    promises
