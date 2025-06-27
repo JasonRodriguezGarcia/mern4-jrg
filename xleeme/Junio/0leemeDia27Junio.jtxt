@@ -1,0 +1,175 @@
+https://www.youtube.com/watch?v=Ze6Fn7DpKTE
+
+tipos de licencia
+
+-Licencias permisivas
+MIT
+BSD
+APACHE
+
+-Week Copyleft
+LGPL V3
+MPL
+
+
+-Licencias Copyleft
+Gpl2 Y 3
+AGPL3
+BSL
+
+
+Ver el fichero LICENCE de los distintos repositorios de https://github.com/trending
+
+
+VAMOS A AÑADIR GOOGLE ANALITICS A NUESTRO REACT
+google Analytics con nuestra cuenta de NAZARET OJO !!!
+https://analytics.google.com/analytics/web/provision/#/provision
+Vincular nuestro render con googleAnalitics
+EMPEZAR A MEDIR
+
+Usando la cuenta de google analytics, tagmanager.google.com permite poner etiquetas distintas partes de nuestra web
+
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/reactjs/02-rendimiento.md
+REACT QUERY
+Datos en cache
+Creamos un componente en vite-frontend
+/components/Query.jsx
+
+que muestra un registro 1
+
+luego lo cambiamos para que muestre el registro 2
+
+luego lo cambiamos para que muestre el registro 3
+
+Cada vez se llama a la base de datos de mongodb
+
+cambiamos el código para usar el cache de Query
+hay que instalar
+    npm install @tanstack/react-query
+    npm install --save-dev @tanstack/react-query-devtools   <-- para comprobar el cache, uso en desarrollo
+
+añadir al codigo de App.jsx el componente PINCIPAL
+    import Query from './components/Query';
+    import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+    import { ReactQueryDevtools } from '@tanstack/react-query-devtools';  // este es opcional 
+    const queryClient = new QueryClient();
+ENVOLVER el componente de nuestra aplicación
+
+<QueryClientProvider client={queryClient}>
+....
+
+    <ReactQueryDevtools initialIsOpen />  <-- SOLO EN DESARROLLO!!
+</QueryClientProvider>
+
+
+en query.jsx
+colocamos fetuser fuera del fecht
+
+eliminamos useeffect
+
+eliminamos el estado fetched del const y del return
+
+importamos el hook
+import { useQuery } from '@tanstack/react-query';
+
+añadimos
+
+    const { data: user, isLoading, error } = useQuery({
+        queryKey: ['user', 1],
+        queryFn: fetchUser,
+    });
+    
+reemplazar el contenido del return
+           {isLoading && <div>Cargando...</div>}
+            {error && <div>Error al cargar usuario</div>}
+            {!isLoading && !error && (
+            <div>{user.id} - {user.name}</div>
+            )}
+
+ejecutar
+
+npm run dev
+
+hace el proceso de websocket con el servidor de frontend
+
+Version más dinámica
+
+import {useState} from 'react';
+import { useQuery } from '@tanstack/react-query';
+
+const fetchUser = async ({queryKey}) => {
+    console.log(queryKey);
+    const [, id] = queryKey;
+    console.log("Fetching");
+    return fetch(`https://jsonplaceholder.typicode.com/users/${id}`)
+    .then(result => {
+        return result.json()
+    })
+    .then(result => {
+        return result;
+    });
+}
+
+
+const Query2 = () => {
+    const [userId, setUserId] = useState(1);
+    const [submittedId, setSubmittedId] = useState(1);
+
+    const { data: user, isLoading, error } = useQuery({
+        queryKey: ['user', Number(submittedId)],
+        queryFn: fetchUser,
+        staleTime: 10000, // 10 seconds
+        //refetchInterval: 60000,
+        onSuccess: () => console.log('Data fetched/refetched'),
+        onError: (err) => console.error('Fetch error:', err),
+    });
+    
+
+    return (
+        <>
+            User Id: <input type="text" value={userId} onChange={(e)=>setUserId(e.target.value)}/>
+            <button onClick={() => setSubmittedId(userId)}>Get</button>
+
+            {isLoading && <div>Cargando...</div>}
+            {error && <div>Error al cargar usuario</div>}
+            {!isLoading && !error && (
+            <div>{user.id} - {user.name}</div>
+            )}
+        </>
+    )
+}
+
+export default Query2
+
+Si volvemos a pedir el mismo id no hace la llamada porque ya está en caché
+Aplicable para un ejercicio que ya hicimo de postgress con pooling (pool)
+
+Actividad de Query
+Query3.jsx
+El API https://picsum.photos/id/267/info devuelve un mensaje en el siguiente formato:
+
+{
+        "id": "0",
+        "author": "Alejandro Escamilla",
+        "width": 5616,
+        "height": 3744,
+        "url": "https://unsplash.com/...",
+        "download_url": "https://picsum.photos/..."
+}
+Aprovechar React Query para mostrar una nueva imagen cada 10 segundos. Usar la que esta en el cache mientras tanto.
+
+const fetchDog = async () => {
+  console.log('Fetching dog data...');
+  const res = await fetch('https://dog.ceo/api/breeds/image/random');
+  if (!res.ok) throw new Error('Network response was not ok');
+  const data = await res.json();
+  return data.message; // URL of a random dog image
+};
+
+
+*****************
+sistema de cámaras que transmite a un servidor en internet
+se desvia esa salida a un servidor
+OBS server 
+NDI PROTOCOLO de transmision de video ligero
