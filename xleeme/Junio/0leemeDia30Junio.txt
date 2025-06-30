@@ -1,0 +1,141 @@
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/devops/sre/sre-nginx/instrucciones.md
+Partiendo de un fichero access.log generado por un servidor y queremos revisarlo para ver si hay alguna anomalía.
+Pasamos directamente a usar los datos de access.anomalia.log 
+
+SRE (Site Reliability Engineering - Ingeniería de Fiabilidad del Sitio)
+https://sre.google/
+
+Docker NGINX logs
+EJECUTAR docker 
+VSC en /mern4-jrg/sre-nginx
+dentro copiar Dockerfile del link de arriba
+dentro copiar default.conf del link de arriba
+dentro copiar index.html del link
+    docker build -t sre-nginx .
+        Explicación paso a paso:
+        docker build
+        Este comando le dice a Docker que construya una imagen a partir de un Dockerfile.
+
+        -t sre-nginx
+        La opción -t (o --tag) permite asignar un nombre a la imagen resultante. En este caso, la imagen se llamará 
+        sre-nginx.
+
+        sre-nginx es el nombre de la imagen (puedes luego referenciarla con este nombre para correr un contenedor,
+         hacer push al registry, etc.)
+
+        . (punto)
+        El punto indica el contexto de construcción, es decir, el directorio actual (.). Docker buscará un archivo llamado 
+        Dockerfile dentro de este directorio para saber cómo construir la imagen.
+    docker run -d --name sre-nginx-container -p 8080:80 sre-nginx
+        Desglose del comando:
+        docker run
+        Ejecuta un contenedor basado en una imagen Docker.
+
+        -d
+        Opción detached: el contenedor se ejecuta en segundo plano (no bloquea la terminal).
+
+        --name sre-nginx-container
+        Asigna un nombre al contenedor: en este caso, sre-nginx-container. Esto es útil para referenciar el 
+        contenedor fácilmente luego (por ejemplo: docker stop sre-nginx-container).
+
+        -p 8080:80
+        Publica el puerto 80 del contenedor en el puerto 8080 del host.
+
+        El formato es HOST:CONTENEDOR
+
+        Esto significa que puedes acceder al servicio que corre en el puerto 80 dentro del contenedor a través 
+        del puerto 8080 de tu máquina local.
+
+        sre-nginx
+        Es el nombre de la imagen Docker que se usará para crear el contenedor. Esta imagen debe existir (la 
+        construiste en el paso anterior).
+
+    docker exec -it NOMBRECONTENEDOR sh
+        Desglose:
+        docker exec
+        Ejecuta un comando dentro de un contenedor en ejecución.
+
+        -i
+        Modo interactivo: mantiene la entrada abierta (stdin).
+
+        -t
+        Asigna una pseudo-terminal (te permite ver la salida como si estuvieras en una consola real).
+
+        NOMBRECONTENEDOR
+        El nombre o ID del contenedor donde quieres ejecutar el comando. Ejemplo: sre-nginx-container.
+
+        sh
+        Es el comando que se ejecuta dentro del contenedor. En este caso, se abre un shell (sh), que es un intérprete
+        de comandos.
+
+hacemos algunas llamadas al contenedor para que se reflejen en un fichero access.log
+abrimos una consola "command prompt" nueva en VSC (OJO DIRECTORIO sre-nginx)
+    curl http://localhost:8080 
+    curl http://localhost:8080/hola 
+    curl http://localhost:8080/adios
+    curl -X POST http://localhost:8080/data
+desde chrome: 
+    http://localhost:8080/login
+desde postman:
+    http://localhost:8080/delete
+
+luego copiar el archivo generado en el contenedor a VSC (local):
+    docker cp sre-nginx-container:/var/log/nginx/access.log ./access.log
+Vemos el contenido del fichero acces.log
+
+En consola VSC /sre-nginx
+    python -m venv .venv
+    crear .gitignore
+    .\.venv\Scripts\activate
+
+Actividad 1: SMOKE TEST
+    pip install requests
+crear smoketest.py conteniendo lo del link de arriba
+Si lo ejecutamos vemos los gets en consola a localhost del fichero
+
+
+
+Actividad 2:
+    pip install apache-log-parser  // funciona en apache y nginx
+Crear fichero processLogs1.py
+Al ejecutar coge el fichero access.log y lo muestra también de forma simple
+
+Crear fichero processLogs2.py
+También usa access.log pero lo parsea al mostrar, lo que muestra son diccionarios(objetos en python)
+
+
+
+Actividad 3:
+Hacemos esto en Google Colab?
+
+colab.new
+
+df['status'].dtype
+df['status'] = pd.to_numeric(df['status'])
+df[df["status"].isin([500])]
+
+
+today = pd.Timestamp.today().date()
+past_dates = df[df['time_received_datetimeobj'].dt.date <= today]
+
+
+import pandas as pd
+
+data = {
+    'name': ['Alice', 'Bob', 'Charlie', 'Diana', 'Eva'],
+    'age': [25, 30, 35, 28, 22],
+    'city': ['London', 'Paris', 'London', 'Berlin', 'Paris'],
+    'score': [85, 92, 78, 88, 95]
+}
+
+df = pd.DataFrame(data)
+
+df[df["age"]> 30]
+df[(df["city"] == "London") & (df["age"]> 30)]
+df[(df["city"] == "London") | (df["age"]> 20)]
+df[df["city"].isin(["London", "Paris"])]
+
+df.iloc[2:4, [0, 1, 3 ]]
+
+df.loc[df["age"]>25]
+df.loc[df["age"]>25, ["age", "score"]]
