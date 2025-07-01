@@ -1,0 +1,48 @@
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/divio/introduccion.md
+
+https://docs.divio.com/documentation-system/adoption/
+brachiograph.art
+
+Realizar documentacion empezando por los 4 ejes de divio con
+https://www.notion.com/es-es
+darse de alta
+
+
+
+
+https://github.com/chekulhan/Desarrollo-Web/tree/main/MF0493-Implantaci%C3%B3n/devops/sre/sre-nginx
+disk.monitor.py
+    creamos en sre-nginx un directorio /backup para probar el programa
+    mostramos el porcentaje de uso del disco duro
+    se puede usar en python los siguientes bibliotecas/modulos para hacer varias cosas
+        shutil
+        subprocess
+        os
+    realizamos con comandos la copia de seguridad de un fichero
+        podríamos incluso manejar errores como 
+            fichero origen no existente, da el siguiente error
+                Error al copiar:  [Errno 2] No such file or directory: 'access.log'
+            directorio destino no existente, da el siguiente error
+                Error al copiar:  [Errno 2] No such file or directory: 'backup/access.log'
+
+        se podría ser más explícito reemplazando el except por
+            except FileNotFoundError as e:
+                # Si no existe el archivo fuente o el directorio destino
+                if not os.path.exists(dst_dir):
+                    try:
+                        os.makedirs(dst_dir)
+                        shutil.copy(src, dst)
+                        print("Directorio creado y archivo copiado con éxito.")
+                    except FileNotFoundError:
+                        print(f"El archivo fuente '{src}' no existe.")
+                    except Exception as e2:
+                        print("Error durante la copia después de crear el directorio:", e2)
+                else:
+                    print(f"El archivo fuente '{src}' no existe.")
+
+            except Exception as e:
+                print("Error inesperado:", e)
+
+
+docker.container.checker.py
+
