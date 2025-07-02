@@ -1,0 +1,37 @@
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/nocode/introduccion.md
+
+https://www.glideapps.com/
+bubble.io
+flutterflow
+
+
+https://github.com/chekulhan/Desarrollo-Web/blob/main/MF0493-Implantaci%C3%B3n/devops/sre/sre-nginx/instrucciones.md
+Otras actividades de Pandas
+https://www.ibm.com/docs/es/scis?topic=samples-sample-csv-files
+
+https://github.com/lawlesst/vivo-sample-data/blob/master/data/csv/people.csv
+
+Localhost no esta expuesto en Google Colab, asi que investiga 'ngrok' para conseguir un túnel de en tiempo 
+real de un URL público al localhost. (OPCIONAL) npm install ngrok
+
+generación de fichero .csv partiendo de un array o datos de otro lado como bbdd
+en /sre-nginx/testcsv.js
+
+const users = [{id:1, name:'Jon', email:'jon@email.com'},
+  {id:2, name:'Maria', email:'maria@email.com'} ];
+
+// Define a route for the root path
+app.get('/api/v1/users/', (req, res) => {
+
+  let header = "id,name,email\n";
+  let data = "";
+  for (let index = 0; index < users.length; index++) {
+    const element = users[index];
+    data += `${element.id},${element.name},${element.email}\n`;
+  }
+
+  res.set('Content-Type', 'text/plain'); // no 'text/csv' ya que lo toma el navegador como una descarga
+  res.send(header + data);
+  //res.send('Hello, World!');
+});
